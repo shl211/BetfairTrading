@@ -1,5 +1,6 @@
 add_library(BetfairAPI STATIC
-    AccountsAPI.cpp
+    AccountAPI.cpp
+    BettingAPI.cpp
     LoginAPI.cpp
     Response.cpp
 )

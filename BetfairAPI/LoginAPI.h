@@ -3,9 +3,10 @@
 
 #include <cpr/cpr.h>
 #include <string>
+#include "Response.h"
 
 namespace BetfairAPI {
-    cpr::Response login(const std::string& apiKey,const std::string& username,const std::string& password);
+    Response login(const std::string& apiKey,const std::string& username,const std::string& password);
 }
 
 #endif

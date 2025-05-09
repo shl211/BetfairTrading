@@ -1,11 +1,12 @@
+#ifndef BETFAIR_RESPONSE_H
+#define BETFAIR_RESPONSE_H
+
 #include <cpr/cpr.h>
 #include <nlohmann/json.hpp>
-
 class Response {
     
 public:
     ~Response();
-    Response(cpr::Response response);
     Response(const cpr::Response& response);
     Response(cpr::Response&& response) noexcept;
     Response& operator=(const Response& other);
@@ -18,3 +19,5 @@ private:
     int status_code;
     nlohmann::json data;
 };
+
+#endif

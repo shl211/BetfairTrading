@@ -14,7 +14,6 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/libcpr/cpr.git
     GIT_TAG        1.11.0
 )
-FetchContent_MakeAvailable(cpr)
 
 #Fetch nlohmann/json library
 FetchContent_Declare(
@@ -22,6 +21,7 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/nlohmann/json.git
     GIT_TAG        v3.11.2
 )
+
 
 FetchContent_MakeAvailable(cpr json)
 

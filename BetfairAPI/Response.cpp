@@ -4,17 +4,13 @@ Response::~Response() {
     //do nothing
 }
 
-Response::Response(cpr::Response response) : 
-    status_code(response.status_code),
-    data(nlohmann::json::parse(response.text)) {}
-
 Response::Response(const cpr::Response& response) : 
     status_code(response.status_code),
     data(nlohmann::json::parse(response.text)) {}
 
 Response::Response(cpr::Response&& response) noexcept : 
-    status_code(response.status_code),
-    data(nlohmann::json::parse(response.text)) {}
+    status_code(std::move(response.status_code)),
+    data(std::move(nlohmann::json::parse(response.text))) {}
 
 Response& Response::operator=(const Response& other) {
     if (this != &other) {
