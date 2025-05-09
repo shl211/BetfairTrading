@@ -3,6 +3,7 @@ add_library(BetfairAPI STATIC
     BettingAPI.cpp
     LoginAPI.cpp
     Response.cpp
+    BetfairManager.cpp
 )
 
 target_link_libraries(BetfairAPI PRIVATE cpr::cpr nlohmann_json::nlohmann_json)
