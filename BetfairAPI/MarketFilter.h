@@ -15,8 +15,8 @@ namespace BetfairAPI {
 
 
     private:
-        bool includeInPlayOnly = false;
-        bool inPlayOnly = true;
+        bool includeInPlayOnly_ = false;
+        bool inPlayOnly_ = true;
     };
 }
 

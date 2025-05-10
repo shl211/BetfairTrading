@@ -12,8 +12,8 @@ namespace BetfairAPI {
     nlohmann::json MarketFilter::getFilterJson() const {
         nlohmann::json j = {{"",""}}; //initialise with empty json
 
-        if (includeInPlayOnly) {
-            j["inPlayOnly"] = inPlayOnly;
+        if (includeInPlayOnly_) {
+            j["inPlayOnly"] = inPlayOnly_;
         }
 
         return j;
@@ -21,7 +21,7 @@ namespace BetfairAPI {
 
 
     void MarketFilter::setInPlay(bool inPlayOnly) {
-        includeInPlayOnly = true;
-        this->inPlayOnly = inPlayOnly;
+        includeInPlayOnly_ = true;
+        inPlayOnly_ = inPlayOnly;
     }
 }

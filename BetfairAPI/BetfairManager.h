@@ -13,17 +13,17 @@ namespace BetfairAPI {
         BetfairManager& operator=(const BetfairManager&) = delete;
         ~BetfairManager();
     
-        double getAccountBalance();
+        double getAccountBalance() const;
         nlohmann::json listEventTypes(const MarketFilter& filter=MarketFilter{});
     
     private:
         std::string session_token;
         std::string application_token;
     
-        double balance;
-        double discount_rate;
-        double exposure;
-        double exposure_limit;
+        double balance_;
+        double discount_rate_;
+        double exposure_;
+        double exposure_limit_;
     
         void assignAccountInformation(const nlohmann::json& account_balance_response);
     };

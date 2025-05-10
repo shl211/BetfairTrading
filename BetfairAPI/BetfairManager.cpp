@@ -39,8 +39,8 @@ namespace BetfairAPI {
         assignAccountInformation(account_info);
     };
     
-    double BetfairManager::getAccountBalance() {
-        return balance;
+    double BetfairManager::getAccountBalance() const {
+        return balance_;
     }
 
     nlohmann::json BetfairManager::listEventTypes(const MarketFilter& filter) {
@@ -55,9 +55,9 @@ namespace BetfairAPI {
     ******************************************************************************/
     
     void BetfairManager::assignAccountInformation(const nlohmann::json& account_balance_response) {
-        balance = account_balance_response["availableToBetBalance"];
-        discount_rate = account_balance_response["discountRate"];
-        exposure = account_balance_response["exposure"];
-        exposure_limit = account_balance_response["exposureLimit"];
+        balance_ = account_balance_response["availableToBetBalance"];
+        discount_rate_ = account_balance_response["discountRate"];
+        exposure_ = account_balance_response["exposure"];
+        exposure_limit_ = account_balance_response["exposureLimit"];
     }
 }
