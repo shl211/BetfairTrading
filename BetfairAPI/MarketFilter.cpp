@@ -32,9 +32,14 @@ namespace BetfairAPI {
             j["marketBettingTypes"] = marketBettingTypeList_;
         }
 
+        //order status type
+        if (!orderStatusList_.empty()) {
+            j["withOrders"] = orderStatusList_;
+        }
+
+        std::cout << j << "\n";
         return j;
     }
-
 
     void MarketFilter::setInPlayOnly(bool inPlayOnly) {
         includeInPlayOnly_ = true;
@@ -62,6 +67,22 @@ namespace BetfairAPI {
     void MarketFilter::addMarketBettingType(const std::vector<MarketBettingType>& marketBettingType) {
         marketBettingTypeList_.reserve(marketBettingTypeList_.size() + marketBettingType.size());
         marketBettingTypeList_.insert(marketBettingTypeList_.end(),marketBettingType.begin(),marketBettingType.end());
+    }
+
+    void MarketFilter::addOrderStatus(const OrderStatus& status) {
+        //pending and expired are not valid search criteria on MarkertFilter
+        if (status != OrderStatus::PENDING and status != OrderStatus::EXPIRED) {
+            orderStatusList_.push_back(status);
+        }
+    }
+    
+    void MarketFilter::addOrderStatus(const std::vector<OrderStatus>& status) {
+        //pending and expired are not valid search criteria on MarkertFilter
+        orderStatusList_.reserve(orderStatusList_.size() + orderStatusList_.size());
+        for (auto& s : status) {
+            //not all OrderStatus enums are valid, so call this one as it handles it
+            addOrderStatus(s);
+        }
     }
 
 /*

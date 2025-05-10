@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 #include "EventTypeIds.hpp"
 #include "MarketBettingType.hpp"
+#include "OrderStatus.hpp"
 #include <vector>
 
 namespace BetfairAPI {
@@ -21,6 +22,8 @@ namespace BetfairAPI {
         void addEventTypeIds(const std::vector<EventTypeIds>& events);
         void addMarketBettingType(const MarketBettingType& market);
         void addMarketBettingType(const std::vector<MarketBettingType>& market);
+        void addOrderStatus(const OrderStatus& status);
+        void addOrderStatus(const std::vector<OrderStatus>& status);
 
 
     private:
@@ -34,6 +37,7 @@ namespace BetfairAPI {
         
         std::vector<EventTypeIds> eventTypeList_ {};
         std::vector<MarketBettingType> marketBettingTypeList_ {};
+        std::vector<OrderStatus> orderStatusList_ {};
 
         //helper functions
         std::vector<int> getEventTypeFilterList_() const;

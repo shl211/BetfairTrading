@@ -17,6 +17,7 @@ int main() {
     filter.addEventTypeIds(BetfairAPI::EventTypeIds::Soccer);
     filter.addEventTypeIds(BetfairAPI::EventTypeIds::Baseball);
     filter.addEventTypeIds(std::vector<BetfairAPI::EventTypeIds> {BetfairAPI::EventTypeIds::Basketball,BetfairAPI::EventTypeIds::Cricket});
+    filter.addMarketBettingType(BetfairAPI::MarketBettingType::ASIAN_HANDICAP_SINGLE_LINE);
     BetfairAPI::BetfairManager session = BetfairAPI::BetfairManager(username,password,api_key);
 
     std::cout << session.listEventTypes(filter) << "\n";

@@ -10,45 +10,79 @@
 namespace BetfairAPI {
     BetfairManager::~BetfairManager() {
         // Clear application_token
-        if (!application_token.empty()) {
-            volatile char* p = &application_token[0];
-            std::memset(const_cast<char*>(p), 0, application_token.size());
+        if (!application_token_.empty()) {
+            volatile char* p = &application_token_[0];
+            std::memset(const_cast<char*>(p), 0, application_token_.size());
             std::atomic_thread_fence(std::memory_order_release);
-            application_token.clear();
+            application_token_.clear();
         }
         // Clear session_token
-        if (!session_token.empty()) {
-            volatile char* p = &session_token[0];
-            std::memset(const_cast<char*>(p), 0, session_token.size());
+        if (!session_token_.empty()) {
+            volatile char* p = &session_token_[0];
+            std::memset(const_cast<char*>(p), 0, session_token_.size());
             std::atomic_thread_fence(std::memory_order_release);
-            session_token.clear();
+            session_token_.clear();
         }
     }
     
     BetfairManager::BetfairManager(std::string username, std::string password, std::string api_key) :
-        application_token(std::string(api_key)) {
+        application_token_(std::string(api_key)) {
         
         //get login and session information
-        Response r = BetfairAPI::login(application_token,username,password);
+        Response r = BetfairAPI::login(application_token_,username,password);
         auto login_info = r.get_data();
-        session_token = login_info["token"];
+        session_token_ = login_info["token"];
     
         //initialise with account information
-        r = BetfairAPI::getAccountFunds(application_token,session_token);
+        r = BetfairAPI::getAccountFunds(application_token_,session_token_);
         auto account_info = r.get_data();
         assignAccountInformation(account_info);
     };
     
+    BetfairManager::BetfairManager(BetfairManager&& other) noexcept : 
+        balance_(std::move(other.balance_)),
+        discount_rate_(std::move(other.discount_rate_)),
+        exposure_(std::move(other.exposure_)),
+        exposure_limit_(std::move(other.exposure_limit_)),
+        session_token_(std::move(other.session_token_)),
+        application_token_(std::move(other.application_token_)) {
+            //reset states in other
+            other.balance_ = 0.0;
+            other.discount_rate_ = 0.0;
+            other.exposure_ = 0.0;
+            other.exposure_limit_ = 0.0;
+
+            //strings are automatically empty after std::move
+    };
+
+    BetfairManager& BetfairManager::operator=(BetfairManager&& other) noexcept {
+        if(this != &other) {
+            balance_ = std::move(other.balance_);
+            discount_rate_ = std::move(other.discount_rate_);
+            exposure_ = std::move(other.exposure_);
+            exposure_limit_ = std::move(other.exposure_limit_);
+            session_token_ = std::move(other.session_token_);
+            application_token_ = std::move(other.application_token_);
+
+            // Reset other state
+            other.balance_ = 0.0;
+            other.discount_rate_ = 0.0;
+            other.exposure_ = 0.0;
+            other.exposure_limit_ = 0.0;
+            // Strings are automatically empty after std::move
+        }
+
+        return *this;
+    }
+
     double BetfairManager::getAccountBalance() const {
         return balance_;
     }
 
     nlohmann::json BetfairManager::listEventTypes(const MarketFilter& filter) {
-        Response response = BetfairAPI::listEventTypes(application_token,session_token,filter);
+        Response response = BetfairAPI::listEventTypes(application_token_,session_token_,filter);
         return response.get_data();
     }
-
-    
     
     /******************************************************************************
     * PRIVATE
