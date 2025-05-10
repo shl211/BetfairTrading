@@ -7,6 +7,8 @@ class BetfairManager {
 
 public:
     BetfairManager(std::string username, std::string password, std::string api_key);
+    BetfairManager(const BetfairManager&) = delete;
+    BetfairManager& operator=(const BetfairManager&) = delete;
     ~BetfairManager();
 
     double getAccountBalance();
