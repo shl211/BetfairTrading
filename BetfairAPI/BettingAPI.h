@@ -6,6 +6,7 @@
 
 namespace BetfairAPI {
 
+    Response listEventTypes(std::string application_token,std::string session_token);
 }
 
 

@@ -11,7 +11,7 @@ int main() {
     const char* username = std::getenv("USERNAME");
     const char* password = std::getenv("PASSWORD");
 
-    BetfairManager session = BetfairManager(username,password,api_key);
+    BetfairAPI::BetfairManager session = BetfairAPI::BetfairManager(username,password,api_key);
 
     std::cout << session.getAccountBalance() << "\n";
 
