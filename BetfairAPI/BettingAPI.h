@@ -3,10 +3,12 @@
 
 #include <cpr/cpr.h>
 #include "Response.h"
+#include "MarketFilter.h"
 
 namespace BetfairAPI {
 
-    Response listEventTypes(std::string application_token,std::string session_token);
+    Response listEventTypes(std::string application_token,std::string session_token,
+                            const MarketFilter& filter = {});
 }
 
 

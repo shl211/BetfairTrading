@@ -2,6 +2,7 @@
 #include <cstdlib>
 
 #include "BetfairAPI/BetfairManager.h"
+#include "BetfairAPI/MarketFilter.h"
 
 int main() {
 
@@ -11,8 +12,10 @@ int main() {
     const char* username = std::getenv("USERNAME");
     const char* password = std::getenv("PASSWORD");
 
+    BetfairAPI::MarketFilter filter = BetfairAPI::MarketFilter();
+    filter.setInPlay(true);
     BetfairAPI::BetfairManager session = BetfairAPI::BetfairManager(username,password,api_key);
 
-    std::cout << session.getAccountBalance() << "\n";
+    std::cout << session.listEventTypes(filter) << "\n";
 
 }

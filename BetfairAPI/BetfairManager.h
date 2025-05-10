@@ -1,8 +1,8 @@
 #ifndef BETFAIR_MANAGER_H
 #define BETFAIR_MANAGER_H
 
-#include <string>
 #include <nlohmann/json.hpp>
+#include "MarketFilter.h"
 
 namespace BetfairAPI {
     class BetfairManager {
@@ -14,6 +14,7 @@ namespace BetfairAPI {
         ~BetfairManager();
     
         double getAccountBalance();
+        nlohmann::json listEventTypes(const MarketFilter& filter=MarketFilter{});
     
     private:
         std::string session_token;

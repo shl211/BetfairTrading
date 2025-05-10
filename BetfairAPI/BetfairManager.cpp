@@ -5,6 +5,7 @@
 #include <iostream>
 #include "LoginAPI.h"
 #include "AccountAPI.h"
+#include "BettingAPI.h"
 
 namespace BetfairAPI {
     BetfairManager::~BetfairManager() {
@@ -41,6 +42,12 @@ namespace BetfairAPI {
     double BetfairManager::getAccountBalance() {
         return balance;
     }
+
+    nlohmann::json BetfairManager::listEventTypes(const MarketFilter& filter) {
+        Response response = BetfairAPI::listEventTypes(application_token,session_token,filter);
+        return response.get_data();
+    }
+
     
     
     /******************************************************************************
