@@ -1,8 +1,10 @@
 #include "BetfairManager.h"
+
+#include <cstring>
+#include <atomic>
+#include <iostream>
 #include "LoginAPI.h"
 #include "AccountAPI.h"
-#include <cstring>
-#include <atomic> 
 
 BetfairManager::~BetfairManager() {
     // Clear application_token
@@ -29,13 +31,24 @@ BetfairManager::BetfairManager(std::string username, std::string password, std::
     auto login_info = r.get_data();
     session_token = login_info["token"];
 
-    //initialise with aaccount information
+    //initialise with account information
     r = BetfairAPI::getAccountFunds(application_token,session_token);
     auto account_info = r.get_data();
-    balance = account_info["availableToBetBalance"];
-
+    assignAccountInformation(account_info);
 };
 
 double BetfairManager::getAccountBalance() {
     return balance;
+}
+
+
+/******************************************************************************
+* PRIVATE
+******************************************************************************/
+
+void BetfairManager::assignAccountInformation(const nlohmann::json& account_balance_response) {
+    balance = account_balance_response["availableToBetBalance"];
+    discount_rate = account_balance_response["discountRate"];
+    exposure = account_balance_response["exposure"];
+    exposure_limit = account_balance_response["exposureLimit"];
 }

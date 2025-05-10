@@ -2,6 +2,7 @@
 #define BETFAIR_MANAGER_H
 
 #include <string>
+#include <nlohmann/json.hpp>
 
 class BetfairManager {
 
@@ -18,6 +19,11 @@ private:
     std::string application_token;
 
     double balance;
+    double discount_rate;
+    double exposure;
+    double exposure_limit;
+
+    void assignAccountInformation(const nlohmann::json& account_balance_response);
 };
 
 #endif
