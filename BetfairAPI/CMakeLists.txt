@@ -5,6 +5,7 @@ add_library(BetfairAPI STATIC
     Response.cpp
     BetfairManager.cpp
     MarketFilter.cpp
+    EventTypeIds.hpp
 )
 
 target_link_libraries(BetfairAPI PRIVATE cpr::cpr nlohmann_json::nlohmann_json)

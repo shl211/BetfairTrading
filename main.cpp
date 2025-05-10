@@ -6,14 +6,17 @@
 
 int main() {
 
-    std::cout << "Testing Login API!" << std::endl;
+    std::cout << "Testing List Market Events!" << std::endl;
 
     const char* api_key = std::getenv("APIKEYDELAY");
     const char* username = std::getenv("USERNAME");
     const char* password = std::getenv("PASSWORD");
 
     BetfairAPI::MarketFilter filter = BetfairAPI::MarketFilter();
-    filter.setInPlay(true);
+    //filter.setInPlayOnly(true);
+    filter.addEventTypeIds(BetfairAPI::EventTypeIds::Soccer);
+    filter.addEventTypeIds(BetfairAPI::EventTypeIds::Baseball);
+    filter.addEventTypeIds(std::vector<BetfairAPI::EventTypeIds> {BetfairAPI::EventTypeIds::Basketball,BetfairAPI::EventTypeIds::Cricket});
     BetfairAPI::BetfairManager session = BetfairAPI::BetfairManager(username,password,api_key);
 
     std::cout << session.listEventTypes(filter) << "\n";
