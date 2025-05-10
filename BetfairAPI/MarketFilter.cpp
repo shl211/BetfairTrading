@@ -27,6 +27,11 @@ namespace BetfairAPI {
             j["eventTypeIds"] = eventTypeFilterList;
         }
 
+        //market betting type
+        if (!marketBettingTypeList_.empty()) {
+            j["marketBettingTypes"] = marketBettingTypeList_;
+        }
+
         return j;
     }
 
@@ -48,6 +53,15 @@ namespace BetfairAPI {
     void MarketFilter::addEventTypeIds(const std::vector<EventTypeIds>& events) {
         eventTypeList_.reserve(eventTypeList_.size() + events.size());
         eventTypeList_.insert(eventTypeList_.end(),events.begin(),events.end());
+    }
+
+    void MarketFilter::addMarketBettingType(const MarketBettingType& marketBettingType) {
+        marketBettingTypeList_.push_back(marketBettingType);
+    }
+    
+    void MarketFilter::addMarketBettingType(const std::vector<MarketBettingType>& marketBettingType) {
+        marketBettingTypeList_.reserve(marketBettingTypeList_.size() + marketBettingType.size());
+        marketBettingTypeList_.insert(marketBettingTypeList_.end(),marketBettingType.begin(),marketBettingType.end());
     }
 
 /*

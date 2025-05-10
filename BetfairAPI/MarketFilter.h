@@ -3,6 +3,7 @@
 
 #include <nlohmann/json.hpp>
 #include "EventTypeIds.hpp"
+#include "MarketBettingType.hpp"
 #include <vector>
 
 namespace BetfairAPI {
@@ -18,7 +19,8 @@ namespace BetfairAPI {
         void setTurnInPlayEnabled(bool turnInPlayEnabled);
         void addEventTypeIds(const EventTypeIds& events);
         void addEventTypeIds(const std::vector<EventTypeIds>& events);
-        
+        void addMarketBettingType(const MarketBettingType& market);
+        void addMarketBettingType(const std::vector<MarketBettingType>& market);
 
 
     private:
@@ -31,7 +33,7 @@ namespace BetfairAPI {
         bool turnInPlayEnabled_ = false;
         
         std::vector<EventTypeIds> eventTypeList_ {};
-        
+        std::vector<MarketBettingType> marketBettingTypeList_ {};
 
         //helper functions
         std::vector<int> getEventTypeFilterList_() const;
