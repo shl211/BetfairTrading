@@ -22,10 +22,23 @@ FetchContent_Declare(
     GIT_TAG        v3.11.2
 )
 
+#Fetch gtest
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/v1.13.0.zip
+)
 
-FetchContent_MakeAvailable(cpr json)
+FetchContent_MakeAvailable(cpr json googletest)
+enable_testing()
 
 add_subdirectory(BetfairAPI)
 
+# Primary executable
 add_executable(app main.cpp)
 target_link_libraries(app PRIVATE BetfairAPI cpr::cpr nlohmann_json::nlohmann_json)
+
+# Tests
+option(BUILD_TESTS "Build tests" ON)
+if(BUILD_TESTS)
+    add_subdirectory(tests)
+endif()

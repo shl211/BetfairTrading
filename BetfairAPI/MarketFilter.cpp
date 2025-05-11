@@ -10,7 +10,7 @@ namespace BetfairAPI {
     }
 
     nlohmann::json MarketFilter::getFilterJson() const {
-        nlohmann::json j = {{"",""}}; //initialise with empty json
+        nlohmann::json j = {};
         
         //boolean values
         if (includeInPlayOnly_) {
@@ -37,7 +37,12 @@ namespace BetfairAPI {
             j["withOrders"] = orderStatusList_;
         }
 
-        std::cout << j << "\n";
+
+        //if nothing, return an empty json for payload:
+        if (j.empty()) {
+            j = {{"",""}};
+        }
+
         return j;
     }
 

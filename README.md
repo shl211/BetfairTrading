@@ -14,4 +14,15 @@ make
 ./app
 ```
 
-This generates an executable **app** located in build. 
+This generates an executable **app** located in build.
+
+This can also be compiled with tests:
+```
+mkdir build
+cd build
+cmake -DBUILD_TESTS=ON ..
+make
+ctest
+```
+
+**ctest** executes the test suite.
