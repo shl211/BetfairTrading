@@ -40,4 +40,23 @@ namespace BetfairAPI {
         cpr::Response r = cpr::Post(url,headers,body);
         return Response(r);
     }
+
+    Response listTimeRanges(std::string application_token,std::string session_token,
+                            const MarketFilter& filter,const TimeGranularity& granularity) {
+        
+        cpr::Url url {std::string(base_betting_url) + "listTimeRanges/"};
+        cpr::Header headers {
+            {"X-Application",application_token},
+            {"X-Authentication",session_token},
+            {"Content-Type","application/json"}
+        };
+
+        nlohmann::json j;
+        j["filter"] = filter.getFilterJson();
+        j["granularity"] = std::string(BetfairAPI::timeGranularityToString(granularity));
+        cpr::Body body {j.dump()};
+
+        cpr::Response r = cpr::Post(url,headers,body);
+        return Response(r);
+    }
 }

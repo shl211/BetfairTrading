@@ -14,11 +14,10 @@ int main() {
 
     BetfairAPI::MarketFilter filter = BetfairAPI::MarketFilter();
     //filter.setInPlayOnly(true);
-    filter.addEventTypeIds(BetfairAPI::EventTypeIds::RugbyUnion);
-    //filter.addMarketBettingType(BetfairAPI::MarketBettingType::ASIAN_HANDICAP_SINGLE_LINE);
+    filter.addEventTypeIds(BetfairAPI::EventTypeIds::Soccer);
     BetfairAPI::BetfairManager session = BetfairAPI::BetfairManager(username,password,api_key);
 
-    auto list = session.listCompetitions(filter);
+    auto list = session.listTimeRanges(filter);
     
     for (auto& l : list) {
         std::cout << l << "\n";

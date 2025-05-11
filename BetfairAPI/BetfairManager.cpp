@@ -115,6 +115,25 @@ namespace BetfairAPI {
         
         return compList;
     }
+
+    std::vector<TimeRangeResult> BetfairManager::listTimeRanges(const MarketFilter& filter,const TimeGranularity& granularity) {
+        Response r = BetfairAPI::listTimeRanges(application_token_,session_token_,filter,granularity);
+        nlohmann::json data = r.get_data();
+
+        std::vector<TimeRangeResult> list;
+        list.reserve(data.size());
+
+        for (const auto& item : data) {
+            int market_count = item["marketCount"];
+            auto time_range = item["timeRange"];
+            std::string from_time = time_range["from"];
+            std::string to_time = time_range["to"];
+            
+            list.push_back(TimeRangeResult(market_count,from_time,to_time));
+        }
+        
+        return list;
+    }
     
     /******************************************************************************
     * PRIVATE

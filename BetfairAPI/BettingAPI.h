@@ -4,6 +4,7 @@
 #include <cpr/cpr.h>
 #include "Response.h"
 #include "MarketFilter.h"
+#include "TimeGranularity.hpp"
 
 namespace BetfairAPI {
 
@@ -12,6 +13,9 @@ namespace BetfairAPI {
 
     Response listCompetitions(std::string application_token,std::string session_token,
                             const MarketFilter& filter = {});
+
+    Response listTimeRanges(std::string application_token,std::string session_token,
+                            const MarketFilter& filter = {},const TimeGranularity& granularity = TimeGranularity::DAYS);
 }
 
 

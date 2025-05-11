@@ -5,6 +5,8 @@
 #include "MarketFilter.h"
 #include "EventTypeResult.h"
 #include "CompetitionResult.h"
+#include "TimeRangeResult.h"
+#include "TimeGranularity.hpp"
 
 namespace BetfairAPI {
     class BetfairManager {
@@ -20,6 +22,7 @@ namespace BetfairAPI {
         double getAccountBalance() const;
         std::vector<EventTypeResult> listEventTypes(const MarketFilter& filter={});
         std::vector<CompetitionResult> listCompetitions(const MarketFilter& filter={});
+        std::vector<TimeRangeResult> listTimeRanges(const MarketFilter& filter={},const TimeGranularity& granularity = TimeGranularity::DAYS);
     
     private:
         std::string session_token_;
