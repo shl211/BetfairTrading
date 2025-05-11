@@ -52,7 +52,7 @@ namespace BetfairAPI {
     }
 
     void MarketFilter::setTurnInPlayEnabled(bool turnInPlayEnabled) {
-        includeInPlayOnly_ = true;
+        includeTurnInPlayEnabled_ = true;
         turnInPlayEnabled_ = turnInPlayEnabled;
     }
 
