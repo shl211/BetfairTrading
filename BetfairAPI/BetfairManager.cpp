@@ -95,6 +95,26 @@ namespace BetfairAPI {
 
         return eventList;
     }
+
+    std::vector<CompetitionResult> BetfairManager::listCompetitions(const MarketFilter& filter) {
+        Response response = BetfairAPI::listCompetitions(application_token_,session_token_,filter);
+        nlohmann::json data = response.get_data();
+
+        std::vector<CompetitionResult> compList;
+        compList.reserve(data.size());
+
+        for (const auto& item : data) {
+            auto competition = item["competition"];
+            int comp_id = std::stoi(competition["id"].get<std::string>());
+            std::string comp_name = competition["name"];
+            std::string competition_region = item["competitionRegion"];
+            int market_count = item["marketCount"];
+            
+            compList.push_back(CompetitionResult(comp_id,comp_name,market_count,competition_region));
+        }
+        
+        return compList;
+    }
     
     /******************************************************************************
     * PRIVATE

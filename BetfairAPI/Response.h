@@ -17,8 +17,8 @@ namespace BetfairAPI {
         const nlohmann::json& get_data() const;
     
     private:
-        int status_code;
-        nlohmann::json data;
+        int status_code_;
+        nlohmann::json data_;
     };
 }
 

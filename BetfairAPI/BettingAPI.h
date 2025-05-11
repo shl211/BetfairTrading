@@ -9,6 +9,9 @@ namespace BetfairAPI {
 
     Response listEventTypes(std::string application_token,std::string session_token,
                             const MarketFilter& filter = {});
+
+    Response listCompetitions(std::string application_token,std::string session_token,
+                            const MarketFilter& filter = {});
 }
 
 

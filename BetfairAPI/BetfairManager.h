@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 #include "MarketFilter.h"
 #include "EventTypeResult.h"
+#include "CompetitionResult.h"
 
 namespace BetfairAPI {
     class BetfairManager {
@@ -17,7 +18,8 @@ namespace BetfairAPI {
         ~BetfairManager();
     
         double getAccountBalance() const;
-        std::vector<EventTypeResult> listEventTypes(const MarketFilter& filter=MarketFilter{});
+        std::vector<EventTypeResult> listEventTypes(const MarketFilter& filter={});
+        std::vector<CompetitionResult> listCompetitions(const MarketFilter& filter={});
     
     private:
         std::string session_token_;
