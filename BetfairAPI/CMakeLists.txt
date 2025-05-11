@@ -5,6 +5,7 @@ add_library(BetfairAPI STATIC
     Response.cpp
     BetfairManager.cpp
     MarketFilter.cpp
+    EventTypeResult.cpp
     EventTypeIds.hpp
     MarketBettingType.hpp
     OrderStatus.hpp

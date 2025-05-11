@@ -1,3 +1,6 @@
+#ifndef MARKET_BETTING_TYPE_HPP
+#define MARKET_BETTING_TYPE_HPP
+
 namespace BetfairAPI {
     enum class MarketBettingType {
         ODDS,
@@ -6,3 +9,5 @@ namespace BetfairAPI {
         ASIAN_HANDICAP_SINGLE_LINE,
     };
 }
+
+#endif

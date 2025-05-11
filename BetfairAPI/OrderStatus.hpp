@@ -1,3 +1,6 @@
+#ifndef ORDER_STATUS_HPP
+#define ORDER_STATUS_HPP
+
 #include <string_view>
 
 namespace BetfairAPI {
@@ -9,3 +12,5 @@ namespace BetfairAPI {
         EXPIRED,
     };
 }
+
+#endif

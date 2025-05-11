@@ -1,3 +1,6 @@
+#ifndef EVENT_TYPE_IDS_HPP
+#define EVENT_TYPE_IDS_HPP
+
 #include <string_view>
 
 namespace BetfairAPI {
@@ -57,3 +60,5 @@ namespace BetfairAPI {
         }
     }
 }    
+
+#endif
