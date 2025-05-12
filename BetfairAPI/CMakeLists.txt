@@ -8,6 +8,7 @@ add_library(BetfairAPI STATIC
     EventTypeResult.cpp
     CompetitionResult.cpp
     TimeRangeResult.cpp
+    Date.cpp
     EventTypeIds.hpp
     MarketBettingType.hpp
     OrderStatus.hpp

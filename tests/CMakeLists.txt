@@ -1,5 +1,6 @@
 add_executable(test_suite
     test_market_filter.cpp
+    test_date.cpp
 )
 
 target_include_directories(test_suite
