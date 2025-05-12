@@ -17,8 +17,8 @@ namespace BetfairAPI {
     Date::~Date() {};
 
     std::ostream& operator<<(std::ostream& os, const Date& date) {
-        os << date.year_ << "/"
-            << std::setw(2) << std::setfill('0') << static_cast<int>(date.month_) << "/"
+        os << date.year_ << "-"
+            << std::setw(2) << std::setfill('0') << static_cast<int>(date.month_) << "-"
             << std::setw(2) << std::setfill('0') << date.day_ << "T"
             << std::setw(2) << std::setfill('0') << date.hour_ << ":"
             << std::setw(2) << std::setfill('0') << date.minute_ << ":"
