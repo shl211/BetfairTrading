@@ -135,6 +135,12 @@ namespace BetfairAPI {
         return list;
     }
     
+    nlohmann::json BetfairManager::listEvents(const MarketFilter& filter) {
+        Response r = BetfairAPI::listEvents(application_token_,session_token_,filter);
+        return r.get_data();
+    }
+
+
     /******************************************************************************
     * PRIVATE
     ******************************************************************************/

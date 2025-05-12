@@ -16,6 +16,10 @@ namespace BetfairAPI {
 
     Response listTimeRanges(std::string application_token,std::string session_token,
                             const MarketFilter& filter = {},const TimeGranularity& granularity = TimeGranularity::DAYS);
+
+
+    Response listEvents(std::string application_token,std::string session_token,
+                            const MarketFilter& filter = {});
 }
 
 

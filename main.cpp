@@ -17,10 +17,10 @@ int main() {
     filter.addEventTypeIds(BetfairAPI::EventTypeIds::Soccer);
     BetfairAPI::BetfairManager session = BetfairAPI::BetfairManager(username,password,api_key);
 
-    auto list = session.listTimeRanges(filter);
-    
-    for (auto& l : list) {
-        std::cout << l << "\n";
-    }
+    auto list = session.listEvents(filter);
+    std::cout << list << "\n";
+    //for (auto& l : list) {
+    //    std::cout << l << "\n";
+    //}
 
 }

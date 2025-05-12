@@ -23,7 +23,8 @@ namespace BetfairAPI {
         std::vector<EventTypeResult> listEventTypes(const MarketFilter& filter={});
         std::vector<CompetitionResult> listCompetitions(const MarketFilter& filter={});
         std::vector<TimeRangeResult> listTimeRanges(const MarketFilter& filter={},const TimeGranularity& granularity = TimeGranularity::DAYS);
-    
+        nlohmann::json listEvents(const MarketFilter& filter={});
+
     private:
         std::string session_token_;
         std::string application_token_;
