@@ -14,6 +14,15 @@ namespace BetfairAPI {
 
     }
 
+    Date::Date(std::string datetime) :
+        year_(std::stoi(datetime.substr(0, 4))),
+        month_(static_cast<Month>(std::stoi(datetime.substr(5, 2)))),
+        day_(std::stoi(datetime.substr(8, 2))),
+        hour_(std::stoi(datetime.substr(11, 2))),
+        minute_(std::stoi(datetime.substr(14, 2))),
+        second_(std::stoi(datetime.substr(17, 2))),
+        millisecond_(std::stoi(datetime.substr(20, 3))){}
+
     Date::~Date() {};
 
     std::ostream& operator<<(std::ostream& os, const Date& date) {

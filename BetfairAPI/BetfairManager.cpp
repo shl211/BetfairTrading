@@ -135,9 +135,29 @@ namespace BetfairAPI {
         return list;
     }
     
-    nlohmann::json BetfairManager::listEvents(const MarketFilter& filter) {
+    std::vector<EventResult> BetfairManager::listEvents(const MarketFilter& filter) {
         Response r = BetfairAPI::listEvents(application_token_,session_token_,filter);
-        return r.get_data();
+        nlohmann::json data = r.get_data();
+
+        std::vector<EventResult> events;
+        events.reserve(data.size());
+        
+        for (auto& e : data) {
+            
+            int market_count = e["marketCount"];
+            auto event = e["event"];
+            int id = std::stoi(event["id"].get<std::string>());
+            std::string name = event["name"].get<std::string>();
+            std::string country_code = event.contains("countryCode") ? event["countryCode"] : "GB";
+            std::string timezone = event.contains("timezone") ? event["timezone"] : "GMT";
+            std::string venue = event.contains("venue") ? event["venue"] : "";
+            Date open_date = Date(event["openDate"].get<std::string>());
+            
+            events.push_back(EventResult(market_count,id,country_code,timezone,
+                venue,open_date));
+        }
+
+        return events;
     }
 
 

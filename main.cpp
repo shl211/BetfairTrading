@@ -18,9 +18,9 @@ int main() {
     BetfairAPI::BetfairManager session = BetfairAPI::BetfairManager(username,password,api_key);
 
     auto list = session.listEvents(filter);
-    std::cout << list << "\n";
-    //for (auto& l : list) {
-    //    std::cout << l << "\n";
-    //}
+    //std::cout << list << "\n";
+    for (auto& l : list) {
+        std::cout << l << "\n";
+    }
 
 }

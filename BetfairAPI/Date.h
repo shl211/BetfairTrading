@@ -46,6 +46,7 @@ namespace BetfairAPI {
         
     public:
         Date(int year, Month month, int day, int hour=0,int minute=0, int second=0, int millisecond=0);
+        Date(std::string datetime);
         ~Date();
         Date(const Date&) = default;
         Date(Date&&) noexcept = default;
