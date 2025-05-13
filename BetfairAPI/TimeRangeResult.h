@@ -18,8 +18,6 @@ namespace BetfairAPI {
         //these should be some sort of date object
         Date time_from_;
         Date time_to_;
-
-        static Date stringToDate(std::string datetime);
     };
 }
 
