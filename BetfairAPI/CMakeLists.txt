@@ -14,4 +14,6 @@ target_include_directories(BetfairAPI
 target_link_libraries(BetfairAPI 
     PRIVATE 
         cpr::cpr
-        nlohmann_json::nlohmann_json)
+        nlohmann_json::nlohmann_json
+        magic_enum
+)

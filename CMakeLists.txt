@@ -29,8 +29,15 @@ FetchContent_Declare(
     URL https://github.com/google/googletest/archive/refs/tags/v1.13.0.zip
 )
 
+# Fetch magic_enum 
+FetchContent_Declare(
+    magic_enum
+    GIT_REPOSITORY https://github.com/Neargye/magic_enum.git
+    GIT_TAG v0.9.6
+)
+
 # Download and make available
-FetchContent_MakeAvailable(cpr json googletest)
+FetchContent_MakeAvailable(cpr json googletest magic_enum)
 
 ###################################
 # Project Targets
@@ -43,7 +50,8 @@ target_link_libraries(app
     PRIVATE 
         BetfairAPI 
         cpr::cpr 
-        nlohmann_json::nlohmann_json)
+        nlohmann_json::nlohmann_json
+        magic_enum)
 
 ###################################
 # Enable Tests

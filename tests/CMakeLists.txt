@@ -1,5 +1,5 @@
 add_executable(test_suite
-    test_main.cpp
+    test_enum_utils.cpp
 )
 
 target_include_directories(test_suite
@@ -14,6 +14,7 @@ target_link_libraries(test_suite
         BetfairAPI
         cpr::cpr
         nlohmann_json::nlohmann_json
+        magic_enum
 )
 
 include(GoogleTest)
