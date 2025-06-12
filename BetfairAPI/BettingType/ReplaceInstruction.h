@@ -1,0 +1,19 @@
+#pragma once
+
+#include <string>
+
+namespace BetfairAPI::BettingType {
+    class ReplaceInstruction {
+        public:
+            ReplaceInstruction(std::string_view bet_id,double new_price);
+            ~ReplaceInstruction() = default;
+        
+            std::string getBetId();
+            double getNewPrice();
+
+        private:
+            std::string bet_id_;
+            double new_price_;//price to replace bet at
+            
+    };
+}
