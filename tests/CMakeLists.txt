@@ -1,5 +1,9 @@
+file(GLOB_RECURSE TEST_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+)
+
 add_executable(test_suite
-    test_enum_utils.cpp
+    ${TEST_SOURCES}
 )
 
 target_include_directories(test_suite
