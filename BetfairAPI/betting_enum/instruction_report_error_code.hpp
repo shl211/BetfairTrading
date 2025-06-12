@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BetfairAPI::BettingEnums {
+namespace BetfairAPI::BettingEnum {
     enum class InstructionReportErrorCode {
         INVALID_BET_SIZE,//bet size is invalid for your currency or your regulator
         INVALID_RUNNER,//Runner does not exist, includes vacant traps in greyhound racing

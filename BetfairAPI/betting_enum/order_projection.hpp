@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BetfairAPI::BettingEnums {
+namespace BetfairAPI::BettingEnum {
     enum class OrderProjection {
         ALL, //EXECUTABLE and EXECUTION_COMPLETE orders
         EXECUTABLE, //An order that has a remaining unmatched portion. This is either a fully unmatched or partially matched bet (order)

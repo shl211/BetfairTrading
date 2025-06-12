@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BetfairAPI::BettingEnums {
+namespace BetfairAPI::BettingEnum {
     enum class MarketBettingType {
         ODDS, //Odds Market - Any market that doesn't fit any any of the below categories.
         LINE, //Line Market - LINE markets operate at even-money odds of 2.0. However, price for these markets refers to the line positions available as defined by the markets min-max range and interval steps. Customers either Buy a line (LAY bet, winning if outcome is greater than the taken line (price)) or Sell a line (BACK bet, winning if outcome is less than the taken line (price)). If settled outcome equals the taken line, stake is returned. 

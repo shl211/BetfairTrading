@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BetfairAPI::BettingEnums {
+namespace BetfairAPI::BettingEnum {
     enum class BetStatus {
         SETTLED,//A matched bet that was settled normally
         VOIDED,//A matched bet that was subsequently voided by Betfair, before, during or after settlement

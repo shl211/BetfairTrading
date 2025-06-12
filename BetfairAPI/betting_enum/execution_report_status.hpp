@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BetfairAPI::BettingEnums {
+namespace BetfairAPI::BettingEnum {
     enum class ExecutionReportStatus {
         SUCCESS,//Order processed successfully
         FAILURE,//Order failed.

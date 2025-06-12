@@ -8,8 +8,8 @@ namespace BetfairAPI::BettingType {
             ReplaceInstruction(std::string_view bet_id,double new_price);
             ~ReplaceInstruction() = default;
         
-            std::string getBetId();
-            double getNewPrice();
+            std::string getBetId() const;
+            double getNewPrice() const;
 
         private:
             std::string bet_id_;

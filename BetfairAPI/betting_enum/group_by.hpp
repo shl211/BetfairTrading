@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BetfairAPI::BettingEnums {
+namespace BetfairAPI::BettingEnum {
     enum class GroupBy {
         EVENT_TYPE,//A roll up of settled P&L, commission paid and number of bet orders, on a specified event type
         EVENT,//A roll up of settled P&L, commission paid and number of bet orders, on a specified event

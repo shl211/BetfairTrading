@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BetfairAPI::BettingEnums {
+namespace BetfairAPI::BettingEnum {
     enum class ExecutionReportErrorCode {
         ERROR_IN_MATCHER, //The matcher is not healthy. Please note: The error will also be returned is you attempt concurrent 'cancel all' bets requests using cancelOrders which isn't permitted.
         PROCESSED_WITH_ERRORS, //The order itself has been accepted, but at least one (possibly all) actions have generated errors

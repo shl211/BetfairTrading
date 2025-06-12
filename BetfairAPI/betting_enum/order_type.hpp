@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BetfairAPI::BettingEnums {
+namespace BetfairAPI::BettingEnum {
     
     enum class OrderType {
         LIMIT, //A normal exchange limit order for immediate execution

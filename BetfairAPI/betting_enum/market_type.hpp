@@ -2,7 +2,7 @@
 
 //this is for legacy data
 
-namespace BetfairAPI::BettingEnums {
+namespace BetfairAPI::BettingEnum {
     enum class MarketType {
         A,//Asian Handicap
         L,//Line market

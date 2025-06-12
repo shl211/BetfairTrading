@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BetfairAPI::BettingEnums {
+namespace BetfairAPI::BettingEnum {
     enum class PriceData {
         SP_AVAILABLE, //Amount available for the BSP auction.
         SP_TRADED, //Amount traded in the BSP auction.

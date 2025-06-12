@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BetfairAPI::BettingEnums {
+namespace BetfairAPI::BettingEnum {
     enum class OrderStatus {
         PENDING, //	An asynchronous order is yet to be processed. Once the bet has been processed by the exchange (including waiting for any in-play delay), the result will be reported and available on the Exchange Stream API and API NG. Not a valid search criteria on MarketFilter
         EXECUTION_COMPLETE, //An order that does not have any remaining unmatched portion.

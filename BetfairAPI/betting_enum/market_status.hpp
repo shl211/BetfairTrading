@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BetfairAPI::BettingEnums {
+namespace BetfairAPI::BettingEnum {
     enum class MarketStatus {
         INACTIVE, //The market has been created but isn't yet available.
         OPEN, //The market is open for betting.

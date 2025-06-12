@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BetfairAPI::BettingEnums {
+namespace BetfairAPI::BettingEnum {
     enum class MarketProjection{
         COMPETITION, //If not selected then the competition will not be returned with marketCatalogue
         EVENT, //If not selected then the event will not be returned with marketCatalogue

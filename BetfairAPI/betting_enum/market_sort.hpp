@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BetfairAPI::BettingEnums {
+namespace BetfairAPI::BettingEnum {
     enum class MarketSort {
         MINIMUM_TRADED,//Minimum traded volume
         MAXIMUM_TRADED,//Maximum traded volume
