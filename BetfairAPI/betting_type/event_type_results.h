@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EventType.h"
+#include "event_type.h"
 
 namespace BetfairAPI::BettingType {
     class EventTypeResults {

@@ -1,4 +1,4 @@
-#include "ReplaceInstruction.h"
+#include "replace_instruction.h"
 
 namespace BetfairAPI::BettingType {
     ReplaceInstruction::ReplaceInstruction(std::string_view bet_id,double new_price)

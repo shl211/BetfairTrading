@@ -1,6 +1,6 @@
 file(GLOB SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/BettingType/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/betting_type/*.cpp"
 )
 
 add_library(BetfairAPI STATIC
@@ -9,8 +9,8 @@ add_library(BetfairAPI STATIC
 
 target_include_directories(BetfairAPI 
     PRIVATE 
-        ${CMAKE_CURRENT_SOURCE_DIR}/BettingEnums
-        ${CMAKE_CURRENT_SOURCE_DIR}/BettingType
+        ${CMAKE_CURRENT_SOURCE_DIR}/betting_enum
+        ${CMAKE_CURRENT_SOURCE_DIR}/betting_type
 )
 
 target_link_libraries(BetfairAPI 

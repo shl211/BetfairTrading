@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "BettingType/ReplaceInstruction.h"
+#include "betting_type/replace_instruction.h"
 
 TEST(ReplaceInstruction, ConstructorAndGetter) {
     std::string bet_id = "123435";

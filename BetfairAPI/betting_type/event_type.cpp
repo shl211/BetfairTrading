@@ -1,4 +1,4 @@
-#include "EventType.h"
+#include "event_type.h"
 
 namespace BetfairAPI::BettingType {
     EventType::EventType(std::string_view id, std::string_view name) 

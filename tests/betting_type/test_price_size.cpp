@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "BettingType/PriceSize.h"
+#include "betting_type/price_size.h"
 
 TEST(PriceSize,ConstructorAndGetter) {
     double price = 1.23;

@@ -1,4 +1,4 @@
-#include "PriceSize.h"
+#include "price_size.h"
 
 namespace BetfairAPI::BettingType {
     PriceSize::PriceSize(double price, double size)

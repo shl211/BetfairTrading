@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "BettingType/EventType.h"
-#include "BettingType/EventTypeResults.h"
+#include "betting_type/event_type.h"
+#include "betting_type/event_type_results.h"
 
 TEST(EventTypeResults, ConstructorAndGetter) {
     std::string name = "Football";

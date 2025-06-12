@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "BettingType/EventType.h"
+#include "betting_type/event_type.h"
 
 TEST(EventType, ConstructorAndGetter) {
     std::string name = "Football";

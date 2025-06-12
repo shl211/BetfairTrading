@@ -1,4 +1,4 @@
-#include "EventTypeResults.h"
+#include "event_type_results.h"
 
 namespace BetfairAPI::BettingType {
     EventTypeResults::EventTypeResults(EventType event_type, int market_count)
