@@ -12,6 +12,9 @@ namespace BetfairAPI::BettingType {
             Competition& operator=(const Competition&) = default;
             Competition& operator=(Competition&&) noexcept = default;
 
+            bool operator==(const Competition& other) const;
+            bool operator!=(const Competition& other) const;
+
             std::string getId() const;
             std::string getName() const;
 
