@@ -17,13 +17,15 @@ TEST(ExchangePrices, VectorConstructorAndGetter) {
     BetfairAPI::BettingType::PriceSize ps6(1,2);
     BetfairAPI::BettingType::PriceSize ps7(1,2);
 
-    std::vector<BetfairAPI::BettingType::PriceSize> l1 = {ps1,ps2};
-    std::vector<BetfairAPI::BettingType::PriceSize> l2 = {ps3};
-    std::vector<BetfairAPI::BettingType::PriceSize> l3 = {ps4,ps5,ps6,ps7};
+    std::vector<BetfairAPI::BettingType::PriceSize> back = {ps1,ps2};
+    std::vector<BetfairAPI::BettingType::PriceSize> lay = {ps3};
+    std::vector<BetfairAPI::BettingType::PriceSize> volume = {ps4,ps5,ps6,ps7};
 
-    BetfairAPI::BettingType::ExchangePrices ep(l1,l2,l3);
+    BetfairAPI::BettingType::ExchangePrices ep(back,lay,volume);
 
-    EXPECT_EQ(true,true);
+    EXPECT_EQ(back,ep.getAvailableToBack());
+    EXPECT_EQ(lay,ep.getAvailableToLay());
+    EXPECT_EQ(volume,ep.getTradedVolume());
 }
 
 TEST(ExchangePrices, TemplateConstructorAndGetter_Array) {
@@ -35,13 +37,20 @@ TEST(ExchangePrices, TemplateConstructorAndGetter_Array) {
     BetfairAPI::BettingType::PriceSize ps6(1,2);
     BetfairAPI::BettingType::PriceSize ps7(1,2);
     
-    std::array<BetfairAPI::BettingType::PriceSize, 2> l1 = {ps1,ps2};
-    std::array<BetfairAPI::BettingType::PriceSize, 1> l2 = {ps3};
-    std::array<BetfairAPI::BettingType::PriceSize, 4> l3 = {ps4,ps5,ps6,ps7};
+    std::array<BetfairAPI::BettingType::PriceSize, 2> b = {ps1,ps2};
+    std::array<BetfairAPI::BettingType::PriceSize, 1> l = {ps3};
+    std::array<BetfairAPI::BettingType::PriceSize, 4> v = {ps4,ps5,ps6,ps7};
     
-    BetfairAPI::BettingType::ExchangePrices ep(l1,l2,l3);
+    //vector as reference, this is what is stored under the hood
+    std::vector<BetfairAPI::BettingType::PriceSize> back = {ps1,ps2};
+    std::vector<BetfairAPI::BettingType::PriceSize> lay = {ps3};
+    std::vector<BetfairAPI::BettingType::PriceSize> volume = {ps4,ps5,ps6,ps7};
     
-    EXPECT_EQ(true,true);
+    BetfairAPI::BettingType::ExchangePrices ep(b,l,v);
+    
+    EXPECT_EQ(back,ep.getAvailableToBack());
+    EXPECT_EQ(lay,ep.getAvailableToLay());
+    EXPECT_EQ(volume,ep.getTradedVolume());
 }
 
 TEST(ExchangePrices, TemplateConstructorAndGetter_List) {
@@ -53,13 +62,20 @@ TEST(ExchangePrices, TemplateConstructorAndGetter_List) {
     BetfairAPI::BettingType::PriceSize ps6(1,2);
     BetfairAPI::BettingType::PriceSize ps7(1,2);
 
-    std::list<BetfairAPI::BettingType::PriceSize> l1 = {ps1,ps2};
-    std::list<BetfairAPI::BettingType::PriceSize> l2 = {ps3};
-    std::list<BetfairAPI::BettingType::PriceSize> l3 = {ps4,ps5,ps6,ps7};
+    std::list<BetfairAPI::BettingType::PriceSize> b = {ps1,ps2};
+    std::list<BetfairAPI::BettingType::PriceSize> l = {ps3};
+    std::list<BetfairAPI::BettingType::PriceSize> v = {ps4,ps5,ps6,ps7};
 
-    BetfairAPI::BettingType::ExchangePrices ep(l1,l2,l3);
-
-    EXPECT_EQ(true,true);
+    //vector as reference, this is what is stored under the hood
+    std::vector<BetfairAPI::BettingType::PriceSize> back = {ps1,ps2};
+    std::vector<BetfairAPI::BettingType::PriceSize> lay = {ps3};
+    std::vector<BetfairAPI::BettingType::PriceSize> volume = {ps4,ps5,ps6,ps7};
+    
+    BetfairAPI::BettingType::ExchangePrices ep(b,l,v);
+    
+    EXPECT_EQ(back,ep.getAvailableToBack());
+    EXPECT_EQ(lay,ep.getAvailableToLay());
+    EXPECT_EQ(volume,ep.getTradedVolume());
 }
 
 TEST(ExchangePrices, TemplateConstructorAndGetter_Deque) {
@@ -71,13 +87,20 @@ TEST(ExchangePrices, TemplateConstructorAndGetter_Deque) {
     BetfairAPI::BettingType::PriceSize ps6(1,2);
     BetfairAPI::BettingType::PriceSize ps7(1,2);
 
-    std::deque<BetfairAPI::BettingType::PriceSize> l1 = {ps1,ps2};
-    std::deque<BetfairAPI::BettingType::PriceSize> l2 = {ps3};
-    std::deque<BetfairAPI::BettingType::PriceSize> l3 = {ps4,ps5,ps6,ps7};
+    std::deque<BetfairAPI::BettingType::PriceSize> b = {ps1,ps2};
+    std::deque<BetfairAPI::BettingType::PriceSize> l = {ps3};
+    std::deque<BetfairAPI::BettingType::PriceSize> v = {ps4,ps5,ps6,ps7};
 
-    BetfairAPI::BettingType::ExchangePrices ep(l1,l2,l3);
-
-    EXPECT_EQ(true,true);
+    //vector as reference, this is what is stored under the hood
+    std::vector<BetfairAPI::BettingType::PriceSize> back = {ps1,ps2};
+    std::vector<BetfairAPI::BettingType::PriceSize> lay = {ps3};
+    std::vector<BetfairAPI::BettingType::PriceSize> volume = {ps4,ps5,ps6,ps7};
+    
+    BetfairAPI::BettingType::ExchangePrices ep(b,l,v);
+    
+    EXPECT_EQ(back,ep.getAvailableToBack());
+    EXPECT_EQ(lay,ep.getAvailableToLay());
+    EXPECT_EQ(volume,ep.getTradedVolume());
 }
 
 
@@ -88,8 +111,14 @@ TEST(ExchangePrices, TemplateConstructorAndGetter_InitialisationList) {
         { {7, 8}, {9, 10} }  // traded_volume
     );
 
-    EXPECT_EQ(true,true);
-
+    //vector as reference, this is what is stored under the hood
+    std::vector<BetfairAPI::BettingType::PriceSize> back = {{1,2},{3,4}};
+    std::vector<BetfairAPI::BettingType::PriceSize> lay = {{5,6}};
+    std::vector<BetfairAPI::BettingType::PriceSize> volume = {{7,8},{9,10}};
+        
+    EXPECT_EQ(back,ep.getAvailableToBack());
+    EXPECT_EQ(lay,ep.getAvailableToLay());
+    EXPECT_EQ(volume,ep.getTradedVolume());
 }
 
 /* PriceSize must have hash function to be hashable
@@ -102,13 +131,20 @@ TEST(ExchangePrices, TemplateConstructorAndGetter_Set) {
     BetfairAPI::BettingType::PriceSize ps6(1,2);
     BetfairAPI::BettingType::PriceSize ps7(1,2);
     
-    std::set<BetfairAPI::BettingType::PriceSize> l1 = {ps1,ps2};
-    std::set<BetfairAPI::BettingType::PriceSize> l2 = {ps3};
-    std::set<BetfairAPI::BettingType::PriceSize> l3 = {ps4,ps5,ps6,ps7};
+    std::set<BetfairAPI::BettingType::PriceSize> b = {ps1,ps2};
+    std::set<BetfairAPI::BettingType::PriceSize> l = {ps3};
+    std::set<BetfairAPI::BettingType::PriceSize> v = {ps4,ps5,ps6,ps7};
     
-    BetfairAPI::BettingType::ExchangePrices ep(l1,l2,l3);
+    //vector as reference, this is what is stored under the hood
+    std::vector<BetfairAPI::BettingType::PriceSize> back = {ps1,ps2};
+    std::vector<BetfairAPI::BettingType::PriceSize> lay = {ps3};
+    std::vector<BetfairAPI::BettingType::PriceSize> volume = {ps4,ps5,ps6,ps7};
     
-    EXPECT_EQ(true,true);
+    BetfairAPI::BettingType::ExchangePrices ep(b,l,v);
+    
+    EXPECT_EQ(back,ep.getAvailableToBack());
+    EXPECT_EQ(lay,ep.getAvailableToLay());
+    EXPECT_EQ(volume,ep.getTradedVolume());
 }
 
 TEST(ExchangePrices, TemplateConstructorAndGetter_UnorderedSet) {
@@ -120,12 +156,19 @@ TEST(ExchangePrices, TemplateConstructorAndGetter_UnorderedSet) {
     BetfairAPI::BettingType::PriceSize ps6(1,2);
     BetfairAPI::BettingType::PriceSize ps7(1,2);
     
-    std::unordered_set<BetfairAPI::BettingType::PriceSize> l1 = {ps1,ps2};
-    std::unordered_set<BetfairAPI::BettingType::PriceSize> l2 = {ps3};
-    std::unordered_set<BetfairAPI::BettingType::PriceSize> l3 = {ps4,ps5,ps6,ps7};
+    std::unordered_set<BetfairAPI::BettingType::PriceSize> b = {ps1,ps2};
+    std::unordered_set<BetfairAPI::BettingType::PriceSize> l = {ps3};
+    std::unordered_set<BetfairAPI::BettingType::PriceSize> v = {ps4,ps5,ps6,ps7};
     
-    BetfairAPI::BettingType::ExchangePrices ep(l1,l2,l3);
+    //vector as reference, this is what is stored under the hood
+    std::vector<BetfairAPI::BettingType::PriceSize> back = {ps1,ps2};
+    std::vector<BetfairAPI::BettingType::PriceSize> lay = {ps3};
+    std::vector<BetfairAPI::BettingType::PriceSize> volume = {ps4,ps5,ps6,ps7};
     
-    EXPECT_EQ(true,true);
+    BetfairAPI::BettingType::ExchangePrices ep(b,l,v);
+    
+    EXPECT_EQ(back,ep.getAvailableToBack());
+    EXPECT_EQ(lay,ep.getAvailableToLay());
+    EXPECT_EQ(volume,ep.getTradedVolume());
 }
 */

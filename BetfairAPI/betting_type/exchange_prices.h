@@ -21,6 +21,12 @@ namespace BetfairAPI::BettingType {
             ExchangePrices& operator=(const ExchangePrices&) = default;
             ExchangePrices& operator=(ExchangePrices&&) noexcept = default;
 
+            const std::vector<PriceSize>& getAvailableToBack() const;
+            const std::vector<PriceSize>& getAvailableToLay() const;
+            const std::vector<PriceSize>& getTradedVolume() const;
+            //might be better to access it as sets of 3?
+
+
         private:
             std::vector<PriceSize> available_to_back_;
             std::vector<PriceSize> available_to_lay_;
