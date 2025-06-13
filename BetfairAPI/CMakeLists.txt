@@ -11,6 +11,7 @@ target_include_directories(BetfairAPI
     PRIVATE 
         ${CMAKE_CURRENT_SOURCE_DIR}/betting_enum
         ${CMAKE_CURRENT_SOURCE_DIR}/betting_type
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils
 )
 
 target_link_libraries(BetfairAPI 

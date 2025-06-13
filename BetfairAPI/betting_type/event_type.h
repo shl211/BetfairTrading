@@ -6,6 +6,10 @@ namespace BetfairAPI::BettingType {
         public:
             EventType(std::string_view id, std::string_view name);
             ~EventType()=default;
+            EventType(const EventType& other) = default;
+            EventType(EventType&& other) noexcept = default;
+            EventType& operator=(const EventType& other) = default;
+            EventType& operator=(EventType&& other) noexcept = default;
 
             bool operator==(const EventType& other) const;
             bool operator!=(const EventType& other) const;

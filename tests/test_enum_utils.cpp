@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "enum_utils.hpp"
+#include "utils/enum_utils.hpp"
 #include <stdexcept>
 
 TEST(EnumUtils, ToString) {

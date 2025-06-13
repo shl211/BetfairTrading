@@ -5,6 +5,13 @@ namespace BetfairAPI::BettingType {
         public:
             PriceSize(double price, double size);
             ~PriceSize() = default;
+            PriceSize(const PriceSize&) = default;
+            PriceSize(PriceSize&&) noexcept= default;
+            PriceSize& operator=(const PriceSize&) = default;
+            PriceSize& operator=(PriceSize&&) noexcept = default;
+            
+            bool operator==(const PriceSize& other) const;
+            bool operator!=(const PriceSize& other) const;
 
             double getPrice() const;
             double getSize() const;
