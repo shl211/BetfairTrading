@@ -29,3 +29,20 @@ TEST(Date, ThrowsOnInvalidInput) {
     }, std::invalid_argument);
 }
 */
+TEST(Date, EqualityOperatorWorks) {
+    std::string iso1 = "2025-06-14T15:04:05.123+02:00";
+    std::string iso2 = "2025-06-14T15:04:05.123+02:00";
+    BetfairAPI::Utils::Date date1(iso1);
+    BetfairAPI::Utils::Date date2(iso2);
+
+    EXPECT_TRUE(date1 == date2);
+}
+
+TEST(Date, InequalityOperatorWorks) {
+    std::string iso1 = "2025-06-14T15:04:05.123+02:00";
+    std::string iso2 = "2025-06-14T16:04:05.123+02:00"; // different hour
+    BetfairAPI::Utils::Date date1(iso1);
+    BetfairAPI::Utils::Date date2(iso2);
+
+    EXPECT_TRUE(date1 != date2);
+}

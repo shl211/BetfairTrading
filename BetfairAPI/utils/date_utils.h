@@ -12,6 +12,13 @@ namespace BetfairAPI::Utils {
         public:
             explicit Date(std::string_view iso8601);
             ~Date() = default;
+            Date(const Date& other) = default;
+            Date(Date&& other) noexcept = default;
+            Date& operator=(const Date& other) = default;
+            Date& operator=(Date&& other) noexcept = default;
+
+            bool operator==(const Date& other) const;
+            bool operator!=(const Date& other) const;
 
             std::string toIsoString() const;
 
