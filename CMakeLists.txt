@@ -36,8 +36,15 @@ FetchContent_Declare(
     GIT_TAG v0.9.6
 )
 
+# Ftech Howard's date and datetime support
+FetchContent_Declare(
+    date
+    GIT_REPOSITORY https://github.com/HowardHinnant/date.git
+    GIT_TAG v3.0.4
+)
+
 # Download and make available
-FetchContent_MakeAvailable(cpr json googletest magic_enum)
+FetchContent_MakeAvailable(cpr json googletest magic_enum date)
 
 ###################################
 # Project Targets
@@ -49,9 +56,7 @@ add_executable(app main.cpp)
 target_link_libraries(app 
     PRIVATE 
         BetfairAPI 
-        cpr::cpr 
-        nlohmann_json::nlohmann_json
-        magic_enum)
+)
 
 ###################################
 # Enable Tests

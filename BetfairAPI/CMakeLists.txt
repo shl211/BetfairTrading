@@ -1,6 +1,7 @@
 file(GLOB SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/betting_type/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
 )
 
 add_library(BetfairAPI STATIC
@@ -19,5 +20,7 @@ target_link_libraries(BetfairAPI
     PRIVATE 
         cpr::cpr
         nlohmann_json::nlohmann_json
+    PUBLIC
         magic_enum
+#        date::date
 )

@@ -16,9 +16,6 @@ target_link_libraries(test_suite
         GTest::gtest
         GTest::gtest_main
         BetfairAPI
-        cpr::cpr
-        nlohmann_json::nlohmann_json
-        magic_enum
 )
 
 include(GoogleTest)
