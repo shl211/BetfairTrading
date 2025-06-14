@@ -11,6 +11,7 @@ namespace BetfairAPI::Utils {
     class Date {
         public:
             explicit Date(std::string_view iso8601);
+            Date() = default;
             ~Date() = default;
             Date(const Date& other) = default;
             Date(Date&& other) noexcept = default;
