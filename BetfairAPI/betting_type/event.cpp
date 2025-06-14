@@ -6,6 +6,14 @@ namespace BetfairAPI::BettingType {
         : id_(id),name_(name),country_code_(country_code),timezone_(timezone),
             venue_(venue),open_date_(std::move(open_date)) {}
 
+    bool Event::operator==(const Event& other) const {
+        return id_ == other.id_;
+    }
+
+    bool Event::operator!=(const Event& other) const {
+        return !(*this == other);
+    }
+
     std::string Event::getId() const {
         return id_;
     }

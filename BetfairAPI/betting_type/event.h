@@ -14,6 +14,9 @@ namespace BetfairAPI::BettingType {
             Event& operator=(const Event&) = default;
             Event& operator=(Event&&) noexcept = default;
 
+            bool operator==(const Event& other) const;
+            bool operator!=(const Event& other) const;
+
             std::string getId() const;
             std::string getName() const;
             std::string getCountryCode() const;
