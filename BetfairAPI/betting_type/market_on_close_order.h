@@ -10,6 +10,9 @@ namespace BetfairAPI::BettingType {
             MarketOnCloseOrder& operator=(const MarketOnCloseOrder&) = default;
             MarketOnCloseOrder& operator=(MarketOnCloseOrder&&) noexcept = default;
         
+            bool operator==(const MarketOnCloseOrder& other) const;
+            bool operator!=(const MarketOnCloseOrder& other) const;
+
             double getLiability() const;
 
         private:

@@ -10,6 +10,9 @@ namespace BetfairAPI::BettingType {
             LimitOnCloseOrder& operator=(const LimitOnCloseOrder&) = default;
             LimitOnCloseOrder& operator=(LimitOnCloseOrder&&) noexcept= default;
         
+            bool operator==(const LimitOnCloseOrder& other) const;
+            bool operator!=(const LimitOnCloseOrder& other) const;
+
             double getLiability() const;
             double getPrice() const;
 
