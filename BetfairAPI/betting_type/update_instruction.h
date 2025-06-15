@@ -13,6 +13,9 @@ namespace BetfairAPI::BettingType {
             UpdateInstruction& operator=(const UpdateInstruction&) = default;
             UpdateInstruction& operator=(UpdateInstruction&&) noexcept = default;
 
+            bool operator==(const UpdateInstruction& other) const;
+            bool operator!=(const UpdateInstruction& other) const;
+
             std::string getBetId() const;
             BetfairAPI::BettingEnum::PersistenceType getNewPersistenceType() const;
 
