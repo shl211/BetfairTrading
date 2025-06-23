@@ -5,6 +5,7 @@ namespace BetfairAPI::BettingType {
         
         public: 
             explicit MarketVersion(long version);
+            MarketVersion() = default;
             ~MarketVersion() = default;
             MarketVersion(const MarketVersion&) = default;
             MarketVersion(MarketVersion&&) noexcept = default;

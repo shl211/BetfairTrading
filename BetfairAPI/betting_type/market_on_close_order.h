@@ -5,6 +5,7 @@ namespace BetfairAPI::BettingType {
         public:
             explicit MarketOnCloseOrder(double liability);
             ~MarketOnCloseOrder() = default;
+            MarketOnCloseOrder() = default;
             MarketOnCloseOrder(const MarketOnCloseOrder&) = default;
             MarketOnCloseOrder(MarketOnCloseOrder&&) noexcept = default;
             MarketOnCloseOrder& operator=(const MarketOnCloseOrder&) = default;

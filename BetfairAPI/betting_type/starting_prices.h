@@ -8,6 +8,7 @@ namespace BetfairAPI::BettingType {
         public:
             StartingPrices(double near_price,double far_price,double actual_sp,
                 std::vector<PriceSize> back_stake_taken, std::vector<PriceSize> lay_liability_taken);
+            StartingPrices() = default;
             ~StartingPrices() = default;
 
             StartingPrices(const StartingPrices&) = default;

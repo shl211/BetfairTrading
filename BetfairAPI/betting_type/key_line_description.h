@@ -10,6 +10,7 @@ namespace BetfairAPI::BettingType {
             KeyLineDescription(const Iterable& key_line);
 
             KeyLineDescription(const std::vector<KeyLineSelection>& key_line);
+            KeyLineDescription() = default;
             ~KeyLineDescription() = default;
             KeyLineDescription(const KeyLineDescription&) = default;
             KeyLineDescription(KeyLineDescription&&) noexcept = default;

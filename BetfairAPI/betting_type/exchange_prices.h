@@ -7,6 +7,7 @@
 namespace BetfairAPI::BettingType {
     class ExchangePrices {
         public:
+            ExchangePrices() = default;
             ExchangePrices(const std::vector<PriceSize>& available_to_back, 
                 const std::vector<PriceSize>& available_to_lay, const std::vector<PriceSize>& traded_volume);
             

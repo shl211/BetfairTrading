@@ -13,6 +13,7 @@ namespace BetfairAPI::BettingType {
             PlaceInstruction(BetfairAPI::BettingEnum::OrderType order_type, long selection_id,
                 double handicap,LimitOrder limit_order, LimitOnCloseOrder limit_on_close_order,
                 MarketOnCloseOrder market_on_close_order, std::string_view customer_order_ref);
+            PlaceInstruction() = default;
             ~PlaceInstruction() = default;
             PlaceInstruction(const PlaceInstruction&) = default;
             PlaceInstruction(PlaceInstruction&&) noexcept = default;

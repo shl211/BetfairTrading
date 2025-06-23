@@ -11,6 +11,7 @@ namespace BetfairAPI::BettingType {
                 BetfairAPI::BettingEnum::TimeInForce time_in_force,double min_fill_size,
                 BetfairAPI::BettingEnum::BetTargetType bet_target_type, double bet_target_size);
             ~LimitOrder() = default;
+            LimitOrder() = default;
             LimitOrder(const LimitOrder&) = default;
             LimitOrder(LimitOrder&&) noexcept = default;
             LimitOrder& operator=(const LimitOrder&) = default;

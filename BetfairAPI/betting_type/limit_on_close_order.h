@@ -4,6 +4,7 @@ namespace BetfairAPI::BettingType {
     class LimitOnCloseOrder {
         public:
             LimitOnCloseOrder(double liability, double price);
+            LimitOnCloseOrder() = default;
             ~LimitOnCloseOrder() = default;
             LimitOnCloseOrder(const LimitOnCloseOrder&) = default;
             LimitOnCloseOrder(LimitOnCloseOrder&&) noexcept = default;
