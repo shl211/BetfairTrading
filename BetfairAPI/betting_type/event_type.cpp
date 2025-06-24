@@ -1,4 +1,5 @@
 #include "event_type.h"
+#include <ostream>
 
 namespace BetfairAPI::BettingType {
     EventType::EventType(std::string_view id, std::string_view name) 
@@ -12,6 +13,12 @@ namespace BetfairAPI::BettingType {
         return !(*this == other);
     }
     
+    std::ostream& operator<<(std::ostream& os, const EventType& eventType) {
+        os << "EventType{id: " << eventType.id_ << ", name: " << eventType.name_ << "}";
+        return os;
+    }
+            
+
     std::string EventType::getId() const {
         return id_;
     }

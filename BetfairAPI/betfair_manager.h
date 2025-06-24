@@ -17,7 +17,7 @@ namespace BetfairAPI {
         ~BetfairManager();
     
         double getAccountBalance() const;
-        nlohmann::json listEventTypes(const BettingType::MarketFilter& mf,const std::string& locale="en") const;
+        std::vector<BettingType::EventTypeResults> listEventTypes(const BettingType::MarketFilter& mf,const std::string& locale="en") const;
         nlohmann::json listCompetitions(const BettingType::MarketFilter& mf,const std::string& locale="en") const;
 
     private:

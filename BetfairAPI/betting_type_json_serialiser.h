@@ -13,6 +13,9 @@ void to_json(nlohmann::json& j, const T& p)
 
 Then can just do nlohmann::json j = T to convert object to json
 And can use T p = j.get<T>(); to convert json to object
+T must be default constructible
+
+Another way is to use adl_serializer??? More efficient apparently.
 
 Ensure in same namespace as the objects
 */

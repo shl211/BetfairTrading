@@ -15,8 +15,9 @@ int main() {
     std::cout << manager.getAccountBalance() << "\n";
     
     BetfairAPI::BettingType::MarketFilter mf;
-    //mf.addCompetitionId("2608550");
-    //mf.addCompetitionId("11365612");
-    mf.addMarketBettingType(BetfairAPI::BettingEnum::MarketBettingType::ASIAN_HANDICAP_DOUBLE_LINE);
-    std::cout << manager.listEventTypes(mf) << "\n";
+    auto r = manager.listEventTypes(mf);
+
+    for(auto& i : r) {
+        std::cout << i << "\n";
+    }
 }

@@ -70,8 +70,7 @@ namespace BetfairAPI::BettingType {
     }
 
     void from_json(const nlohmann::json& j, EventTypeResults& etype) {
-        EventType e("","");
-        from_json(j.at("eventType"),e);
+        EventType e = j.at("eventType").get<EventType>();
         int m_count = j.at("marketCount").get<int>();
         etype = EventTypeResults(e,m_count);
     }

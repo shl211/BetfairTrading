@@ -81,9 +81,16 @@ namespace BetfairAPI {
         return balance_;
     }
 
-    nlohmann::json BetfairManager::listEventTypes(const BettingType::MarketFilter& mf,const std::string& locale) const {
+    std::vector<BettingType::EventTypeResults> BetfairManager::listEventTypes(const BettingType::MarketFilter& mf,const std::string& locale) const {
         auto r = BetfairAPI::listEventTypes(application_token_,session_token_,mf,locale);
-        return r.get_data();
+        
+        std::vector<BetfairAPI::BettingType::EventTypeResults> res;
+        res.reserve(r.get_data().size());
+        for(auto& i : r.get_data()) {
+            res.push_back(i.get<BetfairAPI::BettingType::EventTypeResults>());
+        }
+        
+        return res;
     }
 
     nlohmann::json BetfairManager::listCompetitions(const BettingType::MarketFilter& mf,const std::string& locale) const {
