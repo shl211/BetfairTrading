@@ -8,6 +8,7 @@ namespace BetfairAPI::BettingType {
         public:
             Event(std::string_view id,std::string_view name,std::string_view country_code,
                 std::string_view timezone,std::string_view venue,BetfairAPI::Utils::Date open_date);
+            Event() = default;
             ~Event() = default;
             Event(const Event&) = default;
             Event(Event&&) noexcept = default;
@@ -16,7 +17,8 @@ namespace BetfairAPI::BettingType {
 
             bool operator==(const Event& other) const;
             bool operator!=(const Event& other) const;
-
+            friend std::ostream& operator<<(std::ostream& os, const Event& event);
+            
             std::string getId() const;
             std::string getName() const;
             std::string getCountryCode() const;

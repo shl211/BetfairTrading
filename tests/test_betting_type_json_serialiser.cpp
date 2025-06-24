@@ -152,3 +152,56 @@ TEST(BettingTypeSerialiser,CompetitionResultConstruction) {
     EXPECT_EQ(competition.getCompetitionRegion(),"GB");
     EXPECT_EQ(competition.getMarketCount(),100);
 }
+
+TEST(BettingTypeSerialiser,EventConstruction) {
+    std::string id{"123"};
+    std::string name{"name"};
+    std::string country_code{"GB"};
+    std::string timezone{"GB"};
+    std::string venue{"venue"};
+    BetfairAPI::Utils::Date open_date{"2024-06-01T12:34:56Z"};
+    BetfairAPI::BettingType::Event e(id, name,country_code,timezone,venue,open_date);
+
+    nlohmann::json j{
+        {"id", id},
+        {"name", name},
+        {"countryCode", country_code},
+        {"timezone", timezone},
+        {"venue", venue},
+        {"openDate", open_date.toIsoString()}
+    };
+    auto event = j.get<BetfairAPI::BettingType::Event>();
+
+    EXPECT_EQ(event, e);
+}
+
+TEST(BettingTypeSerialiser,EventResultConstruction) {
+    std::string id{"123"};
+    std::string name{"name"};
+    std::string country_code{"GB"};
+    std::string timezone{"GB"};
+    std::string venue{"venue"};
+    BetfairAPI::Utils::Date open_date{"2024-06-01T12:34:56Z"};
+    BetfairAPI::BettingType::Event e(id, name,country_code,timezone,venue,open_date);
+
+    int m_count {100};
+
+    BetfairAPI::BettingType::EventResult e_res(e, m_count);
+
+    nlohmann::json j{
+        {"event", {
+            {"id", id},
+            {"name", name},
+            {"countryCode", country_code},
+            {"timezone", timezone},
+            {"venue", venue},
+            {"openDate", open_date.toIsoString()}
+        }},
+        {"marketCount", m_count}
+    };
+    auto event_result = j.get<BetfairAPI::BettingType::EventResult>();
+
+    EXPECT_EQ(event_result.getEvent(), e);
+    EXPECT_EQ(event_result.getMarketCount(), m_count);
+
+}

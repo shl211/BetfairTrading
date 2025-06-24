@@ -17,6 +17,12 @@ namespace BetfairAPI::Utils {
         return !(*this == other);
     }
 
+    std::ostream& operator<<(std::ostream& os, const Date& date) {
+        os << date.zoned_time_;
+        return os;
+    }
+
+
     std::string Date::toIsoString() const {
         return zoned_time_;
     }

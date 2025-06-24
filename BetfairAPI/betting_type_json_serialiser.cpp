@@ -88,4 +88,20 @@ namespace BetfairAPI::BettingType {
         c = CompetitionResult(comp,m_count,region);
     }
 
+    void from_json(const nlohmann::json& j, Event& e) {
+        std::string id = j.at("id").get<std::string>();
+        std::string name = j.at("name").get<std::string>();
+        std::string country_code = j.contains("countryCode") ? j.at("countryCode").get<std::string>() : "";
+        std::string tz = j.at("timezone").get<std::string>();
+        std::string venue = j.contains("venue") ? j.at("venue").get<std::string>() : "";
+        BetfairAPI::Utils::Date date = BetfairAPI::Utils::Date(j.at("openDate").get<std::string>());
+        e = Event(id, name, country_code, tz, venue, date);
+    }
+
+    void from_json(const nlohmann::json& j, EventResult& e) {
+        BetfairAPI::BettingType::Event event = j.at("event").get<BetfairAPI::BettingType::Event>();
+        int m_count = j.at("marketCount").get<int>();
+        e = BetfairAPI::BettingType::EventResult(event,m_count);
+    }
+
 }
