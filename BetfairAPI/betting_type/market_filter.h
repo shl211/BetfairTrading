@@ -10,7 +10,7 @@
 namespace BetfairAPI::BettingType {
     class MarketFilter {
         public:
-            MarketFilter();
+            MarketFilter() = default;
             ~MarketFilter() = default;
             MarketFilter(const MarketFilter&) = default;
             MarketFilter(MarketFilter&&) noexcept = default;
@@ -56,9 +56,9 @@ namespace BetfairAPI::BettingType {
             std::vector<std::string> competition_ids_;
             std::vector<std::string> market_ids_;
             std::vector<std::string> venues_ids_;
-            bool bsp_only_;
-            bool turn_in_play_enabled_;
-            bool in_play_only_;
+            bool bsp_only_ = false;
+            bool turn_in_play_enabled_ = false;
+            bool in_play_only_ = false;
             std::vector<BetfairAPI::BettingEnum::MarketBettingType> market_betting_types_;
             std::vector<std::string> market_countries_;
             std::vector<std::string> market_type_codes_;

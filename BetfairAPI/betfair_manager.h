@@ -2,7 +2,8 @@
 #define BETFAIR_MANAGER_H
 
 #include <nlohmann/json.hpp>
-
+#include "betting_type/market_filter.h"
+#include "betting_type/event_type_results.h"
 
 namespace BetfairAPI {
     class BetfairManager {
@@ -16,7 +17,8 @@ namespace BetfairAPI {
         ~BetfairManager();
     
         double getAccountBalance() const;
-
+        nlohmann::json listEventTypes(const BettingType::MarketFilter& mf,const std::string& locale="en") const;
+        nlohmann::json listCompetitions(const BettingType::MarketFilter& mf,const std::string& locale="en") const;
 
     private:
         std::string session_token_;

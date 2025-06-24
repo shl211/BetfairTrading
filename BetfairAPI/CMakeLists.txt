@@ -9,7 +9,7 @@ add_library(BetfairAPI STATIC
 )
 
 target_include_directories(BetfairAPI 
-    PRIVATE 
+    PUBLIC 
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/betting_enum
         ${CMAKE_CURRENT_SOURCE_DIR}/betting_type
@@ -19,8 +19,8 @@ target_include_directories(BetfairAPI
 target_link_libraries(BetfairAPI 
     PRIVATE 
         cpr::cpr
-        nlohmann_json::nlohmann_json
     PUBLIC
+        nlohmann_json::nlohmann_json
         magic_enum
 #        date::date
 )

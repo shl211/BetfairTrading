@@ -1,0 +1,26 @@
+#pragma once
+
+#include <vector>
+#include <nlohmann/json.hpp>
+#include "betting_type/market_filter.h"
+#include "betting_type/time_range.h"
+#include "betting_type/event_type_results.h"
+
+/*
+For compatibility with nlohmann::json, define as
+void from_json(const nlohmann::json& j, T& p)
+void to_json(nlohmann::json& j, const T& p)
+
+Then can just do nlohmann::json j = T to convert object to json
+And can use T p = j.get<T>(); to convert json to object
+
+Ensure in same namespace as the objects
+*/
+
+namespace BetfairAPI::BettingType {
+    void to_json(nlohmann::json& j, const MarketFilter& mf);
+
+    void from_json(const nlohmann::json& j, EventType& e);
+    void from_json(const nlohmann::json& j, EventTypeResults& etype);
+
+}

@@ -1,11 +1,13 @@
-#include "BetfairManager.h"
+#include "betfair_manager.h"
 
 #include <cstring>
 #include <atomic>
 #include <iostream>
 #include "login_api.h"
+#include "betting_api.h"
 #include "account_api.h"
 #include "utils/response.h"
+#include "betting_type_json_serialiser.h"
 
 namespace BetfairAPI {
     BetfairManager::~BetfairManager() {
@@ -73,6 +75,20 @@ namespace BetfairAPI {
         }
 
         return *this;
+    }
+
+    double BetfairManager::getAccountBalance() const {
+        return balance_;
+    }
+
+    nlohmann::json BetfairManager::listEventTypes(const BettingType::MarketFilter& mf,const std::string& locale) const {
+        auto r = BetfairAPI::listEventTypes(application_token_,session_token_,mf,locale);
+        return r.get_data();
+    }
+
+    nlohmann::json BetfairManager::listCompetitions(const BettingType::MarketFilter& mf,const std::string& locale) const {
+        auto r = BetfairAPI::listCompetitions(application_token_,session_token_,mf,locale);
+        return r.get_data();
     }
 
     /******************************************************************************

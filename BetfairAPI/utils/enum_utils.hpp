@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <magic_enum.hpp>
 #include <stdexcept>
 
@@ -8,6 +9,18 @@ namespace BetfairAPI::Utils {
     template<typename Enum>
     std::string to_string(Enum value) {
         return std::string(magic_enum::enum_name(value));
+    };
+
+    template<typename Enum>
+    std::vector<std::string> to_string(const std::vector<Enum>& values) {
+        std::vector<std::string> vec;
+        vec.reserve(values.size());
+        
+        for(auto& v : values) {
+            vec.push_back(to_string(v));
+        }
+
+        return vec;
     };
 
     template<typename Enum>

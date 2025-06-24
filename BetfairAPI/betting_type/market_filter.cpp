@@ -2,6 +2,7 @@
 
 namespace BetfairAPI::BettingType {
     void MarketFilter::setQuery(std::string_view text_query) {
+        //TODO * allowed as wildcard, but not at beginning
         text_query_ = text_query;
     }
 

@@ -1,10 +1,22 @@
 #include <iostream>
-#include "BetfairAPI/utils/date_utils.h"
+#include <cstdlib>
+
+#include "BetfairAPI/betfair_manager.h"
 
 int main() {
-    std::cout << "Hello World!\n";
 
-    BetfairAPI::Utils::Date date{"2025-06-14T15:04:05.123+02:00"};
-
-    std::cout << date.toIsoString() << "\n";
-} 
+    std::cout << "Testing Login!" << std::endl;
+    
+    const char* api_key = std::getenv("APIKEYDELAY");
+    const char* username = std::getenv("USERNAME");
+    const char* password = std::getenv("PASSWORD");
+    
+    BetfairAPI::BetfairManager manager(username,password,api_key);
+    std::cout << manager.getAccountBalance() << "\n";
+    
+    BetfairAPI::BettingType::MarketFilter mf;
+    //mf.addCompetitionId("2608550");
+    //mf.addCompetitionId("11365612");
+    mf.addMarketBettingType(BetfairAPI::BettingEnum::MarketBettingType::ASIAN_HANDICAP_DOUBLE_LINE);
+    std::cout << manager.listEventTypes(mf) << "\n";
+}

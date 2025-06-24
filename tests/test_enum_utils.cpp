@@ -13,6 +13,15 @@ TEST(EnumUtils, ToString) {
     EXPECT_EQ(BetfairAPI::Utils::to_string(TEST_ENUM::SOMETHING_ELSE), "SOMETHING_ELSE");
 }
 
+TEST(EnumUtils, ToStringList) {
+    enum class TEST_ENUM {A,B,C,D,SOMETHING_ELSE};
+    
+    std::vector<TEST_ENUM> v = {TEST_ENUM::A,TEST_ENUM::C,TEST_ENUM::B};
+    std::vector<std::string> v_str = {"A","C","B"};
+
+    EXPECT_EQ(BetfairAPI::Utils::to_string<TEST_ENUM>(v),v_str);
+}
+
 TEST(EnumUtils, FromString) {
     enum class TEST_ENUM {A,B,C,D,SOMETHING_ELSE};
     

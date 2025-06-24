@@ -6,6 +6,7 @@ namespace BetfairAPI::BettingType {
     class TimeRange {
         public:
             TimeRange(BetfairAPI::Utils::Date from,BetfairAPI::Utils::Date to);
+            TimeRange() = default;
             ~TimeRange() = default;
             TimeRange(const TimeRange&) = default;
             TimeRange(TimeRange&&) noexcept = default;
