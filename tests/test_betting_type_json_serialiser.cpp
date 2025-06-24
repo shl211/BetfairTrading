@@ -114,6 +114,54 @@ TEST(BettingTypeSerialiser,MarketFilterCompetitionIds) {
     EXPECT_EQ(j["competitionIds"], nlohmann::json::array({"123456","98765"}));
 }
 
+TEST(BettingTypeSerialiser,MarketFilterEventIds) {
+    BetfairAPI::BettingType::MarketFilter market_filter;
+    market_filter.addEventId("123456");
+    
+    //test for a single one
+    nlohmann::json j = market_filter;
+    EXPECT_TRUE(j.contains("eventIds"));
+    EXPECT_EQ(j["eventIds"], nlohmann::json::array({"123456"}));
+    
+    //test for multiple
+    market_filter.addEventId("98765");
+    j = market_filter;
+    EXPECT_TRUE(j.contains("eventIds"));
+    EXPECT_EQ(j["eventIds"], nlohmann::json::array({"123456","98765"}));
+}
+
+TEST(BettingTypeSerialiser,MarketFilterMarketIds) {
+    BetfairAPI::BettingType::MarketFilter market_filter;
+    market_filter.addMarketId("123456");
+    
+    //test for a single one
+    nlohmann::json j = market_filter;
+    EXPECT_TRUE(j.contains("marketIds"));
+    EXPECT_EQ(j["marketIds"], nlohmann::json::array({"123456"}));
+    
+    //test for multiple
+    market_filter.addMarketId("98765");
+    j = market_filter;
+    EXPECT_TRUE(j.contains("marketIds"));
+    EXPECT_EQ(j["marketIds"], nlohmann::json::array({"123456","98765"}));
+}
+
+TEST(BettingTypeSerialiser,MarketFilterVenues) {
+    BetfairAPI::BettingType::MarketFilter market_filter;
+    market_filter.addVenue("Harlow");
+    
+    //test for a single one
+    nlohmann::json j = market_filter;
+    EXPECT_TRUE(j.contains("venues"));
+    EXPECT_EQ(j["venues"], nlohmann::json::array({"Harlow"}));
+    
+    //test for multiple
+    market_filter.addVenue("Race");
+    j = market_filter;
+    EXPECT_TRUE(j.contains("venues"));
+    EXPECT_EQ(j["venues"], nlohmann::json::array({"Harlow","Race"}));
+}
+
 TEST(BettingTypeSerialiser,EventTypeConstruction) {
     BetfairAPI::BettingType::EventType e("123","name");
     nlohmann::json j {{"id","123"},{"name","name"}};

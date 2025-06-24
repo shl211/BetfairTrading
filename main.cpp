@@ -15,6 +15,7 @@ int main() {
     std::cout << manager.getAccountBalance() << "\n";
     
     BetfairAPI::BettingType::MarketFilter mf;
+    mf.addVenue("Harlow");
     auto r = manager.listEvents(mf);
 
     for(auto& i : r) {

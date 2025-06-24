@@ -17,7 +17,6 @@ namespace BetfairAPI::BettingType {
             j["eventTypeIds"] = event_type_ids;
         }
 
-        //not sure if this is working - untested
         if(const auto& event_ids = mf.getEventIds(); !event_ids.empty()) {
             j["eventIds"] = event_ids;
         }
@@ -26,12 +25,11 @@ namespace BetfairAPI::BettingType {
             j["competitionIds"] = comp_ids;
         }
 
-        //not sure if this is working - untested
+        //not sure if this is working
         if(const auto& market_ids = mf.getMarketIds(); !market_ids.empty()) {
             j["marketIds"] = market_ids;
         }
 
-        //not sure if this is working - untested
         if(const auto& venues = mf.getVenues(); !venues.empty()) {
             j["venues"] = venues;
         }
