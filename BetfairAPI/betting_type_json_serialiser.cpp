@@ -74,4 +74,18 @@ namespace BetfairAPI::BettingType {
         int m_count = j.at("marketCount").get<int>();
         etype = EventTypeResults(e,m_count);
     }
+
+    void from_json(const nlohmann::json& j, Competition& c) {
+        std::string id = j.at("id").get<std::string>();
+        std::string name = j.at("name").get<std::string>();
+        c = Competition(id,name);
+    }
+
+    void from_json(const nlohmann::json& j, CompetitionResult& c) {
+        Competition comp = j.at("competition").get<Competition>();
+        std::string region = j.at("competitionRegion").get<std::string>();
+        int m_count = j.at("marketCount").get<int>();
+        c = CompetitionResult(comp,m_count,region);
+    }
+
 }

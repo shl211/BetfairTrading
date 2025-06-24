@@ -5,6 +5,7 @@
 #include "betting_type/market_filter.h"
 #include "betting_type/time_range.h"
 #include "betting_type/event_type_results.h"
+#include "betting_type/competition_result.h"
 
 /*
 For compatibility with nlohmann::json, define as
@@ -25,5 +26,6 @@ namespace BetfairAPI::BettingType {
 
     void from_json(const nlohmann::json& j, EventType& e);
     void from_json(const nlohmann::json& j, EventTypeResults& etype);
-
+    void from_json(const nlohmann::json& j, Competition& c);
+    void from_json(const nlohmann::json& j, CompetitionResult& c);
 }

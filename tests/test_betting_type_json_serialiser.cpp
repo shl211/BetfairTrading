@@ -132,3 +132,23 @@ TEST(BettingTypeSerialiser,EventTypeResultsConstruction) {
     EXPECT_EQ(eventTypeResult.getEventType(),e);
     EXPECT_EQ(eventTypeResult.getMarketCount(),110);
 }
+
+TEST(BettingTypeSerialiser,CompetitionConstruction) {
+    BetfairAPI::BettingType::Competition c("123","name");
+    nlohmann::json j {{"id","123"},{"name","name"}};
+    auto competition = j.get<BetfairAPI::BettingType::Competition>();
+    
+    EXPECT_EQ(competition,c);
+}
+
+TEST(BettingTypeSerialiser,CompetitionResultConstruction) {
+    BetfairAPI::BettingType::Competition c("123","name");
+    BetfairAPI::BettingType::CompetitionResult c_res(c,100,"GB");
+    
+    nlohmann::json j {{"competition",{{"id","123"},{"name","name"}}},{"marketCount",100},{"competitionRegion","GB"}};
+    auto competition = j.get<BetfairAPI::BettingType::CompetitionResult>();
+    
+    EXPECT_EQ(competition.getCompetition(),c);
+    EXPECT_EQ(competition.getCompetitionRegion(),"GB");
+    EXPECT_EQ(competition.getMarketCount(),100);
+}

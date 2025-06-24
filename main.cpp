@@ -15,7 +15,7 @@ int main() {
     std::cout << manager.getAccountBalance() << "\n";
     
     BetfairAPI::BettingType::MarketFilter mf;
-    auto r = manager.listEventTypes(mf);
+    auto r = manager.listCompetitions(mf);
 
     for(auto& i : r) {
         std::cout << i << "\n";

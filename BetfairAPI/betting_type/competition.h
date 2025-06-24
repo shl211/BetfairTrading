@@ -6,6 +6,7 @@ namespace BetfairAPI::BettingType {
     class Competition {
         public:
             Competition(std::string_view id, std::string_view name);
+            Competition() = default;
             ~Competition() = default;
             Competition(const Competition&) = default;
             Competition(Competition&&) noexcept = default;
@@ -14,7 +15,8 @@ namespace BetfairAPI::BettingType {
 
             bool operator==(const Competition& other) const;
             bool operator!=(const Competition& other) const;
-
+            friend std::ostream& operator<<(std::ostream& os, const Competition& competition);
+            
             std::string getId() const;
             std::string getName() const;
 
