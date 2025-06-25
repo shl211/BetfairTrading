@@ -128,6 +128,19 @@ namespace BetfairAPI {
         
         return res;
     }
+    
+    std::vector<BettingType::TimeRangeResult> BetfairManager::listTimeRanges(const BettingType::MarketFilter& mf, BettingEnum::TimeGranularity granularity) const {
+        auto r = BetfairAPI::listTimeRanges(application_token_,session_token_,mf,granularity);
+        
+        std::vector<BetfairAPI::BettingType::TimeRangeResult> res;
+        res.reserve(r.get_data().size());
+        for(auto& i : r.get_data()) {
+            res.push_back(i.get<BetfairAPI::BettingType::TimeRangeResult>());
+        }
+        
+        return res;
+    }
+
 
     /******************************************************************************
     * PRIVATE

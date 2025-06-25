@@ -106,4 +106,16 @@ namespace BetfairAPI::BettingType {
         int m_count = j.at("marketCount").get<int>();
         mt = BetfairAPI::BettingType::MarketTypeResult(m_type,m_count);
     }
+
+    void from_json(const nlohmann::json& j, TimeRange& t) {
+        auto from = BetfairAPI::Utils::Date(j.at("from").get<std::string>());
+        auto to = BetfairAPI::Utils::Date(j.at("to").get<std::string>());
+        t = TimeRange(from,to);
+    }
+
+    void from_json(const nlohmann::json& j, TimeRangeResult& t) {
+        auto time_range = j.at("timeRange").get<TimeRange>();
+        int m_count = j.at("marketCount").get<int>();
+        t = TimeRangeResult(time_range,m_count);
+    }
 }

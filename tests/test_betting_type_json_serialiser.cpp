@@ -283,3 +283,41 @@ TEST(BettingTypeSerialiser,MarketTypeResultConstruction) {
     EXPECT_EQ(mtr_res.getMarketType(),m_type);
     EXPECT_EQ(mtr_res.getMarketCount(),m_count);
 }
+
+TEST(BettingTypeSerialiser,TimeRangeConstruction) {
+    std::string from_str = "2024-06-01T12:00:00Z";
+    std::string to_str = "2024-06-02T12:00:00Z";
+    BetfairAPI::Utils::Date from_date(from_str);
+    BetfairAPI::Utils::Date to_date(to_str);
+    BetfairAPI::BettingType::TimeRange expected_time_range(from_date, to_date);
+
+    nlohmann::json j{
+        {"from", from_str},
+        {"to", to_str}
+    };
+    auto time_range = j.get<BetfairAPI::BettingType::TimeRange>();
+
+    EXPECT_EQ(time_range.getFromDate(), expected_time_range.getFromDate());
+    EXPECT_EQ(time_range.getToDate(), expected_time_range.getToDate());
+}
+
+TEST(BettingTypeSerialiser,TimeRangeResultConstruction) {
+    std::string from_str = "2024-06-01T12:00:00Z";
+    std::string to_str = "2024-06-02T12:00:00Z";
+    BetfairAPI::Utils::Date from_date(from_str);
+    BetfairAPI::Utils::Date to_date(to_str);
+    BetfairAPI::BettingType::TimeRange expected_time_range(from_date, to_date);
+    int m_count = 42;
+
+    nlohmann::json j{
+        {"timeRange", {
+            {"from", from_str},
+            {"to", to_str}
+        }},
+        {"marketCount", m_count}
+    };
+    auto time_range_result = j.get<BetfairAPI::BettingType::TimeRangeResult>();
+
+    EXPECT_EQ(time_range_result.getTimeRange(), expected_time_range);
+    EXPECT_EQ(time_range_result.getMarketCount(), m_count);
+}

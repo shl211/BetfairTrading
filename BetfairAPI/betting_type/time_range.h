@@ -16,6 +16,8 @@ namespace BetfairAPI::BettingType {
             bool operator==(const TimeRange& other) const;
             bool operator!=(const TimeRange& other) const;
 
+            friend std::ostream& operator<<(std::ostream& os, const TimeRange& timeRange);
+
             BetfairAPI::Utils::Date getFromDate() const;
             BetfairAPI::Utils::Date getToDate() const;
 

@@ -4,6 +4,7 @@
 #include <vector>
 #include "betting_type/market_filter.h"
 #include "utils/response.h"
+#include "betting_enum/time_granularity.hpp"
 
 namespace BetfairAPI {
 
@@ -20,4 +21,9 @@ namespace BetfairAPI {
 
     BetfairAPI::Utils::Response listMarketTypes(std::string application_token,std::string session_token,
         const BetfairAPI::BettingType::MarketFilter& filter, std::string_view locale="en");
+
+    BetfairAPI::Utils::Response listTimeRanges(std::string application_token,std::string session_token,
+        const BetfairAPI::BettingType::MarketFilter& filter, BettingEnum::TimeGranularity granularity);
+
+
 }

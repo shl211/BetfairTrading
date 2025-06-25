@@ -15,8 +15,7 @@ int main() {
     std::cout << manager.getAccountBalance() << "\n";
     
     BetfairAPI::BettingType::MarketFilter mf;
-    mf.addMarketTypeCode("WINNER");
-    auto r = manager.listMarketTypes(mf);
+    auto r = manager.listTimeRanges(mf,BetfairAPI::BettingEnum::TimeGranularity::DAYS);
 
     for(auto& i : r) {
         std::cout << i << "\n";
