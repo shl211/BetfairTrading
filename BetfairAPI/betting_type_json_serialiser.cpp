@@ -137,4 +137,134 @@ namespace BetfairAPI::BettingType {
         v = VenueResult(venue,m_count);
     }
 
+    void from_json(const nlohmann::json& j, MarketCatalogue& m) {
+        //mandatory
+        std::string m_id = j.at("marketId").get<std::string>();
+        std::string m_name = j.at("marketName").get<std::string>();
+
+        //optional
+        Utils::Date start_time;
+        if(j.contains("marketStartTime")) {
+            start_time = Utils::Date(j.at("marketStartTime").get<std::string>());
+        }
+
+        MarketDescription m_desc;
+        if(j.contains("marketDescription")) {
+            m_desc = j.at("marketDescription").get<MarketDescription>();
+        }
+
+        double tot_matched = 0;
+        if(j.contains("totalMatched")) {
+            tot_matched = j.at("totalMatched").get<double>();
+        }
+
+        std::vector<RunnerCatalog> r_list {};
+        if(j.contains("runners")) {
+            r_list.reserve(j.at("totalMatched").size());
+            for(auto& r : j.at("totalMatched")) {
+                r_list.push_back(r.get<RunnerCatalog>());
+            }
+        }
+
+        EventType e_type;
+        if(j.contains("eventType")) {
+            e_type = j.at("eventType").get<EventType>();
+        }
+
+        Competition comp;
+        if(j.contains("competition")) {
+            comp = j.at("competition").get<Competition>();
+        }
+
+        Event e;
+        if (j.contains("event")) {
+            e = j.at("event").get<Event>();
+        }
+
+        //construct
+        m = MarketCatalogue(m_id,m_name,start_time,m_desc,tot_matched,
+            r_list,e_type,comp,e);
+    }
+
+    void from_json(const nlohmann::json& j, MarketLineRangeInfo& m) {
+        double max_v = j.at("maxUnitValue").get<double>();
+        double min_v = j.at("minUnitValue").get<double>();
+        double interval = j.at("interval").get<double>();
+        std::string m_unit = j.at("marketUnit").get<std::string>();
+        m = MarketLineRangeInfo(max_v,min_v,interval,m_unit);
+    }
+
+    void from_json(const nlohmann::json& j, PriceLadderDescription& p) {
+        auto t = Utils::from_string<BettingEnum::PriceLadderType>(j.at("type").get<std::string>());
+        p = PriceLadderDescription(t);
+    }
+
+    void from_json(const nlohmann::json& j, MarketDescription& p) {
+        //these are mandatory returns
+        p.setPersistenceEnabled(j.at("persistenceEnabled").get<bool>());
+        p.setBspMarket(j.at("bspMarket").get<bool>());
+        p.setMarketTime(Utils::Date(j.at("marketTime").get<std::string>()));
+        p.setSuspendTime(Utils::Date(j.at("suspendTime").get<std::string>()));
+        p.setSettleTime(Utils::Date(j.at("settleTime").get<std::string>()));
+        p.setBettingType(
+            Utils::from_string<BettingEnum::MarketBettingType>(
+                j.at("bettingType").get<std::string>()
+            ));
+        p.setTurnInPlayEnabled(j.at("turnInPlayEnabled").get<bool>());
+        p.setMarketType(j.at("marketType").get<std::string>());
+        p.setRegulator(j.at("regulator").get<std::string>());
+        p.setMarketBaseRate(j.at("marketBaseRate").get<double>());
+        p.setDiscountAllowed(j.at("discountAllowed").get<bool>());
+
+        //optional
+        if(j.contains("wallet")) {
+            p.setWallet(j.at("wallet").get<std::string>());
+        }
+
+        if(j.contains("rules")) {
+            p.setRules(j.at("rules").get<std::string>());
+        }
+
+        if(j.contains("rulesHasDates")) {
+            p.setRulesHasDates(j.at("rulesHasDates").get<bool>());
+        }
+
+        if(j.contains("eachWayDivisor")) {
+            p.setEachWayDivisor(j.at("eachWayDivisor").get<double>());
+        }
+
+        if(j.contains("clarifications")) {
+            p.setClarifications(j.at("clarifications").get<std::string>());
+        }
+
+        if(j.contains("lineRangeInfo")) {
+            p.setLineRangeInfo(j.at("lineRangeInfo").get<MarketLineRangeInfo>());
+        }
+
+        if(j.contains("raceType")) {
+            p.setRaceType(j.at("raceType").get<std::string>());
+        }
+
+        if(j.contains("priceLadderDescription")) {
+            p.setPriceLadderDescription(j.at("priceLadderDescription").get<PriceLadderDescription>());
+        }
+    }
+
+    void from_json(const nlohmann::json& j, RunnerCatalog& r) {
+        //mandatory
+        long selection_id = j.at("selectionId").get<long>();
+        std::string name = j.at("runnerName").get<std::string>();
+        double h  = j.at("handicap").get<double>();
+        int s = j.at("sortPriority").get<int>();
+
+        //optional
+        std::map<std::string,std::string> m{};
+        if (j.contains("metadata")) {
+            m = j.at("metadata").get<std::map<std::string,std::string>>();
+        }
+
+        r = RunnerCatalog(selection_id,name,h,s,m);
+    }
+
+
 }

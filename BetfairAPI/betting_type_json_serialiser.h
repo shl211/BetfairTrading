@@ -12,6 +12,7 @@
 #include "betting_type/time_range_result.h"
 #include "betting_type/country_code_result.h"
 #include "betting_type/venue_result.h"
+#include "betting_type/market_catalogue.h"
 
 /*
 For compatibility with nlohmann::json, define as
@@ -42,5 +43,9 @@ namespace BetfairAPI::BettingType {
     void from_json(const nlohmann::json& j, TimeRangeResult& t);
     void from_json(const nlohmann::json& j, CountryCodeResult& t);
     void from_json(const nlohmann::json& j, VenueResult& t);
-
-}
+    void from_json(const nlohmann::json& j, MarketCatalogue& m);
+    void from_json(const nlohmann::json& j, MarketLineRangeInfo& m);
+    void from_json(const nlohmann::json& j, PriceLadderDescription& p);
+    void from_json(const nlohmann::json& j, MarketDescription& p);
+    void from_json(const nlohmann::json& j, RunnerCatalog& r);
+}   

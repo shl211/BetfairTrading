@@ -7,11 +7,15 @@ namespace BetfairAPI::BettingType {
         public:
             MarketLineRangeInfo(double max_unit_value, double min_unit_value,
                                 double interval, std::string_view market_unit);
+            MarketLineRangeInfo() = default;
             ~MarketLineRangeInfo() = default;
             MarketLineRangeInfo(const MarketLineRangeInfo&) = default;
             MarketLineRangeInfo(MarketLineRangeInfo&&) noexcept = default;
             MarketLineRangeInfo& operator=(const MarketLineRangeInfo&) = default;
             MarketLineRangeInfo& operator=(MarketLineRangeInfo&&) noexcept = default;
+
+            bool operator==(const MarketLineRangeInfo& other) const;
+            bool operator!=(const MarketLineRangeInfo& other) const;
 
             double getMaxUnitValue() const;
             double getMinUnitValue() const;

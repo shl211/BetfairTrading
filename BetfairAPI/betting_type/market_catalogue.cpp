@@ -1,4 +1,5 @@
 #include "market_catalogue.h"
+#include <ostream>
 
 namespace BetfairAPI::BettingType {
 
@@ -16,39 +17,59 @@ MarketCatalogue::MarketCatalogue(std::string market_id, std::string market_name,
         competition_(std::move(competition)),
         event_(std::move(event)) {}
 
-    const std::string& MarketCatalogue::market_id() const {
+    std::ostream& operator<<(std::ostream& os, const MarketCatalogue& mc) {
+        /**********************************************************************
+        still work in progress
+        **********************************************************************/
+        os << "MarketCatalogue { "
+            << "market_id: " << mc.market_id_
+            << ", market_name: " << mc.market_name_;
+
+        if (mc.total_matched_ != 0.0) {
+            os << ", total_matched: " << mc.total_matched_;
+        }
+
+        if (!mc.competition_.getId().empty()) {
+            os << ", competition: " << mc.competition_;
+        }
+        
+        return os;
+    }
+
+
+    const std::string& MarketCatalogue::getMarketId() const {
         return market_id_;
     }
 
-    const std::string& MarketCatalogue::market_name() const {
+    const std::string& MarketCatalogue::getMarketName() const {
         return market_name_;
     }
 
-    const BetfairAPI::Utils::Date& MarketCatalogue::market_start_time() const {
+    const BetfairAPI::Utils::Date& MarketCatalogue::getMarketStartTime() const {
         return market_start_time_;
     }
 
-    const MarketDescription& MarketCatalogue::description() const {
+    const MarketDescription& MarketCatalogue::getDescription() const {
         return description_;
     }
 
-    double MarketCatalogue::total_matched() const {
+    double MarketCatalogue::getTotalMatched() const {
         return total_matched_;
     }
 
-    const std::vector<RunnerCatalog>& MarketCatalogue::runners() const {
+    const std::vector<RunnerCatalog>& MarketCatalogue::getRunners() const {
         return runners_;
     }
 
-    const EventType& MarketCatalogue::event_type() const {
+    const EventType& MarketCatalogue::getEventType() const {
         return event_type_;
     }
 
-    const Competition& MarketCatalogue::competition() const {
+    const Competition& MarketCatalogue::getCompetition() const {
         return competition_;
     }
 
-    const Event& MarketCatalogue::event() const {
+    const Event& MarketCatalogue::getEvent() const {
         return event_;
     }
 

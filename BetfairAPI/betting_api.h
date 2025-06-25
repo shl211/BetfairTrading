@@ -5,6 +5,8 @@
 #include "betting_type/market_filter.h"
 #include "utils/response.h"
 #include "betting_enum/time_granularity.hpp"
+#include "betting_enum/market_projection.hpp"
+#include "betting_enum/market_sort.hpp"
 
 namespace BetfairAPI {
 
@@ -24,11 +26,16 @@ namespace BetfairAPI {
         
     BetfairAPI::Utils::Response listTimeRanges(std::string application_token,std::string session_token,
         const BetfairAPI::BettingType::MarketFilter& filter, BettingEnum::TimeGranularity granularity);
-            
+
     BetfairAPI::Utils::Response listCountries(std::string application_token,std::string session_token,
         const BetfairAPI::BettingType::MarketFilter& filter, std::string_view locale="en");
 
     BetfairAPI::Utils::Response listVenues(std::string application_token,std::string session_token,
         const BetfairAPI::BettingType::MarketFilter& filter, std::string_view locale="en");
+
+    Utils::Response listMarketCatalogue(std::string application_token,std::string session_token,
+        const BettingType::MarketFilter& filter, const std::vector<BettingEnum::MarketProjection>& market_projection = {},
+        BettingEnum::MarketSort sort=BettingEnum::MarketSort::UNKNOWN, int max_results=1000, const std::string& locale = "en");
+
 
 }

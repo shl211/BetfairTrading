@@ -10,17 +10,18 @@ namespace BetfairAPI::BettingType {
             RunnerCatalog(long selection_id,std::string_view runner_name,
                         double handicap, int sort_priority, 
                         std::map<std::string,std::string> metadata = {});
+            RunnerCatalog() = default;
             ~RunnerCatalog() = default;
             RunnerCatalog(const RunnerCatalog& other) = default;
             RunnerCatalog(RunnerCatalog&& other) noexcept = default;
             RunnerCatalog& operator=(const RunnerCatalog& other) = default;
             RunnerCatalog& operator=(RunnerCatalog&& other) noexcept = default;
 
-            long selection_id() const;
-            const std::string& runner_name() const;
-            double handicap() const;
-            int sort_priority() const;
-            const std::map<std::string, std::string>& metadata() const;
+            long getSelectionId() const;
+            const std::string& getRunnerName() const;
+            double getHandicap() const;
+            int getSortPriority() const;
+            const std::map<std::string, std::string>& getMetadata() const;
 
             private:
             long selection_id_;

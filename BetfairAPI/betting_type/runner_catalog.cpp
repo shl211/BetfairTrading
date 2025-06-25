@@ -6,23 +6,23 @@ namespace BetfairAPI::BettingType {
         : selection_id_(selection_id), runner_name_(std::string(runner_name)), handicap_(handicap),
         sort_priority_(sort_priority), metadata_(std::move(metadata)) {}
 
-    long RunnerCatalog::selection_id() const {
+    long RunnerCatalog::getSelectionId() const {
         return selection_id_;
     }
 
-    const std::string& RunnerCatalog::runner_name() const {
+    const std::string& RunnerCatalog::getRunnerName() const {
         return runner_name_;
     }
 
-    double RunnerCatalog::handicap() const {
+    double RunnerCatalog::getHandicap() const {
         return handicap_;
     }
 
-    int RunnerCatalog::sort_priority() const {
+    int RunnerCatalog::getSortPriority() const {
         return sort_priority_;
     }
 
-    const std::map<std::string, std::string>& RunnerCatalog::metadata() const {
+    const std::map<std::string, std::string>& RunnerCatalog::getMetadata() const {
         return metadata_;
     }
 }

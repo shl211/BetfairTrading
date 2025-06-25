@@ -2,6 +2,7 @@
 
 namespace BetfairAPI::BettingEnum {
     enum class MarketSort {
+        UNKNOWN,
         MINIMUM_TRADED,//Minimum traded volume
         MAXIMUM_TRADED,//Maximum traded volume
         MINIMUM_AVAILABLE,//Minimum available to match

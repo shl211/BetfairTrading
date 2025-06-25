@@ -5,7 +5,7 @@ namespace BetfairAPI::BettingType {
     PriceLadderDescription::PriceLadderDescription(BetfairAPI::BettingEnum::PriceLadderType type)
         : type_(type) {}
 
-    BetfairAPI::BettingEnum::PriceLadderType PriceLadderDescription::getType() {
+    BetfairAPI::BettingEnum::PriceLadderType PriceLadderDescription::getType() const {
         return type_;
     }
 }

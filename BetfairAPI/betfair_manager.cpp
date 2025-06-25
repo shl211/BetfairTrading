@@ -165,6 +165,21 @@ namespace BetfairAPI {
         return res;
     }
 
+    std::vector<BettingType::MarketCatalogue> BetfairManager::listMarketCatalogue(const BettingType::MarketFilter& filter, 
+        const std::vector<BettingEnum::MarketProjection>& market_projection, BettingEnum::MarketSort sort,         
+        int max_results, const std::string& locale) {
+
+        auto r = BetfairAPI::listMarketCatalogue(application_token_,session_token_,filter,market_projection,sort,max_results,locale);
+        
+        std::vector<BetfairAPI::BettingType::MarketCatalogue> res;
+        res.reserve(r.get_data().size());
+        for(auto& i : r.get_data()) {
+            res.push_back(i.get<BetfairAPI::BettingType::MarketCatalogue>());
+        }
+        
+        return res;
+    }
+
 
     /******************************************************************************
     * PRIVATE

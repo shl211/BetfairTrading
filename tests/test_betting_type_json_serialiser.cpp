@@ -395,3 +395,178 @@ TEST(BettingTypeSerialiser,VenueResultConstruction) {
     EXPECT_EQ(venue_result.getVenue(), venue);
     EXPECT_EQ(venue_result.getMarketCount(), market_count);
 }
+
+TEST(BettingTypeSerialiser,MarketLineRangeInfoConstruction) {
+    double min = 1.5;
+    double max = 3.5;
+    double interval = 0.5;
+    std::string m_unit = "1";
+
+    nlohmann::json j{
+        {"minUnitValue", min},
+        {"maxUnitValue", max},
+        {"interval", interval},
+        {"marketUnit", m_unit}
+    };
+    auto info = j.get<BetfairAPI::BettingType::MarketLineRangeInfo>();
+
+    EXPECT_EQ(info.getMinUnitValue(), min);
+    EXPECT_EQ(info.getMaxUnitValue(), max);
+    EXPECT_EQ(info.getInterval(), interval);
+    EXPECT_EQ(info.getMarketUnit(),m_unit);
+}
+
+TEST(BettingTypeSerialiser,PriceLadderDescriptionConstructor) {
+    BetfairAPI::BettingEnum::PriceLadderType type = BetfairAPI::BettingEnum::PriceLadderType::CLASSIC;
+    BetfairAPI::BettingType::PriceLadderDescription desc(type);
+
+    nlohmann::json j{
+        {"type", "CLASSIC"},
+    };
+    auto parsed = j.get<BetfairAPI::BettingType::PriceLadderDescription>();
+
+    EXPECT_EQ(parsed.getType(), type);
+}
+
+TEST(BettingTypeSerialiser,MarketDescriptionConstructor) {
+    BetfairAPI::BettingType::MarketDescription desc;
+    desc.setPersistenceEnabled(true);
+    desc.setBspMarket(false);
+    desc.setMarketTime(BetfairAPI::Utils::Date("2024-06-01T12:00:00Z"));
+    desc.setSuspendTime(BetfairAPI::Utils::Date("2024-06-01T11:00:00Z"));
+    desc.setSettleTime(BetfairAPI::Utils::Date("2024-06-01T13:00:00Z"));
+    desc.setBettingType(BetfairAPI::BettingEnum::MarketBettingType::FIXED_ODDS);
+    desc.setTurnInPlayEnabled(true);
+    desc.setMarketType("WIN");
+    desc.setRegulator("UKGC");
+    desc.setMarketBaseRate(5.0);
+    desc.setDiscountAllowed(true);
+    desc.setWallet("Main");
+    desc.setRules("Some rules");
+    desc.setRulesHasDates(true);
+    desc.setEachWayDivisor(0.25);
+    desc.setClarifications("Clarification text");
+    desc.setLineRangeInfo(BetfairAPI::BettingType::MarketLineRangeInfo(10.0, 1.0, 0.5, "unit"));
+    desc.setRaceType("FLAT");
+    desc.setPriceLadderDescription(BetfairAPI::BettingType::PriceLadderDescription(BetfairAPI::BettingEnum::PriceLadderType::CLASSIC));
+
+    nlohmann::json j = {
+        {"persistenceEnabled", true},
+        {"bspMarket", false},
+        {"marketTime", "2024-06-01T12:00:00Z"},
+        {"suspendTime", "2024-06-01T11:00:00Z"},
+        {"settleTime", "2024-06-01T13:00:00Z"},
+        {"bettingType", "FIXED_ODDS"},
+        {"turnInPlayEnabled", true},
+        {"marketType", "WIN"},
+        {"regulator", "UKGC"},
+        {"marketBaseRate", 5.0},
+        {"discountAllowed", true},
+        {"wallet", "Main"},
+        {"rules", "Some rules"},
+        {"rulesHasDates", true},
+        {"eachWayDivisor", 0.25},
+        {"clarifications", "Clarification text"},
+        {"lineRangeInfo", {
+            {"maxUnitValue", 10.0},
+            {"minUnitValue", 1.0},
+            {"interval", 0.5},
+            {"marketUnit", "unit"}
+        }},
+        {"raceType", "FLAT"},
+        {"priceLadderDescription", {
+            {"type", "CLASSIC"}
+        }}
+    };
+
+    auto parsed = j.get<BetfairAPI::BettingType::MarketDescription>();
+
+    EXPECT_EQ(parsed.isPersistenceEnabled(), desc.isPersistenceEnabled());
+    EXPECT_EQ(parsed.isBspMarket(), desc.isBspMarket());
+    EXPECT_EQ(parsed.getMarketTime(), desc.getMarketTime());
+    EXPECT_EQ(parsed.getSuspendTime(), desc.getSuspendTime());
+    EXPECT_EQ(parsed.getSettleTime(), desc.getSettleTime());
+    EXPECT_EQ(parsed.getBettingType(), desc.getBettingType());
+    EXPECT_EQ(parsed.isTurnInPlayEnabled(), desc.isTurnInPlayEnabled());
+    EXPECT_EQ(parsed.getMarketType(), desc.getMarketType());
+    EXPECT_EQ(parsed.getRegulator(), desc.getRegulator());
+    EXPECT_EQ(parsed.getMarketBaseRate(), desc.getMarketBaseRate());
+    EXPECT_EQ(parsed.isDiscountAllowed(), desc.isDiscountAllowed());
+    EXPECT_EQ(parsed.getWallet(), desc.getWallet());
+    EXPECT_EQ(parsed.getRules(), desc.getRules());
+    EXPECT_EQ(parsed.hasRulesWithDates(), desc.hasRulesWithDates());
+    EXPECT_EQ(parsed.getEachWayDivisor(), desc.getEachWayDivisor());
+    EXPECT_EQ(parsed.getClarifications(), desc.getClarifications());
+    EXPECT_EQ(parsed.getLineRangeInfo(), desc.getLineRangeInfo());
+    EXPECT_EQ(parsed.getRaceType(), desc.getRaceType());
+    EXPECT_EQ(parsed.getPriceLadderDescription().getType(),desc.getPriceLadderDescription().getType());
+}
+
+TEST(BettingTypeSerialiser,RunnerCatalogConstructor) {
+    // Test with only mandatory fields
+    {
+        long selection_id = 12345;
+        std::string name = "RunnerName";
+        double handicap = 0.0;
+        int sort_priority = 1;
+
+        nlohmann::json j = {
+            {"selectionId", selection_id},
+            {"runnerName", name},
+            {"handicap", handicap},
+            {"sortPriority", sort_priority}
+        };
+
+        auto runner = j.get<BetfairAPI::BettingType::RunnerCatalog>();
+        EXPECT_EQ(runner.getSelectionId(), selection_id);
+        EXPECT_EQ(runner.getRunnerName(), name);
+        EXPECT_EQ(runner.getHandicap(), handicap);
+        EXPECT_EQ(runner.getSortPriority(), sort_priority);
+        EXPECT_TRUE(runner.getMetadata().empty());
+    }
+
+    // Test with metadata present
+    {
+        long selection_id = 54321;
+        std::string name = "AnotherRunner";
+        double handicap = 1.5;
+        int sort_priority = 2;
+        std::map<std::string, std::string> metadata = {{"key1", "value1"}, {"key2", "value2"}};
+
+        nlohmann::json j = {
+            {"selectionId", selection_id},
+            {"runnerName", name},
+            {"handicap", handicap},
+            {"sortPriority", sort_priority},
+            {"metadata", metadata}
+        };
+
+        auto runner = j.get<BetfairAPI::BettingType::RunnerCatalog>();
+        EXPECT_EQ(runner.getSelectionId(), selection_id);
+        EXPECT_EQ(runner.getRunnerName(), name);
+        EXPECT_EQ(runner.getHandicap(), handicap);
+        EXPECT_EQ(runner.getSortPriority(), sort_priority);
+        EXPECT_EQ(runner.getMetadata(), metadata);
+    }
+}
+
+//TODO Fix at some point
+TEST(BettingTypeSerialiser,MarketCatalogueConstructor) {
+    // Test with only most common fields
+    std::string market_id = "1.23456789";
+    std::string market_name = "WIN";
+    double total_matched = 1000.0;
+    nlohmann::json j = {
+        {"marketId", market_id},
+        {"marketName", market_name},
+        {"totalMatched", total_matched},
+    };
+
+    auto market_catalogue = j.get<BetfairAPI::BettingType::MarketCatalogue>();
+    SCOPED_TRACE("Checking MarketCatalogue construction from JSON");
+    EXPECT_EQ(market_catalogue.getMarketId(), market_id) << "marketId mismatch";
+    EXPECT_EQ(market_catalogue.getMarketName(), market_name) << "marketName mismatch";
+    EXPECT_EQ(market_catalogue.getTotalMatched(), total_matched) << "totalMatched mismatch";
+
+    //test with otgher fields --> ???
+}

@@ -11,6 +11,9 @@
 #include "betting_type/country_code_result.h"
 #include "betting_enum/time_granularity.hpp"
 #include "betting_type/venue_result.h"
+#include "betting_type/market_catalogue.h"
+#include "betting_enum/market_sort.hpp"
+#include "betting_enum/market_projection.hpp"
 
 namespace BetfairAPI {
     class BetfairManager {
@@ -31,6 +34,9 @@ namespace BetfairAPI {
         std::vector<BettingType::TimeRangeResult> listTimeRanges(const BettingType::MarketFilter& mf, BettingEnum::TimeGranularity granularity) const;
         std::vector<BettingType::CountryCodeResult> listCountries(const BettingType::MarketFilter& mf, const std::string& locale="en") const;
         std::vector<BettingType::VenueResult> listVenues(const BettingType::MarketFilter& mf, const std::string& locale="en") const;
+        std::vector<BettingType::MarketCatalogue> listMarketCatalogue(const BettingType::MarketFilter& filter, 
+            const std::vector<BettingEnum::MarketProjection>& market_projection = {}, BettingEnum::MarketSort sort=BettingEnum::MarketSort::UNKNOWN, 
+            int max_results=1000, const std::string& locale="en");
 
     private:
         std::string session_token_;

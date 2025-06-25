@@ -16,8 +16,11 @@ int main() {
     
     BetfairAPI::BettingType::MarketFilter mf;
     auto r = manager.listVenues(mf);
+    auto r2 = manager.listMarketCatalogue(mf,
+        {BetfairAPI::BettingEnum::MarketProjection::COMPETITION}//other types aren't printed in <<
+    );
 
-    for(auto& i : r) {
+    for(auto& i : r2) {
         std::cout << i << "\n";
     }
     std::cout << "Total: " << r.size() << "\n";
