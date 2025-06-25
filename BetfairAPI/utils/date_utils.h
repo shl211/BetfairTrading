@@ -24,6 +24,7 @@ namespace BetfairAPI::Utils {
             friend std::ostream& operator<<(std::ostream& os, const Date& date);
 
             std::string toIsoString() const;
+            bool isValid() const;
 
         private:
             std::string zoned_time_;

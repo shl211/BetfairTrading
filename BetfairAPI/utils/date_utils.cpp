@@ -26,4 +26,8 @@ namespace BetfairAPI::Utils {
     std::string Date::toIsoString() const {
         return zoned_time_;
     }
+
+    bool Date::isValid() const {
+        return !zoned_time_.empty();
+    }
 }

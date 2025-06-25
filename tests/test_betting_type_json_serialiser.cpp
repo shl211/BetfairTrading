@@ -178,6 +178,36 @@ TEST(BettingTypeSerialiser,MarketFilterMarketTypeCodes) {
     EXPECT_EQ(j["marketTypeCodes"], nlohmann::json::array({"Winners","Race"}));
 }
 
+TEST(BettingTypeSerialiser,MarketFilterMarketStartTime) {
+    BetfairAPI::BettingType::MarketFilter market_filter;
+    BetfairAPI::Utils::Date from_date("2024-06-01T12:00:00Z");
+    BetfairAPI::Utils::Date to_date("2024-06-02T12:00:00Z");
+    BetfairAPI::BettingType::TimeRange time_range(from_date, to_date);
+    market_filter.setMarketStartTime(time_range);
+
+    nlohmann::json j = market_filter;
+    EXPECT_TRUE(j.contains("marketStartTime"));
+    EXPECT_TRUE(j["marketStartTime"].contains("from"));
+    EXPECT_TRUE(j["marketStartTime"].contains("to"));
+    EXPECT_EQ(j["marketStartTime"]["from"], "2024-06-01T12:00:00Z");
+    EXPECT_EQ(j["marketStartTime"]["to"], "2024-06-02T12:00:00Z");
+}
+
+TEST(BettingTypeSerialiser,TimeRangeToJson) {
+    std::string from_str = "2024-06-01T12:00:00Z";
+    std::string to_str = "2024-06-02T12:00:00Z";
+    BetfairAPI::Utils::Date from_date(from_str);
+    BetfairAPI::Utils::Date to_date(to_str);
+    BetfairAPI::BettingType::TimeRange time_range(from_date, to_date);
+
+    nlohmann::json j = time_range;
+
+    EXPECT_TRUE(j.contains("from"));
+    EXPECT_TRUE(j.contains("to"));
+    EXPECT_EQ(j["from"], from_str);
+    EXPECT_EQ(j["to"], to_str);
+}
+
 TEST(BettingTypeSerialiser,EventTypeConstruction) {
     BetfairAPI::BettingType::EventType e("123","name");
     nlohmann::json j {{"id","123"},{"name","name"}};

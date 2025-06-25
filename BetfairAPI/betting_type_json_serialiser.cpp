@@ -48,6 +48,9 @@ namespace BetfairAPI::BettingType {
         }
 
         //date???
+        if (const auto& mst = mf.getMarketStartTime(); mst.getFromDate().isValid() || mst.getToDate().isValid()) {
+            j["marketStartTime"] = mst;
+        }
 
         //not sure if this is working - untested
         if (const auto& orders = mf.getOrders(); !orders.empty()) {
@@ -58,6 +61,11 @@ namespace BetfairAPI::BettingType {
         if (const auto& rt = mf.getRaceTypes(); !rt.empty()) {
             j["raceTypes"] = rt;
         }
+    }
+
+    void to_json(nlohmann::json& j, const TimeRange& t) {
+        j["from"] = t.getFromDate().toIsoString();
+        j["to"] = t.getToDate().toIsoString();
     }
 
     void from_json(const nlohmann::json& j, EventType& etype) {

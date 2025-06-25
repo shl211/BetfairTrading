@@ -27,6 +27,7 @@ Ensure in same namespace as the objects
 
 namespace BetfairAPI::BettingType {
     void to_json(nlohmann::json& j, const MarketFilter& mf);
+    void to_json(nlohmann::json& j, const TimeRange& t);
 
     void from_json(const nlohmann::json& j, EventType& e);
     void from_json(const nlohmann::json& j, EventTypeResults& etype);

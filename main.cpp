@@ -15,6 +15,12 @@ int main() {
     std::cout << manager.getAccountBalance() << "\n";
     
     BetfairAPI::BettingType::MarketFilter mf;
+    BetfairAPI::BettingType::TimeRange tr(
+        BetfairAPI::Utils::Date("2026-03-13T00:00:00.000Z"),
+        BetfairAPI::Utils::Date("2026-05-04T00:00:00.000Z")
+    );
+    mf.setMarketStartTime(tr);
+
     auto r = manager.listTimeRanges(mf,BetfairAPI::BettingEnum::TimeGranularity::DAYS);
 
     for(auto& i : r) {

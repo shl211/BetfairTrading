@@ -46,3 +46,20 @@ TEST(Date, InequalityOperatorWorks) {
 
     EXPECT_TRUE(date1 != date2);
 }
+TEST(Date, IsValidReturnsTrueForValidIsoString) {
+    std::string iso = "2025-06-14T15:04:05.123+02:00";
+    BetfairAPI::Utils::Date date(iso);
+    EXPECT_TRUE(date.isValid());
+}
+
+TEST(Date, IsValidReturnsFalseForEmptyString) {
+    std::string empty_iso = "";
+    BetfairAPI::Utils::Date date(empty_iso);
+    EXPECT_FALSE(date.isValid());
+}
+
+TEST(Date, IsValidReturnsTrueForIsoStringWithoutMilliseconds) {
+    std::string iso = "2025-06-14T15:04:05+02:00";
+    BetfairAPI::Utils::Date date(iso);
+    EXPECT_TRUE(date.isValid());
+}
