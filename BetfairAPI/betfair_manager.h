@@ -8,6 +8,7 @@
 #include "betting_type/event_result.h"
 #include "betting_type/market_type_result.h"
 #include "betting_type/time_range_result.h"
+#include "betting_type/country_code_result.h"
 #include "betting_enum/time_granularity.hpp"
 
 namespace BetfairAPI {
@@ -27,6 +28,7 @@ namespace BetfairAPI {
         std::vector<BettingType::EventResult> listEvents(const BettingType::MarketFilter& mf,const std::string& locale="en") const;
         std::vector<BettingType::MarketTypeResult> listMarketTypes(const BettingType::MarketFilter& mf, const std::string& locale="en") const;
         std::vector<BettingType::TimeRangeResult> listTimeRanges(const BettingType::MarketFilter& mf, BettingEnum::TimeGranularity granularity) const;
+        std::vector<BettingType::CountryCodeResult> listCountries(const BettingType::MarketFilter& mf, const std::string& locale="en") const;
 
     private:
         std::string session_token_;

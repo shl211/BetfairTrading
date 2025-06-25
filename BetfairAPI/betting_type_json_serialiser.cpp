@@ -38,7 +38,6 @@ namespace BetfairAPI::BettingType {
             j["marketBettingTypes"] = Utils::to_string<BettingEnum::MarketBettingType>(mbt);
         }
 
-        //not sure if this is working - untested
         if (const auto& market_countries = mf.getMarketCountries(); !market_countries.empty()) {
             j["marketCountries"] = market_countries;
         }
@@ -47,7 +46,6 @@ namespace BetfairAPI::BettingType {
             j["marketTypeCodes"] = mtc;
         }
 
-        //date???
         if (const auto& mst = mf.getMarketStartTime(); mst.getFromDate().isValid() || mst.getToDate().isValid()) {
             j["marketStartTime"] = mst;
         }
@@ -125,5 +123,11 @@ namespace BetfairAPI::BettingType {
         auto time_range = j.at("timeRange").get<TimeRange>();
         int m_count = j.at("marketCount").get<int>();
         t = TimeRangeResult(time_range,m_count);
+    }
+
+    void from_json(const nlohmann::json& j, CountryCodeResult& t) {
+        std::string country_code = j.at("countryCode").get<std::string>();
+        int m_count = j.at("marketCount").get<int>();
+        t = CountryCodeResult(country_code,m_count);
     }
 }

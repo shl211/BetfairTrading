@@ -193,6 +193,22 @@ TEST(BettingTypeSerialiser,MarketFilterMarketStartTime) {
     EXPECT_EQ(j["marketStartTime"]["to"], "2024-06-02T12:00:00Z");
 }
 
+TEST(BettingTypeSerialiser,MarketFilterMarketCountry) {
+    BetfairAPI::BettingType::MarketFilter market_filter;
+    market_filter.addMarketCountry("GB");
+
+    // test for a single country
+    nlohmann::json j = market_filter;
+    EXPECT_TRUE(j.contains("marketCountries"));
+    EXPECT_EQ(j["marketCountries"], nlohmann::json::array({"GB"}));
+
+    // test for multiple countries
+    market_filter.addMarketCountry("FR");
+    j = market_filter;
+    EXPECT_TRUE(j.contains("marketCountries"));
+    EXPECT_EQ(j["marketCountries"], nlohmann::json::array({"GB", "FR"}));
+}
+
 TEST(BettingTypeSerialiser,TimeRangeToJson) {
     std::string from_str = "2024-06-01T12:00:00Z";
     std::string to_str = "2024-06-02T12:00:00Z";
@@ -350,4 +366,18 @@ TEST(BettingTypeSerialiser,TimeRangeResultConstruction) {
 
     EXPECT_EQ(time_range_result.getTimeRange(), expected_time_range);
     EXPECT_EQ(time_range_result.getMarketCount(), m_count);
+}
+
+TEST(BettingTypeSerialiser,CountryCodeResultConstruction) {
+    std::string country_code = "GB";
+    int market_count = 99;
+
+    nlohmann::json j{
+        {"countryCode", country_code},
+        {"marketCount", market_count}
+    };
+    auto country_code_result = j.get<BetfairAPI::BettingType::CountryCodeResult>();
+
+    EXPECT_EQ(country_code_result.getCountryCode(), country_code);
+    EXPECT_EQ(country_code_result.getMarketCount(), market_count);
 }

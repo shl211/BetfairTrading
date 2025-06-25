@@ -21,9 +21,11 @@ namespace BetfairAPI {
 
     BetfairAPI::Utils::Response listMarketTypes(std::string application_token,std::string session_token,
         const BetfairAPI::BettingType::MarketFilter& filter, std::string_view locale="en");
-
+        
     BetfairAPI::Utils::Response listTimeRanges(std::string application_token,std::string session_token,
         const BetfairAPI::BettingType::MarketFilter& filter, BettingEnum::TimeGranularity granularity);
-
+            
+    BetfairAPI::Utils::Response listCountries(std::string application_token,std::string session_token,
+        const BetfairAPI::BettingType::MarketFilter& filter, std::string_view locale="en");
 
 }

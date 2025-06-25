@@ -140,7 +140,19 @@ namespace BetfairAPI {
         
         return res;
     }
-
+    
+    std::vector<BettingType::CountryCodeResult> BetfairManager::listCountries(const BettingType::MarketFilter& mf, const std::string& locale) const {
+        auto r = BetfairAPI::listCountries(application_token_,session_token_,mf,locale);
+        
+        std::vector<BetfairAPI::BettingType::CountryCodeResult> res;
+        res.reserve(r.get_data().size());
+        for(auto& i : r.get_data()) {
+            res.push_back(i.get<BetfairAPI::BettingType::CountryCodeResult>());
+        }
+        
+        return res;
+    }
+    
 
     /******************************************************************************
     * PRIVATE
