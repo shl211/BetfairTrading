@@ -153,6 +153,18 @@ namespace BetfairAPI {
         return res;
     }
     
+    std::vector<BettingType::VenueResult> BetfairManager::listVenues(const BettingType::MarketFilter& mf, const std::string& locale) const {
+        auto r = BetfairAPI::listVenues(application_token_,session_token_,mf,locale);
+        
+        std::vector<BetfairAPI::BettingType::VenueResult> res;
+        res.reserve(r.get_data().size());
+        for(auto& i : r.get_data()) {
+            res.push_back(i.get<BetfairAPI::BettingType::VenueResult>());
+        }
+        
+        return res;
+    }
+
 
     /******************************************************************************
     * PRIVATE

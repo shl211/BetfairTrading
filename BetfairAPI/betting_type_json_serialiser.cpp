@@ -130,4 +130,11 @@ namespace BetfairAPI::BettingType {
         int m_count = j.at("marketCount").get<int>();
         t = CountryCodeResult(country_code,m_count);
     }
+
+    void from_json(const nlohmann::json& j, VenueResult& v) {
+        std::string venue = j.at("venue").get<std::string>();
+        int m_count = j.at("marketCount").get<int>();
+        v = VenueResult(venue,m_count);
+    }
+
 }

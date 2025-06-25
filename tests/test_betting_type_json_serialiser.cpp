@@ -381,3 +381,17 @@ TEST(BettingTypeSerialiser,CountryCodeResultConstruction) {
     EXPECT_EQ(country_code_result.getCountryCode(), country_code);
     EXPECT_EQ(country_code_result.getMarketCount(), market_count);
 }
+
+TEST(BettingTypeSerialiser,VenueResultConstruction) {
+    std::string venue = "Ascot";
+    int market_count = 77;
+
+    nlohmann::json j{
+        {"venue", venue},
+        {"marketCount", market_count}
+    };
+    auto venue_result = j.get<BetfairAPI::BettingType::VenueResult>();
+
+    EXPECT_EQ(venue_result.getVenue(), venue);
+    EXPECT_EQ(venue_result.getMarketCount(), market_count);
+}

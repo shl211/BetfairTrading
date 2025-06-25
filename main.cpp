@@ -15,9 +15,7 @@ int main() {
     std::cout << manager.getAccountBalance() << "\n";
     
     BetfairAPI::BettingType::MarketFilter mf;
-    mf.addMarketCountry("GB");
-    mf.addMarketCountry("RO");
-    auto r = manager.listCountries(mf);
+    auto r = manager.listVenues(mf);
 
     for(auto& i : r) {
         std::cout << i << "\n";
