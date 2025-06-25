@@ -6,6 +6,7 @@
 #include "betting_type/event_type_results.h"
 #include "betting_type/competition_result.h"
 #include "betting_type/event_result.h"
+#include "betting_type/market_type_result.h"
 
 namespace BetfairAPI {
     class BetfairManager {
@@ -22,6 +23,7 @@ namespace BetfairAPI {
         std::vector<BettingType::EventTypeResults> listEventTypes(const BettingType::MarketFilter& mf,const std::string& locale="en") const;
         std::vector<BettingType::CompetitionResult> listCompetitions(const BettingType::MarketFilter& mf,const std::string& locale="en") const;
         std::vector<BettingType::EventResult> listEvents(const BettingType::MarketFilter& mf,const std::string& locale="en") const;
+        std::vector<BettingType::MarketTypeResult> listMarketTypes(const BettingType::MarketFilter& mf, const std::string& locale="en") const;
 
     private:
         std::string session_token_;

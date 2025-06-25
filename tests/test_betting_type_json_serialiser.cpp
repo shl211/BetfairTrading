@@ -162,6 +162,22 @@ TEST(BettingTypeSerialiser,MarketFilterVenues) {
     EXPECT_EQ(j["venues"], nlohmann::json::array({"Harlow","Race"}));
 }
 
+TEST(BettingTypeSerialiser,MarketFilterMarketTypeCodes) {
+    BetfairAPI::BettingType::MarketFilter market_filter;
+    market_filter.addMarketTypeCode("Winners");
+    
+    //test for a single one
+    nlohmann::json j = market_filter;
+    EXPECT_TRUE(j.contains("marketTypeCodes"));
+    EXPECT_EQ(j["marketTypeCodes"], nlohmann::json::array({"Winners"}));
+    
+    //test for multiple
+    market_filter.addMarketTypeCode("Race");
+    j = market_filter;
+    EXPECT_TRUE(j.contains("marketTypeCodes"));
+    EXPECT_EQ(j["marketTypeCodes"], nlohmann::json::array({"Winners","Race"}));
+}
+
 TEST(BettingTypeSerialiser,EventTypeConstruction) {
     BetfairAPI::BettingType::EventType e("123","name");
     nlohmann::json j {{"id","123"},{"name","name"}};
@@ -251,5 +267,19 @@ TEST(BettingTypeSerialiser,EventResultConstruction) {
 
     EXPECT_EQ(event_result.getEvent(), e);
     EXPECT_EQ(event_result.getMarketCount(), m_count);
+}
 
+TEST(BettingTypeSerialiser,MarketTypeResultConstruction) {
+    std::string m_type = "MarketType";
+    int m_count = 100;
+    //BetfairAPI::BettingType::MarketTypeResult mtr(m_type,m_count);
+
+    nlohmann::json j {
+        {"marketType", m_type},
+        {"marketCount", m_count},
+    };
+    auto mtr_res = j.get<BetfairAPI::BettingType::MarketTypeResult>();
+
+    EXPECT_EQ(mtr_res.getMarketType(),m_type);
+    EXPECT_EQ(mtr_res.getMarketCount(),m_count);
 }

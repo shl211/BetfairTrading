@@ -17,4 +17,7 @@ namespace BetfairAPI {
     
     BetfairAPI::Utils::Response listEvents(std::string application_token,std::string session_token,
         const BetfairAPI::BettingType::MarketFilter& filter, std::string_view locale="en");
+
+    BetfairAPI::Utils::Response listMarketTypes(std::string application_token,std::string session_token,
+        const BetfairAPI::BettingType::MarketFilter& filter, std::string_view locale="en");
 }

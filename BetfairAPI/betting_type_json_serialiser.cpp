@@ -43,7 +43,6 @@ namespace BetfairAPI::BettingType {
             j["marketCountries"] = market_countries;
         }
 
-        //not sure if this is working - untested
         if (const auto& mtc = mf.getMarketTypeCodes(); !mtc.empty()) {
             j["marketTypeCodes"] = mtc;
         }
@@ -52,7 +51,7 @@ namespace BetfairAPI::BettingType {
 
         //not sure if this is working - untested
         if (const auto& orders = mf.getOrders(); !orders.empty()) {
-            j["withOrders"] = orders;
+            j["withOrders"] = Utils::to_string<BettingEnum::OrderStatus>(orders);
         }
 
         //not sure if this is working - untested
@@ -102,4 +101,9 @@ namespace BetfairAPI::BettingType {
         e = BetfairAPI::BettingType::EventResult(event,m_count);
     }
 
+    void from_json(const nlohmann::json& j, MarketTypeResult& mt) {
+        std::string m_type = j.at("marketType").get<std::string>();
+        int m_count = j.at("marketCount").get<int>();
+        mt = BetfairAPI::BettingType::MarketTypeResult(m_type,m_count);
+    }
 }
