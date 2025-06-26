@@ -19,6 +19,8 @@ namespace BetfairAPI::BettingType {
             MarketBook& operator=(const MarketBook&) = default;
             MarketBook& operator=(MarketBook&&) noexcept = default;
 
+            friend std::ostream& operator<<(std::ostream& os, const MarketBook& market_book);
+
             void setStatus(BetfairAPI::BettingEnum::MarketStatus status);
             void setBetDelay(bool is_bet_delay);
             void setBspReconciled(bool is_bsp_reconciled);

@@ -23,3 +23,5 @@ namespace BetfairAPI::BettingType {
             std::vector<KeyLineSelection> key_line_;
     };
 }
+
+#include "key_line_description.tpp"

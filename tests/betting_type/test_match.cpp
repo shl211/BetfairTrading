@@ -13,10 +13,10 @@ TEST(Match, ConstructorAndGetter) {
     BetfairAPI::BettingType::Match match(side, price, size, bet_id, match_id, match_date);
 
     // Test getters
-    EXPECT_EQ(match.get_side(), side);
-    EXPECT_DOUBLE_EQ(match.get_price(), price);
-    EXPECT_DOUBLE_EQ(match.get_size(), size);
-    EXPECT_EQ(match.get_bet_id(), bet_id);
-    EXPECT_EQ(match.get_match_id(), match_id);
-    EXPECT_EQ(match.get_match_date(), match_date);
+    EXPECT_EQ(match.getSide(), side);
+    EXPECT_DOUBLE_EQ(match.getPrice(), price);
+    EXPECT_DOUBLE_EQ(match.getSize(), size);
+    EXPECT_EQ(match.getBetId(), bet_id);
+    EXPECT_EQ(match.getMatchId(), match_id);
+    EXPECT_EQ(match.getMatchDate(), match_date);
 }

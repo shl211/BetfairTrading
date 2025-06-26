@@ -9,5 +9,3 @@ namespace BetfairAPI::BettingType {
         return key_line_;
     }
 }
-
-#include "key_line_description.tpp"

@@ -14,11 +14,11 @@ namespace BetfairAPI::BettingType {
         return !(*this == other);
     }
 
-    long KeyLineSelection::getSelectionId() {
+    long KeyLineSelection::getSelectionId() const {
         return selection_id_;
     }
 
-    double KeyLineSelection::getHandicap() {
+    double KeyLineSelection::getHandicap() const {
         return handicap_;
     }
 }

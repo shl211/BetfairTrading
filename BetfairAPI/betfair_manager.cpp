@@ -180,6 +180,70 @@ namespace BetfairAPI {
         return res;
     }
 
+    std::vector<BettingType::MarketBook> BetfairManager::listMarketBook(
+        const std::vector<std::string>& market_ids, BettingEnum::OrderProjection order_projection,
+        BettingEnum::MatchProjection match_projection, bool include_overall_position,
+        bool position_matched_by_strategy_ref, const std::vector<std::string>& customer_strategy_refs,
+        const std::string& currency_code, const std::string& locale, 
+        const Utils::Date& matched_since,const std::vector<std::string>& bet_id) {
+
+        auto r = BetfairAPI::listMarketBook(
+            application_token_,
+            session_token_,
+            market_ids,
+            order_projection,
+            match_projection,
+            include_overall_position,
+            position_matched_by_strategy_ref,
+            customer_strategy_refs,
+            currency_code,
+            locale,
+            matched_since,
+            bet_id
+        );
+
+        std::vector<BetfairAPI::BettingType::MarketBook> res;
+        res.reserve(r.get_data().size());
+        for(auto& i : r.get_data()) {
+            res.push_back(i.get<BetfairAPI::BettingType::MarketBook>());
+        }
+        
+        return res;
+
+    }
+
+    std::vector<BettingType::MarketBook> BetfairManager::listMarketBook(
+        const std::vector<std::string>& market_ids, const BettingType::PriceProjection& price_projection,
+        BettingEnum::OrderProjection order_projection,BettingEnum::MatchProjection match_projection,
+        bool include_overall_position,bool position_matched_by_strategy_ref,
+        std::vector<std::string> customer_strategy_refs,std::string currency_code,
+        std::string locale, Utils::Date matched_since,std::vector<std::string> bet_id) {
+
+        auto r = BetfairAPI::listMarketBook(
+            application_token_,
+            session_token_,
+            market_ids,
+            price_projection,
+            order_projection,
+            match_projection,
+            include_overall_position,
+            position_matched_by_strategy_ref,
+            customer_strategy_refs,
+            currency_code,
+            locale,
+            matched_since,
+            bet_id
+        );
+        
+        std::vector<BetfairAPI::BettingType::MarketBook> res;
+        res.reserve(r.get_data().size());
+        for(auto& i : r.get_data()) {
+            res.push_back(i.get<BetfairAPI::BettingType::MarketBook>());
+        }
+        
+        return res;
+
+    }
 
     /******************************************************************************
     * PRIVATE

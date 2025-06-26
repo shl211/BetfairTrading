@@ -18,6 +18,7 @@ TEST(KeyLineDescription, ConstructorAndGetter) {
 
     EXPECT_EQ(description.getKeyLine(),key_line);
 }
+
 TEST(KeyLineDescription, ConstructFromList) {
     std::list<BetfairAPI::BettingType::KeyLineSelection> key_line_list{
         {1, 2.5}, {2, 3.5}, {3, 4.5}

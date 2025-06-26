@@ -15,6 +15,7 @@ namespace BetfairAPI::BettingType {
     class Runner {
         public:
             Runner(long selection_id,double handicap, BetfairAPI::BettingEnum::RunnerStatus status);
+            Runner() = default;
             ~Runner() = default;
             Runner(const Runner&) = default;
             Runner(Runner&&) noexcept = default;

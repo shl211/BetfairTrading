@@ -570,3 +570,293 @@ TEST(BettingTypeSerialiser,MarketCatalogueConstructor) {
 
     //test with otgher fields --> ???
 }
+
+TEST(BettingTypeSerialiser,KeyLineSelectionConstruction) {
+    // Create a KeyLineSelection object
+    long selection_id = 123456;
+    double handicap = 2.5;
+    BetfairAPI::BettingType::KeyLineSelection key_line_selection(selection_id, handicap);
+
+    // Serialise to JSON
+    nlohmann::json j = key_line_selection;
+
+    // Check JSON fields
+    EXPECT_EQ(j.at("selectionId"), selection_id);
+    EXPECT_EQ(j.at("handicap"), handicap);
+
+    // Deserialise from JSON
+    auto parsed = j.get<BetfairAPI::BettingType::KeyLineSelection>();
+
+    // Check values
+    EXPECT_EQ(parsed.getSelectionId(), selection_id);
+    EXPECT_EQ(parsed.getHandicap(), handicap);
+}
+
+TEST(BettingTypeSerialiser,KeyLineDescriptionConstruction) {
+    // Create KeyLineSelection objects
+    BetfairAPI::BettingType::KeyLineSelection sel1(123, 1.5);
+    BetfairAPI::BettingType::KeyLineSelection sel2(456, 2.5);
+
+    // Create a KeyLineDescription object
+    std::vector<BetfairAPI::BettingType::KeyLineSelection> selections{sel1, sel2};
+    BetfairAPI::BettingType::KeyLineDescription key_line_desc(selections);
+
+    // Serialise to JSON
+    nlohmann::json j = key_line_desc;
+
+    // Check JSON fields
+    EXPECT_TRUE(j.contains("keyLine"));
+    ASSERT_EQ(j.at("keyLine").size(), 2);
+    EXPECT_EQ(j.at("keyLine").at(0).at("selectionId"), 123);
+    EXPECT_EQ(j.at("keyLine").at(0).at("handicap"), 1.5);
+    EXPECT_EQ(j.at("keyLine").at(1).at("selectionId"), 456);
+    EXPECT_EQ(j.at("keyLine").at(1).at("handicap"), 2.5);
+
+    // Deserialise from JSON
+    auto parsed = j.get<BetfairAPI::BettingType::KeyLineDescription>();
+
+    // Check values
+    ASSERT_EQ(parsed.getKeyLine().size(), 2);
+    EXPECT_EQ(parsed.getKeyLine()[0], sel1);
+    EXPECT_EQ(parsed.getKeyLine()[1], sel2);
+}
+
+TEST(BettingTypeSerialiser, PriceSizeToJsonFromJson) {
+    double price = 3.75;
+    double size = 50.0;
+    BetfairAPI::BettingType::PriceSize price_size(price, size);
+
+    // Serialize to JSON
+    nlohmann::json j = price_size;
+    EXPECT_TRUE(j.contains("price"));
+    EXPECT_TRUE(j.contains("size"));
+    EXPECT_EQ(j["price"], price);
+    EXPECT_EQ(j["size"], size);
+
+    // Deserialize from JSON
+    auto parsed = j.get<BetfairAPI::BettingType::PriceSize>();
+    EXPECT_EQ(parsed.getPrice(), price);
+    EXPECT_EQ(parsed.getSize(), size);
+}
+
+TEST(BettingTypeSerialiser, StartingPricesToJsonFromJson) {
+    BetfairAPI::BettingType::StartingPrices sp(
+        2.5, // nearPrice
+        3.0, // farPrice
+        2.75, // actualSP
+        {BetfairAPI::BettingType::PriceSize(2.5, 100.0)}, // backStakeTaken
+        {BetfairAPI::BettingType::PriceSize(3.0, 50.0)}  // layLiabilityTaken
+    );
+
+    // Serialize to JSON
+    nlohmann::json j = sp;
+    EXPECT_TRUE(j.contains("nearPrice"));
+    EXPECT_TRUE(j.contains("farPrice"));
+    EXPECT_TRUE(j.contains("backStakeTaken"));
+    EXPECT_TRUE(j.contains("layLiabilityTaken"));
+    EXPECT_TRUE(j.contains("actualSP"));
+    EXPECT_EQ(j.at("nearPrice"), 2.5);
+    EXPECT_EQ(j.at("farPrice"), 3.0);
+    EXPECT_EQ(j.at("actualSP"), 2.75);
+    ASSERT_EQ(j.at("backStakeTaken").size(), 1);
+    ASSERT_EQ(j.at("layLiabilityTaken").size(), 1);
+    EXPECT_EQ(j.at("backStakeTaken").at(0).at("price"), 2.5);
+    EXPECT_EQ(j.at("backStakeTaken").at(0).at("size"), 100.0);
+    EXPECT_EQ(j.at("layLiabilityTaken").at(0).at("price"), 3.0);
+    EXPECT_EQ(j.at("layLiabilityTaken").at(0).at("size"), 50.0);
+
+    // Deserialize from JSON
+    auto parsed = j.get<BetfairAPI::BettingType::StartingPrices>();
+    EXPECT_EQ(parsed.getNearPrice(), 2.5);
+    EXPECT_EQ(parsed.getFarPrice(), 3.0);
+    EXPECT_EQ(parsed.getActualSP(), 2.75);
+    ASSERT_EQ(parsed.getBackStakeTaken().size(), 1);
+    ASSERT_EQ(parsed.getLayLiabilityTaken().size(), 1);
+    EXPECT_EQ(parsed.getBackStakeTaken()[0].getPrice(), 2.5);
+    EXPECT_EQ(parsed.getBackStakeTaken()[0].getSize(), 100.0);
+    EXPECT_EQ(parsed.getLayLiabilityTaken()[0].getPrice(), 3.0);
+    EXPECT_EQ(parsed.getLayLiabilityTaken()[0].getSize(), 50.0);
+}
+
+TEST(BettingTypeSerialiser, ExchangePricesToJsonFromJson) {
+    // Create ExchangePrices object
+    std::vector<BetfairAPI::BettingType::PriceSize> availableToBack = {
+        BetfairAPI::BettingType::PriceSize(2.0, 100.0),
+        BetfairAPI::BettingType::PriceSize(2.2, 50.0)
+    };
+    std::vector<BetfairAPI::BettingType::PriceSize> availableToLay = {
+        BetfairAPI::BettingType::PriceSize(2.5, 80.0),
+        BetfairAPI::BettingType::PriceSize(2.6, 40.0)
+    };
+    std::vector<BetfairAPI::BettingType::PriceSize> tradedVolume = {
+        BetfairAPI::BettingType::PriceSize(2.0, 200.0),
+        BetfairAPI::BettingType::PriceSize(2.5, 150.0)
+    };
+
+    BetfairAPI::BettingType::ExchangePrices ex_prices(
+        availableToBack,
+        availableToLay,
+        tradedVolume
+    );
+
+    // Serialize to JSON
+    nlohmann::json j = ex_prices;
+    EXPECT_TRUE(j.contains("availableToBack"));
+    EXPECT_TRUE(j.contains("availableToLay"));
+    EXPECT_TRUE(j.contains("tradedVolume"));
+    ASSERT_EQ(j.at("availableToBack").size(), 2);
+    ASSERT_EQ(j.at("availableToLay").size(), 2);
+    ASSERT_EQ(j.at("tradedVolume").size(), 2);
+    EXPECT_EQ(j.at("availableToBack").at(0).at("price"), 2.0);
+    EXPECT_EQ(j.at("availableToBack").at(0).at("size"), 100.0);
+    EXPECT_EQ(j.at("availableToLay").at(1).at("price"), 2.6);
+    EXPECT_EQ(j.at("availableToLay").at(1).at("size"), 40.0);
+    EXPECT_EQ(j.at("tradedVolume").at(0).at("price"), 2.0);
+    EXPECT_EQ(j.at("tradedVolume").at(0).at("size"), 200.0);
+
+    // Deserialize from JSON
+    auto parsed = j.get<BetfairAPI::BettingType::ExchangePrices>();
+    ASSERT_EQ(parsed.getAvailableToBack().size(), 2);
+    ASSERT_EQ(parsed.getAvailableToLay().size(), 2);
+    ASSERT_EQ(parsed.getTradedVolume().size(), 2);
+    EXPECT_EQ(parsed.getAvailableToBack()[0].getPrice(), 2.0);
+    EXPECT_EQ(parsed.getAvailableToBack()[0].getSize(), 100.0);
+    EXPECT_EQ(parsed.getAvailableToLay()[1].getPrice(), 2.6);
+    EXPECT_EQ(parsed.getAvailableToLay()[1].getSize(), 40.0);
+    EXPECT_EQ(parsed.getTradedVolume()[0].getPrice(), 2.0);
+    EXPECT_EQ(parsed.getTradedVolume()[0].getSize(), 200.0);
+}
+
+TEST(BettingTypeSerialiser, MatchToJsonFromJson) {
+    std::string bet_id = "bet123";
+    std::string match_id = "456789";
+    double price = 2.5;
+    double size = 100.0;
+    auto side = BetfairAPI::BettingEnum::Side::BACK;
+    BetfairAPI::Utils::Date match_time = BetfairAPI::Utils::Date("2024-06-01T12:34:56Z");
+
+    BetfairAPI::BettingType::Match match(side,price,size,bet_id,match_id,match_time);
+
+    // Serialize to JSON
+    nlohmann::json j = match;
+
+    // Deserialize from JSON
+    auto parsed = j.get<BetfairAPI::BettingType::Match>();
+    EXPECT_EQ(parsed.getBetId(), bet_id);
+    EXPECT_EQ(parsed.getMatchId(), match_id);
+    EXPECT_EQ(parsed.getPrice(), price);
+    EXPECT_EQ(parsed.getSize(), size);
+    EXPECT_EQ(parsed.getSide(), side);
+    EXPECT_EQ(parsed.getMatchDate(), match_time);
+}
+
+TEST(BettingTypeSerialiser, OrderToJsonFromJson) {
+    BetfairAPI::BettingType::OrderParams params;
+    params.bet_id = "bet123";
+    params.order_type = BetfairAPI::BettingEnum::OrderType::LIMIT;
+    params.order_status = BetfairAPI::BettingEnum::OrderStatus::EXECUTABLE;
+    params.persistence_type = BetfairAPI::BettingEnum::PersistenceType::LAPSE;
+    params.side = BetfairAPI::BettingEnum::Side::BACK;
+    params.price = 2.5;
+    params.size = 100.0;
+    params.bsp_liability = 0.0;
+    params.placed_date = BetfairAPI::Utils::Date("2024-06-01T12:34:56Z");
+    params.avg_price_matched = 2.6;
+    params.size_matched = 50.0;
+    params.size_remaining = 50.0;
+    params.size_lapsed = 0.0;
+    params.size_cancelled = 0.0;
+    params.size_voided = 0.0;
+    params.customer_order_ref = "orderRef";
+    params.customer_strategy_ref = "strategyRef";
+
+    BetfairAPI::BettingType::Order order(params);
+
+    // Serialise to JSON
+    nlohmann::json j = order;
+
+    // Deserialise from JSON
+    auto parsed = j.get<BetfairAPI::BettingType::Order>();
+    EXPECT_EQ(parsed.getBetId(), params.bet_id) << "bet_id mismatch";
+    EXPECT_EQ(parsed.getOrderType(), params.order_type) << "order_type mismatch";
+    EXPECT_EQ(parsed.getOrderStatus(), params.order_status) << "order_status mismatch";
+    EXPECT_EQ(parsed.getPersistenceType(), params.persistence_type) << "persistence_type mismatch";
+    EXPECT_EQ(parsed.getSide(), params.side) << "side mismatch";
+    EXPECT_EQ(parsed.getPrice(), params.price) << "price mismatch";
+    EXPECT_EQ(parsed.getSize(), params.size) << "size mismatch";
+    EXPECT_EQ(parsed.getBspLiability(), params.bsp_liability) << "bsp_liability mismatch";
+    EXPECT_EQ(parsed.getPlacedDate(), params.placed_date) << "placed_date mismatch";
+    EXPECT_EQ(parsed.getAvgPriceMatched(), params.avg_price_matched) << "avg_price_matched mismatch";
+    EXPECT_EQ(parsed.getSizeMatched(), params.size_matched) << "size_matched mismatch";
+    EXPECT_EQ(parsed.getSizeRemaining(), params.size_remaining) << "size_remaining mismatch";
+    EXPECT_EQ(parsed.getSizeLapsed(), params.size_lapsed) << "size_lapsed mismatch";
+    EXPECT_EQ(parsed.getSizeCancelled(), params.size_cancelled) << "size_cancelled mismatch";
+    EXPECT_EQ(parsed.getSizeVoided(), params.size_voided) << "size_voided mismatch";
+    EXPECT_EQ(parsed.getCustomerOrderRef(), params.customer_order_ref) << "customer_order_ref mismatch";
+    EXPECT_EQ(parsed.getCustomerStrategyRef(), params.customer_strategy_ref) << "customer_strategy_ref mismatch";
+}
+
+TEST(BettingTypeSerialiser, MarketBookToJsonFromJson) {
+    // Prepare MarketBook fields
+    std::string market_id = "1.23456789";
+    bool is_market_data_delayed = false;
+    auto status = BetfairAPI::BettingEnum::MarketStatus::OPEN;
+    bool bet_delay = 5;
+    bool bsp_reconciled = true;
+    bool complete = false;
+    bool inplay = true;
+    int number_of_winners = 1;
+    int number_of_runners = 10;
+    int number_of_active_runners = 8;
+    BetfairAPI::Utils::Date last_match_time("2024-06-01T12:34:56Z");
+    double total_matched = 12345.67;
+    double total_available = 2345.67;
+    bool cross_matching = true;
+    bool runners_voidable = false;
+    long version = 123456789;
+    std::vector<BetfairAPI::BettingType::Runner> runners {
+        {123455,1.023, BetfairAPI::BettingEnum::RunnerStatus::ACTIVE}
+    };
+    BetfairAPI::BettingType::KeyLineDescription key_line_description({{1,1}});
+
+    BetfairAPI::BettingType::MarketBook m_book(market_id,is_market_data_delayed);
+    m_book.setStatus(status);
+    m_book.setBetDelay(bet_delay);
+    m_book.setBspReconciled(bsp_reconciled);
+    m_book.setComplete(complete);
+    m_book.setInplay(inplay);
+    m_book.setNumberOfWinners(number_of_winners);
+    m_book.setNumberOfRunners(number_of_runners);
+    m_book.setNumberOfActiveRunners(number_of_active_runners);
+    m_book.setLastMatchTime(last_match_time);
+    m_book.setTotalMatched(total_matched);
+    m_book.setTotalAvailable(total_available);
+    m_book.setCrossMatching(cross_matching);
+    m_book.setRunnersVoidable(runners_voidable);
+    m_book.setVersion(version);
+    for(auto& i : runners) {
+        m_book.addRunners(i);
+    }
+
+    //convert to and from json
+    nlohmann::json j = m_book; 
+
+    auto market_book = j.get<BetfairAPI::BettingType::MarketBook>();
+    EXPECT_EQ(market_book.getMarketId(), market_id);
+    EXPECT_EQ(market_book.isMarketDataDelayed(), is_market_data_delayed);
+    EXPECT_EQ(market_book.getStatus(), status);
+    EXPECT_EQ(market_book.getBetDelay(), bet_delay);
+    EXPECT_EQ(market_book.isBspReconciled(), bsp_reconciled);
+    EXPECT_EQ(market_book.isComplete(), complete);
+    EXPECT_EQ(market_book.isInplay(), inplay);
+    EXPECT_EQ(market_book.getNumberOfWinners(), number_of_winners);
+    EXPECT_EQ(market_book.getNumberOfRunners(), number_of_runners);
+    EXPECT_EQ(market_book.getNumberOfActiveRunners(), number_of_active_runners);
+    EXPECT_EQ(market_book.getLastMatchTime().toIsoString(), last_match_time.toIsoString());
+    EXPECT_EQ(market_book.getTotalMatched(), total_matched);
+    EXPECT_EQ(market_book.getTotalAvailable(), total_available);
+    EXPECT_EQ(market_book.isCrossMatching(), cross_matching);
+    EXPECT_EQ(market_book.isRunnersVoidable(), runners_voidable);
+    EXPECT_EQ(market_book.getVersion(), version);
+    //no tests for runners or keyline until they have == overloaded
+}

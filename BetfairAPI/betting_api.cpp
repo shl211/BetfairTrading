@@ -164,8 +164,59 @@ namespace BetfairAPI {
             max_results = 1;
         }
         j["maxResults"] = max_results;
-        
+        j["locale"] = locale;
 
+        cpr::Body body {j.dump()};
+        
+        cpr::Response r = cpr::Post(url,headers,body);
+        return BetfairAPI::Utils::Response(r);
+    }
+    
+    Utils::Response listMarketBook(std::string application_token,std::string session_token,
+        const std::vector<std::string>& market_ids, const BettingType::PriceProjection& price_projection,
+        BettingEnum::OrderProjection order_projection,BettingEnum::MatchProjection match_projection,
+        bool include_overall_position,bool partition_matched_by_strategy_ref,
+        std::vector<std::string> customer_strategy_refs,std::string currency_code,
+        std::string locale, Utils::Date matched_since,std::vector<std::string> bet_id) {
+
+        std::cerr << "This is still under development and there may be bugs with price projection \n";
+        
+        cpr::Url url {std::string(betting_endpoint_url) + "listMarketBook/"};
+        cpr::Header headers {
+        {"X-Application",application_token},
+        {"X-Authentication",session_token},
+        {"Content-Type","application/json"}
+        };
+        
+        nlohmann::json j;
+        j["marketIds"] = market_ids;
+        
+        //if(!price_projection.getPriceData().empty()) {
+        //    j["priceProjection"] = price_projection; //TODO -> to_json method
+        //}
+        
+        if(order_projection != BettingEnum::OrderProjection::UNKNOWN) {
+            j["orderProjection"] = Utils::to_string<BettingEnum::OrderProjection>(order_projection);
+
+            //these only populated if orders are requested
+            if(match_projection != BettingEnum::MatchProjection::UNKNOWN) {
+                j["matchProjection"] = Utils::to_string<BettingEnum::MatchProjection>(match_projection);
+            }
+
+            j["includeOverallPosition"] = include_overall_position;
+            j["partitionMatchedByStrategyRef"] = partition_matched_by_strategy_ref;
+            j["customerStrategyRefs"] = customer_strategy_refs;
+            
+            if (matched_since.isValid()) {
+                j["matchedDate"] = matched_since.toIsoString();
+            }
+
+            if(!bet_id.empty()) {
+                j["betIds"] = bet_id;//TODO this should be max 250???
+            }
+        }
+
+        j["currencyCode"] = currency_code;  
         j["locale"] = locale;
 
         std::cerr << j << "\n";
@@ -173,5 +224,54 @@ namespace BetfairAPI {
         
         cpr::Response r = cpr::Post(url,headers,body);
         return BetfairAPI::Utils::Response(r);
+    }
+
+    Utils::Response listMarketBook(std::string application_token,std::string session_token,
+        const std::vector<std::string>& market_ids,
+        BettingEnum::OrderProjection order_projection,BettingEnum::MatchProjection match_projection,
+        bool include_overall_position,bool partition_matched_by_strategy_ref,
+        std::vector<std::string> customer_strategy_refs,std::string currency_code,
+        std::string locale, Utils::Date matched_since,std::vector<std::string> bet_id) {
+
+        cpr::Url url {std::string(betting_endpoint_url) + "listMarketBook/"};
+        cpr::Header headers {
+        {"X-Application",application_token},
+        {"X-Authentication",session_token},
+        {"Content-Type","application/json"}
+        };
+        
+        nlohmann::json j;
+        j["marketIds"] = market_ids;
+        
+        if(order_projection != BettingEnum::OrderProjection::UNKNOWN) {
+            j["orderProjection"] = Utils::to_string<BettingEnum::OrderProjection>(order_projection);
+
+            //these only populated if orders are requested
+            if(match_projection != BettingEnum::MatchProjection::UNKNOWN) {
+                j["matchProjection"] = Utils::to_string<BettingEnum::MatchProjection>(match_projection);
+            }
+
+            j["includeOverallPosition"] = include_overall_position;
+            j["partitionMatchedByStrategyRef"] = partition_matched_by_strategy_ref;
+            j["customerStrategyRefs"] = customer_strategy_refs;
+            
+            if (matched_since.isValid()) {
+                j["matchedDate"] = matched_since.toIsoString();
+            }
+
+            if(!bet_id.empty()) {
+                j["betIds"] = bet_id;//TODO this should be max 250???
+            }
+        }
+
+        j["currencyCode"] = currency_code;  
+        j["locale"] = locale;
+
+        std::cerr << j << "\n";
+        cpr::Body body {j.dump()};
+        
+        cpr::Response r = cpr::Post(url,headers,body);
+        return BetfairAPI::Utils::Response(r);
+
     }
 }

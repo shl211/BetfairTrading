@@ -4,6 +4,7 @@ namespace BetfairAPI::BettingType {
     class PriceSize {
         public:
             PriceSize(double price, double size);
+            PriceSize() = default;
             ~PriceSize() = default;
             PriceSize(const PriceSize&) = default;
             PriceSize(PriceSize&&) noexcept= default;

@@ -1,9 +1,25 @@
 #include "market_book.h"
+#include "utils/enum_utils.hpp"
+#include <ostream>
 
 namespace BetfairAPI::BettingType {
 
     MarketBook::MarketBook(const std::string& market_id,bool is_market_delayed)
         : market_id_(market_id), is_market_data_delayed_(is_market_delayed) {}
+
+    std::ostream& operator<<(std::ostream& os, const MarketBook& market_book) {
+        os << "MarketBook for Market{" << market_book.market_id_ 
+            << "} and isMarketDataDelayed{" << market_book.isMarketDataDelayed() << "} ";
+            
+        if(market_book.status_ != BettingEnum::MarketStatus::UNKNOWN) {
+            os << " MarketStatus{" << Utils::to_string<BettingEnum::MarketStatus>(market_book.status_) << "}";
+        }
+
+        os << ". More information available by querying relevant get functions. ";
+        return os;
+    }
+
+
 
     void MarketBook::setStatus(BetfairAPI::BettingEnum::MarketStatus status) {
         status_ = status;

@@ -6,27 +6,27 @@ namespace BetfairAPI::BettingType {
         : side_(side), price_(price), size_(size), bet_id_(bet_id),
             match_id_(match_id), match_date_(std::move(match_date)) {}
 
-    BetfairAPI::BettingEnum::Side Match::get_side() const {
+    BetfairAPI::BettingEnum::Side Match::getSide() const {
         return side_;
     }
 
-    double Match::get_price() const {
+    double Match::getPrice() const {
         return price_;
     }
 
-    double Match::get_size() const {
+    double Match::getSize() const {
         return size_;
     }
 
-    std::string Match::get_bet_id() const {
+    std::string Match::getBetId() const {
         return std::string(bet_id_);
     }
 
-    std::string Match::get_match_id() const {
+    std::string Match::getMatchId() const {
         return std::string(match_id_);
     }
 
-    BetfairAPI::Utils::Date Match::get_match_date() const {
+    BetfairAPI::Utils::Date Match::getMatchDate() const {
         return match_date_;
     }
 }

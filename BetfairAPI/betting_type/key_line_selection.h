@@ -4,6 +4,7 @@ namespace BetfairAPI::BettingType {
     class KeyLineSelection {
         public:
             KeyLineSelection(long selection_id,double handicap);
+            KeyLineSelection() = default;
             ~KeyLineSelection() = default;
             KeyLineSelection(const KeyLineSelection&) = default;
             KeyLineSelection(KeyLineSelection&&) noexcept = default;
@@ -13,8 +14,8 @@ namespace BetfairAPI::BettingType {
             bool operator==(const KeyLineSelection& other) const;
             bool operator!=(const KeyLineSelection& other) const;
 
-            long getSelectionId();
-            double getHandicap();
+            long getSelectionId() const;
+            double getHandicap() const;
 
         private:
             long selection_id_;

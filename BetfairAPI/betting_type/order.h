@@ -31,6 +31,7 @@ namespace BetfairAPI::BettingType {
     class Order {
         public:
             Order(const OrderParams& params);
+            Order() = default;
             ~Order() = default;
 
             std::string getBetId() const;

@@ -3,6 +3,14 @@
 
 #include "BetfairAPI/betfair_manager.h"
 
+template<typename T>
+void printResult(std::vector<T> vec) {
+    for(auto& v : vec) {
+        std::cout << v << "\n";
+    }
+    std::cout << "Total: " << vec.size() << "\n";
+}
+
 int main() {
 
     std::cout << "Testing Login!" << std::endl;
@@ -20,8 +28,8 @@ int main() {
         BetfairAPI::BettingEnum::MarketProjection::EVENT}//other types aren't printed in <<
     );
 
-    for(auto& i : r) {
-        std::cout << i << "\n";
-    }
-    std::cout << "Total: " << r.size() << "\n";
+    auto r2 = manager.listMarketBook(
+        {"1.245119197"}
+    );
+    printResult(r2);
 }

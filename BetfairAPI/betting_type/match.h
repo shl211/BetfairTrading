@@ -10,18 +10,19 @@ namespace BetfairAPI::BettingType {
         public:
             Match(BetfairAPI::BettingEnum::Side side, double price, double size,
                 std::string_view bet_id, std::string_view match_id, BetfairAPI::Utils::Date match_date);
+            Match() = default;
             ~Match() = default;
             Match(const Match&) = default;
             Match(Match&&) noexcept = default;
             Match& operator=(const Match&) = default;
             Match& operator=(Match&&) noexcept = default;
 
-            BetfairAPI::BettingEnum::Side get_side() const;
-            double get_price() const;
-            double get_size() const;
-            std::string get_bet_id() const;
-            std::string get_match_id() const;
-            BetfairAPI::Utils::Date get_match_date() const;
+            BetfairAPI::BettingEnum::Side getSide() const;
+            double getPrice() const;
+            double getSize() const;
+            std::string getBetId() const;
+            std::string getMatchId() const;
+            BetfairAPI::Utils::Date getMatchDate() const;
 
         private:
             BetfairAPI::BettingEnum::Side side_;
