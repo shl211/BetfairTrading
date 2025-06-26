@@ -27,9 +27,10 @@ int main() {
         {BetfairAPI::BettingEnum::MarketProjection::COMPETITION,
         BetfairAPI::BettingEnum::MarketProjection::EVENT}//other types aren't printed in <<
     );
+    std::vector<std::string> m_ids {"1.245119197","1.245101965","1.244873359"};
 
-    auto r2 = manager.listMarketBook(
-        {"1.245119197"}
-    );
+    auto r2 = manager.listMarketBook(m_ids);
+    auto r3 = manager.listMarketProfitAndLoss(m_ids);
     printResult(r2);
+    printResult(r3);
 }

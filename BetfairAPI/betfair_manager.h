@@ -18,6 +18,7 @@
 #include "betting_type/price_projection.h"
 #include "betting_enum/order_projection.hpp"
 #include "betting_enum/match_projection.hpp"
+#include "betting_type/market_profit_loss.h"
 
 namespace BetfairAPI {
     class BetfairManager {
@@ -59,6 +60,9 @@ namespace BetfairAPI {
             std::vector<std::string> customer_strategy_refs,std::string currency_code,
             std::string locale, Utils::Date matched_since,std::vector<std::string> bet_id
         );
+
+        std::vector<BettingType::MarketProfitLoss> listMarketProfitAndLoss(const std::vector<std::string>& market_ids,
+            bool include_settled_bets=false,bool include_bsp_bets=false,bool net_of_commission=false);
 
     private:
         std::string session_token_;

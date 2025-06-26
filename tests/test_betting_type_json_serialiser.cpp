@@ -860,3 +860,55 @@ TEST(BettingTypeSerialiser, MarketBookToJsonFromJson) {
     EXPECT_EQ(market_book.getVersion(), version);
     //no tests for runners or keyline until they have == overloaded
 }
+
+TEST(BettingTypeSerialiser, MarketProfitLossConstruction) {
+    // Prepare JSON for MarketProfitLoss with one RunnerProfitLoss
+    std::string market_id = "1.23456789";
+    double commission_applied = 2.5;
+    long selection_id = 123456;
+    double if_win = 100.0;
+    double if_lose = -50.0;
+    double if_place = 25.0;
+
+    nlohmann::json j = {
+        {"marketId", market_id},
+        {"commissionApplied", commission_applied},
+        {"profitAndLosses", {
+            {
+                {"selectionId", selection_id},
+                {"ifWin", if_win},
+                {"ifLose", if_lose},
+                {"ifPlace", if_place}
+            }
+        }}
+    };
+
+    auto mpl = j.get<BetfairAPI::BettingType::MarketProfitLoss>();
+    EXPECT_EQ(mpl.getMarketId(), market_id);
+    EXPECT_EQ(mpl.getCommissionApplied(), commission_applied);
+    const auto& rpl = mpl.getProfitLoss()[0];
+    EXPECT_EQ(rpl.getSelectionId(), selection_id);
+    EXPECT_EQ(rpl.getIfWin(), if_win);
+    EXPECT_EQ(rpl.getIfLose(), if_lose);
+    EXPECT_EQ(rpl.getIfPlace(), if_place);
+}
+
+TEST(BettingTypeSerialiser, RunnerProfitLossConstruction) {
+    long selection_id = 987654;
+    double if_win = 150.0;
+    double if_lose = -75.0;
+    double if_place = 30.0;
+
+    nlohmann::json j = {
+        {"selectionId", selection_id},
+        {"ifWin", if_win},
+        {"ifLose", if_lose},
+        {"ifPlace", if_place}
+    };
+
+    auto rpl = j.get<BetfairAPI::BettingType::RunnerProfitLoss>();
+    EXPECT_EQ(rpl.getSelectionId(), selection_id);
+    EXPECT_EQ(rpl.getIfWin(), if_win);
+    EXPECT_EQ(rpl.getIfLose(), if_lose);
+    EXPECT_EQ(rpl.getIfPlace(), if_place);
+}

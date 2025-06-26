@@ -219,7 +219,6 @@ namespace BetfairAPI {
         j["currencyCode"] = currency_code;  
         j["locale"] = locale;
 
-        std::cerr << j << "\n";
         cpr::Body body {j.dump()};
         
         cpr::Response r = cpr::Post(url,headers,body);
@@ -267,11 +266,44 @@ namespace BetfairAPI {
         j["currencyCode"] = currency_code;  
         j["locale"] = locale;
 
-        std::cerr << j << "\n";
         cpr::Body body {j.dump()};
         
         cpr::Response r = cpr::Post(url,headers,body);
         return BetfairAPI::Utils::Response(r);
 
+    }
+
+    Utils::Response listMarketProfitAndLoss(std::string application_token,std::string session_token,
+        const std::vector<std::string>& market_ids,bool include_settled_bets,
+        bool include_bsp_bets,bool net_of_commission) {
+
+        cpr::Url url {std::string(betting_endpoint_url) + "listMarketProfitAndLoss/"};
+        cpr::Header headers {
+        {"X-Application",application_token},
+        {"X-Authentication",session_token},
+        {"Content-Type","application/json"}
+        };
+        
+        nlohmann::json j;
+        j["marketIds"] = market_ids;
+        
+        //these default to false if not included
+        //so don't include if false to save time on parsing
+        if(include_settled_bets) {
+            j["includeSettledBets"] = include_settled_bets;
+        }
+
+        if(include_bsp_bets) {
+            j["includeBspBets"] = include_bsp_bets;
+        }
+
+        if(net_of_commission) {
+            j["netOfCommission"] = net_of_commission;
+        }
+
+        cpr::Body body {j.dump()};
+        
+        cpr::Response r = cpr::Post(url,headers,body);
+        return BetfairAPI::Utils::Response(r);
     }
 }

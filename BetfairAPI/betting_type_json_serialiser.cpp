@@ -679,5 +679,26 @@ namespace BetfairAPI::BettingType {
         }
     }
 
+    void from_json(const nlohmann::json& j, MarketProfitLoss& m_pl) {
+        std::string m_id = j.at("marketId").get<std::string>();
+        
+        double commision = (j.contains("commissionApplied")) ? j.at("commissionApplied").get<double>() : -1;
+        std::vector<RunnerProfitLoss> r_pl;
+        for(auto& i : j.at("profitAndLosses")) {
+            r_pl.push_back(i.get<RunnerProfitLoss>());
+        }
+        
+        m_pl = MarketProfitLoss(m_id,commision,r_pl);
+    }
+
+    void from_json(const nlohmann::json& j, RunnerProfitLoss& r_pl) {
+        long s = j.at("selectionId").get<long>();
+        double if_win = j.at("ifWin").get<double>();
+        double if_lose = j.contains("ifLose") ? j.at("ifLose").get<double>() : 0;
+        double if_place = j.contains("ifPlace") ? j.at("ifPlace").get<double>() : 0;
+
+        r_pl = RunnerProfitLoss(s,if_win,if_lose,if_place);
+    }
+
 
 }

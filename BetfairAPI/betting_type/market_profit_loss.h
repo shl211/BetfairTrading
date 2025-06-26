@@ -10,11 +10,14 @@ namespace BetfairAPI::BettingType {
         public:
             MarketProfitLoss(std::string_view market_id, double commission_applied, 
                 const std::vector<RunnerProfitLoss>& profit_loss);
+            MarketProfitLoss() = default;
             ~MarketProfitLoss() = default;
             MarketProfitLoss(const MarketProfitLoss&) = default;
             MarketProfitLoss(MarketProfitLoss&&) noexcept = default;
             MarketProfitLoss& operator=(const MarketProfitLoss&) = default;
             MarketProfitLoss& operator=(MarketProfitLoss&&) noexcept = default;
+
+            friend std::ostream& operator<<(std::ostream& os, const MarketProfitLoss& mpl);
 
             std::string getMarketId() const;
             double getCommissionApplied() const;

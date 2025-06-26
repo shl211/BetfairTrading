@@ -1,10 +1,10 @@
 #include "runner_profit_loss.h"
 #include "utils/math_utils.hpp"
+#include <ostream>
 
 namespace BetfairAPI::BettingType {
     RunnerProfitLoss::RunnerProfitLoss(long selection_id, double if_win, double if_lose, double if_place)
         : selection_id_(selection_id), if_win_(if_win), if_lose_(if_lose), if_place_(if_place) {}
-
 
     bool RunnerProfitLoss::operator==(const RunnerProfitLoss& other) const {
         return selection_id_ == other.selection_id_ && 
@@ -15,6 +15,14 @@ namespace BetfairAPI::BettingType {
 
     bool RunnerProfitLoss::operator!=(const RunnerProfitLoss& other) const {
         return !(*this == other);
+    }
+
+    std::ostream& operator<<(std::ostream& os, const RunnerProfitLoss& rpl) {
+        os << "Selection: " << rpl.getSelectionId() << 
+            " ifWin: " << rpl.getIfWin() << 
+            " ifLose: " << rpl.getIfLose() << 
+            " ifPlace: " << rpl.getIfPlace();
+        return os; 
     }
 
     long RunnerProfitLoss::getSelectionId() const {

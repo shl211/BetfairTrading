@@ -54,4 +54,8 @@ namespace BetfairAPI {
         std::vector<std::string> customer_strategy_refs,std::string currency_code,
         std::string locale, Utils::Date matched_since,std::vector<std::string> bet_id);
 
+    Utils::Response listMarketProfitAndLoss(std::string application_token,std::string session_token,
+        const std::vector<std::string>& market_ids,bool include_settled_bets,
+        bool include_bsp_bets,bool net_of_commission);
+
 }

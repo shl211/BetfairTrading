@@ -245,6 +245,21 @@ namespace BetfairAPI {
 
     }
 
+    std::vector<BettingType::MarketProfitLoss> BetfairManager::listMarketProfitAndLoss(const std::vector<std::string>& market_ids,
+        bool include_settled_bets,bool include_bsp_bets,bool net_of_commission) {
+
+        auto r = BetfairAPI::listMarketProfitAndLoss(application_token_,session_token_,market_ids,
+            include_settled_bets,include_bsp_bets,net_of_commission);
+        
+        std::vector<BetfairAPI::BettingType::MarketProfitLoss> res;
+        res.reserve(r.get_data().size());
+        for(auto& i : r.get_data()) {
+            res.push_back(i.get<BetfairAPI::BettingType::MarketProfitLoss>());
+        }
+        
+        return res;
+    }
+
     /******************************************************************************
     * PRIVATE
     ******************************************************************************/
