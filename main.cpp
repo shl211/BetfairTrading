@@ -15,12 +15,12 @@ int main() {
     std::cout << manager.getAccountBalance() << "\n";
     
     BetfairAPI::BettingType::MarketFilter mf;
-    auto r = manager.listVenues(mf);
-    auto r2 = manager.listMarketCatalogue(mf,
-        {BetfairAPI::BettingEnum::MarketProjection::COMPETITION}//other types aren't printed in <<
+    auto r = manager.listMarketCatalogue(mf,
+        {BetfairAPI::BettingEnum::MarketProjection::COMPETITION,
+        BetfairAPI::BettingEnum::MarketProjection::EVENT}//other types aren't printed in <<
     );
 
-    for(auto& i : r2) {
+    for(auto& i : r) {
         std::cout << i << "\n";
     }
     std::cout << "Total: " << r.size() << "\n";

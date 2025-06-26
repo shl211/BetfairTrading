@@ -30,9 +30,18 @@ MarketCatalogue::MarketCatalogue(std::string market_id, std::string market_name,
         }
 
         if (!mc.competition_.getId().empty()) {
-            os << ", competition: " << mc.competition_;
+            os << ", competition: " << mc.competition_.getName();
         }
-        
+
+        if (!mc.event_.getId().empty()) {
+            os << ", event: " << mc.event_.getName();
+        }
+
+        if (!mc.event_type_.getId().empty()) {
+            os << ", event type: " << mc.event_type_.getName();
+        }
+
+        //os << " TODO: description, runners, market start time";
         return os;
     }
 
