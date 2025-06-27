@@ -23,6 +23,7 @@ int main() {
     std::cout << manager.getAccountBalance() << "\n";
     
     BetfairAPI::BettingType::MarketFilter mf;
+    mf.setQuery("Soccer");
     auto r = manager.listMarketCatalogue(mf,
         {BetfairAPI::BettingEnum::MarketProjection::COMPETITION,
         BetfairAPI::BettingEnum::MarketProjection::EVENT}//other types aren't printed in <<
@@ -31,6 +32,9 @@ int main() {
 
     auto r2 = manager.listMarketBook(m_ids);
     auto r3 = manager.listMarketProfitAndLoss(m_ids);
+    auto r4 = manager.listCurrentOrders();
+    printResult(r);
     printResult(r2);
     printResult(r3);
+    std::cout << r4 << "\n";
 }

@@ -18,11 +18,14 @@ namespace BetfairAPI::BettingType {
                 BetfairAPI::BettingEnum::OrderStatus status,BetfairAPI::BettingEnum::PersistenceType persistence_type,
                 BetfairAPI::BettingEnum::OrderType order_type, BetfairAPI::Utils::Date placed_date,
                 BetfairAPI::Utils::Date matched_date);
-            ~CurrentOrderSummary();
+            CurrentOrderSummary() = default;
+            ~CurrentOrderSummary() = default;
             CurrentOrderSummary(const CurrentOrderSummary&) = default;
             CurrentOrderSummary(CurrentOrderSummary&&) noexcept = default;
             CurrentOrderSummary& operator=(const CurrentOrderSummary&) = default;
             CurrentOrderSummary& operator=(CurrentOrderSummary&&) = default;
+
+            friend std::ostream& operator<<(std::ostream& os, const CurrentOrderSummary& summary);
 
             void setAveragePriceMatched(double val);
             void setSizeMatched(double val);

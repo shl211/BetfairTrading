@@ -700,5 +700,167 @@ namespace BetfairAPI::BettingType {
         r_pl = RunnerProfitLoss(s,if_win,if_lose,if_place);
     }
 
+    void from_json(const nlohmann::json& j, CurrentOrderSummaryReport& k) {
+        bool more = j.at("moreAvailable").get<bool>();
+        
+        std::vector<CurrentOrderSummary> summary = {};
+        summary.reserve(j.at("currentOrders").size());
 
+        for(auto& i : j.at("currentOrders")) {
+            summary.push_back(i.get<CurrentOrderSummary>());
+        }
+
+        k = CurrentOrderSummaryReport(summary,more);
+    }
+
+    void to_json(nlohmann::json& j, const CurrentOrderSummaryReport& k) {
+        j["moreAvailable"] = k.isMoreAvailable();
+        j["currentOrders"] = nlohmann::json::array();
+
+        for(auto& i : k.getCurrentOrders()) {
+            j["currentOrders"].push_back(i);
+        }
+    }
+
+    void from_json(const nlohmann::json& j, CurrentOrderSummary& k) {
+        
+        k = CurrentOrderSummary(
+            j["betId"].get<std::string>(),
+            j["marketId"].get<std::string>(),
+            j["selectionId"].get<long>(),
+            j["handicap"].get<double>(),
+            j["priceSize"].get<PriceSize>(),
+            j["bspLiability"].get<double>(),
+            Utils::from_string<BettingEnum::Side>(j["side"].get<std::string>()),
+            Utils::from_string<BettingEnum::OrderStatus>(j["status"].get<std::string>()),
+            Utils::from_string<BettingEnum::PersistenceType>(j["persistenceType"].get<std::string>()),
+            Utils::from_string<BettingEnum::OrderType>(j["orderType"].get<std::string>()),
+            Utils::Date(j["placedDate"].get<std::string>()),
+            Utils::Date(j["matchedDate"].get<std::string>())
+        );
+        
+        //optional
+        if(j.contains("averagePriceMatched")) {
+            k.setAveragePriceMatched(j.at("averagePriceMatched").get<double>());
+        }
+
+        if(j.contains("sizeMatched")) {
+            k.setSizeMatched(j.at("sizeMatched").get<double>());
+        }
+
+        if(j.contains("sizeRemaining")) {
+            k.setSizeRemaining(j.at("sizeRemaining").get<double>());
+        }
+
+        if(j.contains("sizeLapsed")) {
+            k.setSizeLapsed(j.at("sizeLapsed").get<double>());
+        }
+        
+        if(j.contains("sizeCancelled")) {
+            k.setSizeCancelled(j.at("sizeCancelled").get<double>());
+        }
+        
+        if(j.contains("sizeVoided")) {
+            k.setSizeVoided(j.at("sizeVoided").get<double>());
+        }
+
+        if(j.contains("regulatorAuthCode")) {
+            k.setRegulatorAuthCode(j.at("regulatorAuthCode").get<std::string>());
+        }
+
+        if(j.contains("regulatorCode")) {
+            k.setRegulatorCode(j.at("regulatorCode").get<std::string>());
+        }
+
+        if(j.contains("customerOrderRef")) {
+            k.setCustomerOrderRef(j.at("customerOrderRef").get<std::string>());
+        }
+
+        if(j.contains("customerStrategyRef")) {
+            k.setCustomerStrategyRef(j.at("customerStrategyRef").get<std::string>());
+        }
+        
+        if(j.contains("currentItemDescription")) {
+            k.setCurrentItemDescription(j.at("currentItemDescription").get<CurrentItemDescription>());
+        }
+        
+        if(j.contains("sourceIdKey")) {
+            k.setSourceIdKey(j.at("sourceIdKey").get<std::string>());
+        }
+        
+        if(j.contains("sourceIdDescription")) {
+            k.setSourceIdDescription(j.at("sourceIdDescription").get<std::string>());
+        }
+    }
+
+    void to_json(nlohmann::json& j, const CurrentOrderSummary& k) {
+        j["betId"] = k.getBetId();
+        j["marketId"] = k.getMarketId();
+        j["selectionId"] = k.getSelectionId();
+        j["handicap"] = k.getHandicap();
+        j["priceSize"] = k.getPriceSize();
+        j["bspLiability"] = k.getBspLiability();
+        j["side"] = Utils::to_string<BettingEnum::Side>(k.getSide());
+        j["status"] = Utils::to_string<BettingEnum::OrderStatus>(k.getStatus());
+        j["persistenceType"] = Utils::to_string<BettingEnum::PersistenceType>(k.getPersistenceType());
+        j["orderType"] = Utils::to_string<BettingEnum::OrderType>(k.getOrderType());
+        j["placedDate"] = k.getPlacedDate().toIsoString();
+        j["matchedDate"] = k.getMatchedDate().toIsoString();
+
+        if (k.getAveragePriceMatched() >= 0) {
+            j["averagePriceMatched"] = k.getAveragePriceMatched();
+        }
+        if (k.getSizeMatched() >= 0) {
+            j["sizeMatched"] = k.getSizeMatched();
+        }
+        if (k.getSizeRemaining() >= 0) {
+            j["sizeRemaining"] = k.getSizeRemaining();
+        }
+        if (k.getSizeLapsed() >= 0) {
+            j["sizeLapsed"] = k.getSizeLapsed();
+        }
+        if (k.getSizeCancelled() >= 0) {
+            j["sizeCancelled"] = k.getSizeCancelled();
+        }
+        if (k.getSizeVoided() >= 0) {
+            j["sizeVoided"] = k.getSizeVoided();
+        }
+        if (!k.getRegulatorAuthCode().empty()) {
+            j["regulatorAuthCode"] = k.getRegulatorAuthCode();
+        }
+        if (!k.getRegulatorCode().empty()) {
+            j["regulatorCode"] = k.getRegulatorCode();
+        }
+        if (!k.getCustomerOrderRef().empty()) {
+            j["customerOrderRef"] = k.getCustomerOrderRef();
+        }
+        if (!k.getCustomerStrategyRef().empty()) {
+            j["customerStrategyRef"] = k.getCustomerStrategyRef();
+        }
+        if (k.getCurrentItemDescription().getMarketVersion().getVersion() != 0) {
+            j["currentItemDescription"] = k.getCurrentItemDescription();
+        }
+        if (!k.getSourceIdKey().empty()) {
+            j["sourceIdKey"] = k.getSourceIdKey();
+        }
+        if (!k.getSourceIdDescription().empty()) {
+            j["sourceIdDescription"] = k.getSourceIdDescription();
+        }
+    }
+
+    void from_json(const nlohmann::json& j, CurrentItemDescription& k) {
+        k = CurrentItemDescription(j.at("marketVersion").get<MarketVersion>());
+    }
+
+    void to_json(nlohmann::json& j, const CurrentItemDescription& k) {
+        j["marketVersion"] = k.getMarketVersion();
+    }
+
+    void from_json(const nlohmann::json& j, MarketVersion& k) {
+        k = MarketVersion(j.at("version").get<long>());
+    }
+
+    void to_json(nlohmann::json& j, const MarketVersion& k) {
+        j["version"] = k.getVersion();
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace BetfairAPI::BettingEnum {
     enum class OrderBy {
+        UNKNOWN,
         BY_MARKET, //Order by market id, then placed time, then bet id.
         BY_MATCH_TIME, //Order by time of last matched fragment (if any), then placed time, then bet id. Filters out orders which have no matched date. The dateRange filter (if specified) is applied to the matched date.
         BY_PLACE_TIME, //Order by placed time, then bet id. This is an alias of to be deprecated BY_BET. The dateRange filter (if specified) is applied to the placed date.

@@ -260,6 +260,41 @@ namespace BetfairAPI {
         return res;
     }
 
+    BettingType::CurrentOrderSummaryReport BetfairManager::listCurrentOrders(
+        const std::vector<std::string>& bet_ids, 
+        const std::vector<std::string>& market_ids,
+        const BettingType::TimeRange& placed_date_range,
+        BettingEnum::OrderProjection order_projection,
+        BettingEnum::OrderBy order_by,
+        BettingEnum::SortDir sort_dir,
+        int from_record,
+        int record_count,
+        bool include_item_desc,
+        bool include_source_id,
+        const std::vector<std::string>& customer_order_refs,
+        const std::vector<std::string>& customer_strategy_ref
+    ) {
+        auto r = BetfairAPI::listCurrentOrders(
+            application_token_,
+            session_token_,
+            bet_ids,
+            market_ids,
+            order_projection,
+            placed_date_range,
+            order_by,
+            sort_dir,
+            from_record,
+            record_count,
+            include_item_desc,
+            include_source_id,
+            customer_order_refs,
+            customer_strategy_ref
+        );
+
+        return r.get_data().get<BettingType::CurrentOrderSummaryReport>();
+    }
+
+
     /******************************************************************************
     * PRIVATE
     ******************************************************************************/

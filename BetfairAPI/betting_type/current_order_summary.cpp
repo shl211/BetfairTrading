@@ -1,4 +1,6 @@
 #include "current_order_summary.h"
+#include <ostream>
+#include "utils/enum_utils.hpp"
 
 namespace BetfairAPI::BettingType {
     CurrentOrderSummary::CurrentOrderSummary(std::string_view bet_id,std::string_view market_id,long selection_id,
@@ -10,6 +12,18 @@ namespace BetfairAPI::BettingType {
             handicap_(handicap), price_size_(std::move(price_size)),bsp_liability_(bsp_liability),
             side_(side),status_(status),persistence_type_(persistence_type),order_type_(order_type),
             placed_date_(std::move(placed_date)),matched_date_(std::move(matched_date)) {}
+
+    std::ostream& operator<<(std::ostream& os, const CurrentOrderSummary& summary) {
+        //what else is needed here?
+        os << Utils::to_string<BettingEnum::Side>(summary.side_) <<  " Bet: " << 
+            summary.bet_id_ << ", Market: " << summary.market_id_ <<
+            ", Selection: " << summary.selection_id_ << 
+            ", Price-Size: p" << summary.price_size_.getPrice() << "-s" << summary.price_size_.getSize() <<
+            ", status: " << Utils::to_string<BettingEnum::OrderStatus>(summary.status_);
+            
+        return os;
+    }
+
 
     void CurrentOrderSummary::setAveragePriceMatched(double val) {
         average_price_matched_ = val;

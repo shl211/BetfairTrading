@@ -10,6 +10,8 @@
 #include "betting_type/price_projection.h"
 #include "order_projection.hpp"
 #include "match_projection.hpp"
+#include "betting_enum/order_by.hpp"
+#include "betting_enum/sort_dir.hpp"
 
 namespace BetfairAPI {
 
@@ -57,5 +59,14 @@ namespace BetfairAPI {
     Utils::Response listMarketProfitAndLoss(std::string application_token,std::string session_token,
         const std::vector<std::string>& market_ids,bool include_settled_bets,
         bool include_bsp_bets,bool net_of_commission);
+
+    Utils::Response listCurrentOrders(std::string application_token,std::string session_token,
+        const std::vector<std::string>& bet_ids, const std::vector<std::string>& market_ids,
+        BettingEnum::OrderProjection order_projection,
+        const BettingType::TimeRange& placed_date_range, BettingEnum::OrderBy order_by, 
+        BettingEnum::SortDir sort_dir, int from_record, int record_count,
+        bool include_item_desc, bool include_source_id,
+        const std::vector<std::string>& customer_order_refs,
+        const std::vector<std::string>& customer_strategy_ref);
 
 }

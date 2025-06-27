@@ -912,3 +912,63 @@ TEST(BettingTypeSerialiser, RunnerProfitLossConstruction) {
     EXPECT_EQ(rpl.getIfLose(), if_lose);
     EXPECT_EQ(rpl.getIfPlace(), if_place);
 }
+
+TEST(BettingTypeSerialiser, MarketVersionConstruction) {
+    long version = 987654321;
+
+    nlohmann::json j = {
+        {"version", version}
+    };
+
+    auto market_version = j.get<BetfairAPI::BettingType::MarketVersion>();
+    EXPECT_EQ(market_version.getVersion(), version);
+}
+
+TEST(BettingTypeSerialiser, CurrentItemDescriptionConstruction) {
+    BetfairAPI::BettingType::MarketVersion mv(123);
+    BetfairAPI::BettingType::CurrentItemDescription item_desc(mv);
+
+    // Serialize to JSON
+    nlohmann::json j = item_desc;
+
+    // Deserialize from JSON
+    auto parsed = j.get<BetfairAPI::BettingType::CurrentItemDescription>();
+    EXPECT_EQ(parsed.getMarketVersion(), mv);
+}
+
+TEST(BettingTypeSerialiser, CurrentOrderSummaryConstruction) {
+    BetfairAPI::BettingType::CurrentOrderSummary order(
+        "123",
+        "456",
+        1234,
+        1,
+        BetfairAPI::BettingType::PriceSize(2,3),
+        12,
+        BetfairAPI::BettingEnum::Side::BACK,
+        BetfairAPI::BettingEnum::OrderStatus::EXECUTABLE,
+        BetfairAPI::BettingEnum::PersistenceType::PERSIST,
+        BetfairAPI::BettingEnum::OrderType::LIMIT,
+        BetfairAPI::Utils::Date("2024-06-01T12:34:56Z"),
+        BetfairAPI::Utils::Date("2024-06-01T12:34:59Z")
+    );
+
+    nlohmann::json j = order;
+
+    BetfairAPI::BettingType::CurrentOrderSummary order_from_json = j;
+
+    EXPECT_EQ(order_from_json.getBetId(), order.getBetId());
+    EXPECT_EQ(order_from_json.getMarketId(), order.getMarketId());
+    EXPECT_EQ(order_from_json.getSelectionId(), order.getSelectionId());
+    EXPECT_EQ(order_from_json.getHandicap(), order.getHandicap());
+    EXPECT_EQ(order_from_json.getPriceSize(), order.getPriceSize());
+    EXPECT_EQ(order_from_json.getBspLiability(), order.getBspLiability());
+    EXPECT_EQ(order_from_json.getSide(), order.getSide());
+    EXPECT_EQ(order_from_json.getStatus(), order.getStatus());
+    EXPECT_EQ(order_from_json.getPersistenceType(), order.getPersistenceType());
+    EXPECT_EQ(order_from_json.getOrderType(), order.getOrderType());
+    EXPECT_EQ(order_from_json.getPlacedDate(), order.getPlacedDate());
+    EXPECT_EQ(order_from_json.getMatchedDate(), order.getMatchedDate());
+
+    //and other optional ones???
+
+}

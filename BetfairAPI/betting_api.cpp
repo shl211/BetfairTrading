@@ -306,4 +306,73 @@ namespace BetfairAPI {
         cpr::Response r = cpr::Post(url,headers,body);
         return BetfairAPI::Utils::Response(r);
     }
+
+    Utils::Response listCurrentOrders(std::string application_token,std::string session_token,
+        const std::vector<std::string>& bet_ids, const std::vector<std::string>& market_ids,
+        BettingEnum::OrderProjection order_projection, const BettingType::TimeRange& placed_date_range, 
+        BettingEnum::OrderBy order_by, BettingEnum::SortDir sort_dir, int from_record, int record_count,
+        bool include_item_desc, bool include_source_id, const std::vector<std::string>& customer_order_refs,
+        const std::vector<std::string>& customer_strategy_ref) {
+
+
+        cpr::Url url {std::string(betting_endpoint_url) + "listCurrentOrders/"};
+        cpr::Header headers {
+        {"X-Application",application_token},
+        {"X-Authentication",session_token},
+        {"Content-Type","application/json"}
+        };
+        
+        nlohmann::json j;
+        
+        //betIds + marketIds should be max 250
+        if(!bet_ids.empty()) {
+            j["betIds"] = bet_ids;
+        }
+
+        if(!market_ids.empty()) {
+            j["marketIds"] = market_ids;
+        }
+        
+        if(order_projection != BettingEnum::OrderProjection::UNKNOWN) {
+            j["orderProjection"] = Utils::to_string<BettingEnum::OrderProjection>(order_projection);
+        }
+
+        if(!customer_order_refs.empty()) {
+            j["customerOrderRefs"] = customer_order_refs;
+        }
+        
+        if(!customer_strategy_ref.empty()) {
+            j["customerStrategyRefs"] = customer_strategy_ref;
+        }
+
+        if(placed_date_range.getFromDate().isValid() || placed_date_range.getToDate().isValid()) {
+            j["dateRange"] = placed_date_range;
+        }
+
+        if(order_by != BettingEnum::OrderBy::UNKNOWN) {
+            j["orderBy"] = Utils::to_string<BettingEnum::OrderBy>(order_by);
+        }
+
+        if(sort_dir != BettingEnum::SortDir::UNKNOWN) {
+            j["sortDir"] = Utils::to_string<BettingEnum::SortDir>(sort_dir);
+        }
+
+        j["fromRecord"] = from_record;//default 0
+        j["recordCount"] = record_count;//max 1000, 0 for all
+        
+        //these default to false if not included
+        //so don't include if false to save time on parsing
+        if(include_item_desc) {
+            j["includeItemDescription"] = include_item_desc;
+        }
+
+        if(include_source_id) {
+            j["includeSourceId"] = include_source_id;
+        }
+
+        cpr::Body body {j.dump()};
+        
+        cpr::Response r = cpr::Post(url,headers,body);
+        return BetfairAPI::Utils::Response(r);
+    }
 }

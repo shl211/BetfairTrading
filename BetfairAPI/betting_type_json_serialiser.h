@@ -15,6 +15,7 @@
 #include "betting_type/market_catalogue.h"
 #include "betting_type/market_book.h"
 #include "betting_type/market_profit_loss.h"
+#include "betting_type/current_order_summary_report.h"
 
 /*
 For compatibility with nlohmann::json, define as
@@ -42,6 +43,10 @@ namespace BetfairAPI::BettingType {
     void to_json(nlohmann::json& j, const ExchangePrices& k);
     void to_json(nlohmann::json& j, const Match& k);
     void to_json(nlohmann::json& j, const Order& k);
+    void to_json(nlohmann::json& j, const CurrentOrderSummaryReport& k);
+    void to_json(nlohmann::json& j, const CurrentOrderSummary& k);
+    void to_json(nlohmann::json& j, const CurrentItemDescription& k);
+    void to_json(nlohmann::json& j, const MarketVersion& k);
 
 
     void from_json(const nlohmann::json& j, EventType& e);
@@ -71,4 +76,8 @@ namespace BetfairAPI::BettingType {
     void from_json(const nlohmann::json& j, Order& k);
     void from_json(const nlohmann::json& j, MarketProfitLoss& k);
     void from_json(const nlohmann::json& j, RunnerProfitLoss& k);
+    void from_json(const nlohmann::json& j, CurrentOrderSummaryReport& k);
+    void from_json(const nlohmann::json& j, CurrentOrderSummary& k);
+    void from_json(const nlohmann::json& j, CurrentItemDescription& k);
+    void from_json(const nlohmann::json& j, MarketVersion& k);
 }   

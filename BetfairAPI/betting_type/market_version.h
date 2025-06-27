@@ -12,7 +12,10 @@ namespace BetfairAPI::BettingType {
             MarketVersion& operator=(const MarketVersion&) = default;
             MarketVersion& operator=(MarketVersion&&) noexcept = default;
 
-            long getVersion();
+            bool operator==(const MarketVersion& other) const;
+            bool operator!=(const MarketVersion& other) const;
+
+            long getVersion() const;
 
         private:
             long version_;

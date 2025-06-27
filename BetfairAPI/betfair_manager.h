@@ -18,7 +18,10 @@
 #include "betting_type/price_projection.h"
 #include "betting_enum/order_projection.hpp"
 #include "betting_enum/match_projection.hpp"
+#include "betting_enum/order_by.hpp"
+#include "betting_enum/sort_dir.hpp"
 #include "betting_type/market_profit_loss.h"
+#include "betting_type/current_order_summary_report.h"
 
 namespace BetfairAPI {
     class BetfairManager {
@@ -63,6 +66,21 @@ namespace BetfairAPI {
 
         std::vector<BettingType::MarketProfitLoss> listMarketProfitAndLoss(const std::vector<std::string>& market_ids,
             bool include_settled_bets=false,bool include_bsp_bets=false,bool net_of_commission=false);
+
+        BettingType::CurrentOrderSummaryReport listCurrentOrders(
+            const std::vector<std::string>& bet_ids = {}, 
+            const std::vector<std::string>& market_ids = {},
+            const BettingType::TimeRange& placed_date_range = {},
+            BettingEnum::OrderProjection order_projection = BettingEnum::OrderProjection::UNKNOWN,
+            BettingEnum::OrderBy order_by = BettingEnum::OrderBy::UNKNOWN,
+            BettingEnum::SortDir sort_dir = BettingEnum::SortDir::UNKNOWN,
+            int from_record = 0,
+            int record_count = 0, //0 for get all up to limit
+            bool include_item_desc = false,
+            bool include_source_id = false,
+            const std::vector<std::string>& customer_order_refs = {},
+            const std::vector<std::string>& customer_strategy_ref = {}
+        );
 
     private:
         std::string session_token_;
