@@ -37,4 +37,7 @@ int main() {
     printResult(r2);
     printResult(r3);
     std::cout << r4 << "\n";
+
+    auto r5 = manager.listClearedOrders(BetfairAPI::BettingEnum::BetStatus::SETTLED);
+    std::cout << r5 << "\n";
 }

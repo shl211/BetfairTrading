@@ -86,7 +86,7 @@ namespace BetfairAPI {
         );
 
         BettingType::ClearedOrderSummaryReport listClearedOrders (
-            BettingEnum::BetStatus bet_status = BettingEnum::BetStatus::UNKNOWN,
+            BettingEnum::BetStatus bet_status,
             const std::vector<BettingType::EventType>& event_types = {},
             const std::vector<BettingType::Event>& events = {},
             const std::vector<BettingType::MarketTypeResult>& market_types = {},

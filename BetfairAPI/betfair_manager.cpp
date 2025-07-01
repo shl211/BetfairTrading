@@ -337,6 +337,7 @@ namespace BetfairAPI {
             r_id.push_back(r.getSelectionId());
         }
 
+        std::cout << "H\n";
         auto r = BetfairAPI::listClearedOrders(
             application_token_,
             session_token_,
@@ -357,7 +358,6 @@ namespace BetfairAPI {
             customer_order_refs,
             customer_strategy_ref
         );
-
         return r.get_data().get<BettingType::ClearedOrderSummaryReport>();
     }
 

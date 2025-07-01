@@ -1,6 +1,18 @@
+#include <ostream>
 #include "cleared_order_summary.h"
+#include "utils/enum_utils.hpp"
 
 namespace BetfairAPI::BettingType {
+    std::ostream& operator<<(std::ostream& os, const ClearedOrderSummary& summary) {
+        os << "event_type_id: " << summary.getEventTypeId()
+            << ", event_id: " << summary.getEventId()
+            << ", market_id: " << summary.getMarketId()
+            << ", selection_id: " << summary.getSelectionId()
+            << ", side: " << Utils::to_string<>(summary.getSide())
+            << ", profit: " << summary.profit_;
+        return os;
+    }
+    
     // Getters
     const std::string& ClearedOrderSummary::getEventTypeId() const {
         return event_type_id_;
