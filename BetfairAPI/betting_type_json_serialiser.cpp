@@ -863,4 +863,303 @@ namespace BetfairAPI::BettingType {
     void to_json(nlohmann::json& j, const MarketVersion& k) {
         j["version"] = k.getVersion();
     }
+
+    void from_json(const nlohmann::json& j, ClearedOrderSummaryReport& r) {
+        bool more = j.at("moreAvailable").get<bool>();
+        
+        std::vector<ClearedOrderSummary> summary = {};
+        summary.reserve(j.at("clearedOrders").size());
+
+        for(auto& i : j.at("clearedOrders")) {
+            summary.push_back(i.get<ClearedOrderSummary>());
+        }
+
+        r = ClearedOrderSummaryReport(summary,more);
+    }
+
+    void to_json(nlohmann::json& j, const ClearedOrderSummaryReport& k) {
+        j["moreAvailable"] = k.isMoreAvailable();
+        j["clearedOrders"] = nlohmann::json::array();
+
+        for(auto& i : k.getClearedOrders()) {
+            j["clearedOrders"].push_back(i);
+        }
+    }
+
+    void from_json(const nlohmann::json& j, ClearedOrderSummary& r) {
+        if(j.contains("eventTypeId")) {
+            r.setEventTypeId(j.at("eventTypeId").get<std::string>());
+        }
+
+        if(j.contains("eventId")) {
+            r.setEventId(j.at("eventId").get<std::string>());
+        }
+
+        if(j.contains("marketId")) {
+            r.setMarketId(j.at("marketId").get<std::string>());
+        }
+
+        if(j.contains("selectionId")) {
+            r.setSelectionId(j.at("selectionId").get<long>());
+        }
+
+        if(j.contains("handicap")) {
+            r.setHandicap(j.at("handicap").get<double>());
+        }
+
+        if(j.contains("betId")) {
+            r.setBetId(j.at("betId").get<std::string>());
+        }
+
+        if(j.contains("placedDate")) {
+            r.setPlacedDate(Utils::Date(j.at("placedDate").get<std::string>()));
+        }
+        
+        if(j.contains("persistenceType")) {
+            r.setPersistenceType(Utils::from_string<BettingEnum::PersistenceType>(
+                j.at("persistenceType").get<std::string>()
+            ));
+        }
+        
+        if(j.contains("orderType")) {
+            r.setOrderType(Utils::from_string<BettingEnum::OrderType>(
+                j.at("orderType").get<std::string>()
+            ));
+        }
+        
+        if(j.contains("side")) {
+            r.setSide(Utils::from_string<BettingEnum::Side>(
+                j.at("side").get<std::string>()
+            ));
+        }
+        
+        if(j.contains("itemDescription")) {
+            r.setItemDescription(j.at("itemDescription").get<ItemDescription>());
+        }
+        
+        if(j.contains("betOutcome")) {
+            r.setBetOutcome(j.at("betOutcome").get<std::string>());
+        }
+        
+        if(j.contains("priceRequested")) {
+            r.setPriceRequested(j.at("priceRequested").get<double>());
+        }
+        
+        if(j.contains("settledDate")) {
+            r.setSettledDate(Utils::Date(j.at("settledDate").get<std::string>()));
+        }
+
+        if(j.contains("lastMatchedDate")) {
+            r.setLastMatchedDate(Utils::Date(j.at("lastMatchedDate").get<std::string>()));
+        }
+
+        if(j.contains("betCount")) {
+            r.setBetCount(j.at("betCount").get<int>());
+        }
+
+        if(j.contains("commission")) {
+            r.setCommission(j.at("commission").get<double>());
+        }
+
+        if(j.contains("priceMatched")) {
+            r.setPriceMatched(j.at("priceMatched").get<double>());
+        }
+
+        if(j.contains("priceReduced")) {
+            r.setPriceReduced(j.at("priceReduced").get<bool>());
+        }
+
+        if(j.contains("sizeSettled")) {
+            r.setSizeSettled(j.at("sizeSettled").get<double>());
+        }
+
+        if(j.contains("profit")) {
+            r.setProfit(j.at("profit").get<double>());
+        }
+
+        if(j.contains("sizeCancelled")) {
+            r.setSizeCancelled(j.at("sizeCancelled").get<double>());
+        }
+
+        if(j.contains("customerOrderRef")) {
+            r.setCustomerOrderRef(j.at("customerOrderRef").get<std::string>());
+        }
+
+        if(j.contains("customerStrategyRef")) {
+            r.setCustomerStrategyRef(j.at("customerStrategyRef").get<std::string>());
+        }
+
+        if(j.contains("sourceIdKey")) {
+            r.setSourceIdKey(j.at("sourceIdKey").get<std::string>());
+        }
+
+        if(j.contains("sourceIdDescription")) {
+            r.setSourceIdDescription(j.at("sourceIdDescription").get<std::string>());
+        }
+    }
+
+    void to_json(nlohmann::json& j, const ClearedOrderSummary& k) {
+        if (!k.getEventTypeId().empty()) {
+            j["eventTypeId"] = k.getEventTypeId();
+        }
+        if (!k.getEventId().empty()) {
+            j["eventId"] = k.getEventId();
+        }
+        if (!k.getMarketId().empty()) {
+            j["marketId"] = k.getMarketId();
+        }
+        if (k.getSelectionId() != 0) {
+            j["selectionId"] = k.getSelectionId();
+        }
+        if (k.getHandicap() != 0.0) {
+            j["handicap"] = k.getHandicap();
+        }
+        if (!k.getBetId().empty()) {
+            j["betId"] = k.getBetId();
+        }
+        if (k.getPlacedDate().isValid()) {
+            j["placedDate"] = k.getPlacedDate().toIsoString();
+        }
+
+        if(k.getPersistenceType() != BettingEnum::PersistenceType::UNKNOWN) {
+            std::cerr << "WTF\n";
+            std::cerr << Utils::to_string<BettingEnum::PersistenceType>(k.getPersistenceType());
+            
+            j["persistenceType"] = Utils::to_string<BettingEnum::PersistenceType>(k.getPersistenceType());
+        }
+
+        if(k.getOrderType() != BettingEnum::OrderType::UNKNOWN) {
+            j["orderType"] = Utils::to_string<BettingEnum::OrderType>(k.getOrderType());
+        }
+
+        if(k.getSide() != BettingEnum::Side::UNKNOWN) {
+            j["side"] = Utils::to_string<BettingEnum::Side>(k.getSide());
+        }
+
+        if (!k.getItemDescription().getEventDesc().empty()) {
+            j["itemDescription"] = k.getItemDescription();
+        }
+
+        if (!k.getBetOutcome().empty()) {
+            j["betOutcome"] = k.getBetOutcome();
+        }
+        
+        if (k.getPriceRequested() >= 0) {
+            j["priceRequested"] = k.getPriceRequested();
+        }
+        
+        if (k.getSettledDate().isValid()) {
+            j["settledDate"] = k.getSettledDate().toIsoString();
+        }
+        
+        if (k.getLastMatchedDate().isValid()) {
+            j["lastMatchedDate"] = k.getLastMatchedDate().toIsoString();
+        }
+        
+        if (k.getBetCount() >= 0) {
+            j["betCount"] = k.getBetCount();
+        }
+        
+        if (k.getCommission() >= 0) {
+            j["commission"] = k.getCommission();
+        }
+        
+        if (k.getPriceMatched() >= 0) {
+            j["priceMatched"] = k.getPriceMatched();
+        }
+        
+        if(k.getPriceReduced() >= 0) {
+            j["priceReduced"] = k.getPriceReduced();
+        }
+
+        if (k.getSizeSettled() >= 0) {
+            j["sizeSettled"] = k.getSizeSettled();
+        }
+        
+        if (k.getProfit() >= 0) {
+            j["profit"] = k.getProfit();
+        }
+        
+        if (k.getSizeCancelled() >= 0) {
+            j["sizeCancelled"] = k.getSizeCancelled();
+        }
+        
+        if (!k.getCustomerOrderRef().empty()) {
+            j["customerOrderRef"] = k.getCustomerOrderRef();
+        }
+        
+        if (!k.getCustomerStrategyRef().empty()) {
+            j["customerStrategyRef"] = k.getCustomerStrategyRef();
+        }
+        
+        if (!k.getSourceIdKey().empty()) {
+            j["sourceIdKey"] = k.getSourceIdKey();
+        }
+        
+        if (!k.getSourceIdDescription().empty()) {
+            j["sourceIdDescription"] = k.getSourceIdDescription();
+        }
+    }
+    
+    void from_json(const nlohmann::json& j, ItemDescription& k) {
+        if(j.contains("eventTypeDesc")) {
+            k.setEventTypeDesc(j.at("eventTypeDesc").get<std::string>());
+        }
+
+        if(j.contains("eventDesc")) {
+            k.setEventDesc(j.at("eventDesc").get<std::string>());
+        }
+
+        if(j.contains("marketDesc")) {
+            k.setMarketDesc(j.at("marketDesc").get<std::string>());
+        }
+
+        if(j.contains("marketType")) {
+            k.setMarketType(j.at("marketType").get<std::string>());
+        }
+
+        if(j.contains("marketStartTime")) {
+            k.setMarketStartTime(Utils::Date(j.at("marketStartTime").get<std::string>()));
+        }
+
+        if(j.contains("runnerDesc")) {
+            k.setRunnerDesc(j.at("runnerDesc").get<std::string>());
+        }
+
+        if(j.contains("numberOfWinners")) {
+            k.setNumberOfWinners(j.at("numberOfWinners").get<int>());
+        }
+
+        if(j.contains("eachWayDivisor")) {
+            k.setEachWayDivisor(j.at("eachWayDivisor").get<double>());
+        }
+    }
+
+    void to_json(nlohmann::json& j, const ItemDescription& k) {
+        if (!k.getEventTypeDesc().empty()) {
+            j["eventTypeDesc"] = k.getEventTypeDesc();
+        }
+        if (!k.getEventDesc().empty()) {
+            j["eventDesc"] = k.getEventDesc();
+        }
+        if (!k.getMarketDesc().empty()) {
+            j["marketDesc"] = k.getMarketDesc();
+        }
+        if (!k.getMarketType().empty()) {
+            j["marketType"] = k.getMarketType();
+        }
+        if (k.getMarketStartTime().isValid()) {
+            j["marketStartTime"] = k.getMarketStartTime().toIsoString();
+        }
+        if (!k.getRunnerDesc().empty()) {
+            j["runnerDesc"] = k.getRunnerDesc();
+        }
+        if (k.getNumberOfWinners() >= 0) {
+            j["numberOfWinners"] = k.getNumberOfWinners();
+        }
+        if (k.getEachWayDivisor() >= 0) {
+            j["eachWayDivisor"] = k.getEachWayDivisor();
+        }
+    }
+
 }

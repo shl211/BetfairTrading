@@ -7,14 +7,15 @@ namespace BetfairAPI::BettingType {
     class ClearedOrderSummaryReport {
         public:
             ClearedOrderSummaryReport(const std::vector<ClearedOrderSummary>& cleared_orders,bool more_available);
+            ClearedOrderSummaryReport() = default;
             ~ClearedOrderSummaryReport() = default;
             ClearedOrderSummaryReport(const ClearedOrderSummaryReport&) = default;
             ClearedOrderSummaryReport(ClearedOrderSummaryReport&&) noexcept = default;
             ClearedOrderSummaryReport& operator=(const ClearedOrderSummaryReport&) = default;
             ClearedOrderSummaryReport& operator=(ClearedOrderSummaryReport&&) noexcept = default;
 
-            const std::vector<ClearedOrderSummary>& GetClearedOrders() const;
-            bool IsMoreAvailable() const;
+            const std::vector<ClearedOrderSummary>& getClearedOrders() const;
+            bool isMoreAvailable() const;
 
         private:
             std::vector<ClearedOrderSummary> cleared_orders_;

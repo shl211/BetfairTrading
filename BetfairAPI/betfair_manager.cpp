@@ -294,6 +294,73 @@ namespace BetfairAPI {
         return r.get_data().get<BettingType::CurrentOrderSummaryReport>();
     }
 
+    BettingType::ClearedOrderSummaryReport BetfairManager::listClearedOrders (
+        BettingEnum::BetStatus bet_status,
+        const std::vector<BettingType::EventType>& event_types,
+        const std::vector<BettingType::Event>& events,
+        const std::vector<BettingType::MarketTypeResult>& market_types,
+        const std::vector<BettingType::Runner>& runners,
+        const std::vector<std::string>& bet_ids,
+        BettingEnum::Side side,
+        const BettingType::TimeRange& settled_date_range,
+        BettingEnum::GroupBy group_by,
+        int from_record,
+        int record_count, 
+        bool include_item_desc,
+        bool include_source_id,
+        const std::vector<std::string>& customer_order_refs,
+        const std::vector<std::string>& customer_strategy_ref,
+        const std::string& locale
+    ) {
+        std::vector<std::string> e_type_id;
+        std::vector<std::string> e_id;
+        std::vector<std::string> m_id;
+        std::vector<long> r_id;
+
+        e_type_id.reserve(event_types.size());
+        for(auto& et : event_types) {
+            e_type_id.push_back(et.getId());
+        }
+
+        e_id.reserve(events.size());
+        for(auto& e : events) {
+            e_id.push_back(e.getId());
+        }
+
+        m_id.reserve(market_types.size());
+        for(auto& m : market_types) {
+            m_id.push_back(m.getMarketType());
+        }
+
+        r_id.reserve(runners.size());
+        for(auto& r : runners) {
+            r_id.push_back(r.getSelectionId());
+        }
+
+        auto r = BetfairAPI::listClearedOrders(
+            application_token_,
+            session_token_,
+            bet_status,
+            e_type_id,
+            e_id,
+            m_id,
+            r_id,
+            bet_ids,
+            side,
+            settled_date_range,
+            group_by,
+            include_item_desc,
+            include_source_id,
+            locale,
+            from_record,
+            record_count,
+            customer_order_refs,
+            customer_strategy_ref
+        );
+
+        return r.get_data().get<BettingType::ClearedOrderSummaryReport>();
+    }
+
 
     /******************************************************************************
     * PRIVATE

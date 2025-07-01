@@ -972,3 +972,115 @@ TEST(BettingTypeSerialiser, CurrentOrderSummaryConstruction) {
     //and other optional ones???
 
 }
+
+TEST(BettingTypeSerialiser, ItemDescriptionFromJsonToJson) {
+    // Prepare test data for ItemDescription
+    BetfairAPI::BettingType::ItemDescription item_desc;
+    item_desc.setEventTypeDesc("Horse Racing");
+    item_desc.setEventDesc("Ascot");
+    item_desc.setMarketDesc("WIN");
+    item_desc.setMarketType("WIN");
+    item_desc.setMarketStartTime(BetfairAPI::Utils::Date("2024-06-01T15:00:00Z"));
+    item_desc.setRunnerDesc("RunnerName");
+    item_desc.setNumberOfWinners(1);
+    item_desc.setEachWayDivisor(0.25);
+
+    // Serialize to JSON
+    nlohmann::json j = item_desc;
+
+    // Check JSON fields
+    EXPECT_EQ(j.at("eventTypeDesc"), "Horse Racing");
+    EXPECT_EQ(j.at("eventDesc"), "Ascot");
+    EXPECT_EQ(j.at("marketDesc"), "WIN");
+    EXPECT_EQ(j.at("marketType"), "WIN");
+    EXPECT_EQ(j.at("marketStartTime"), "2024-06-01T15:00:00Z");
+    EXPECT_EQ(j.at("runnerDesc"), "RunnerName");
+    EXPECT_EQ(j.at("numberOfWinners"), 1);
+    EXPECT_DOUBLE_EQ(j.at("eachWayDivisor"), 0.25);
+
+    // Deserialize from JSON
+    auto parsed = j.get<BetfairAPI::BettingType::ItemDescription>();
+
+    // Check values
+    EXPECT_EQ(parsed.getEventTypeDesc(), "Horse Racing");
+    EXPECT_EQ(parsed.getEventDesc(), "Ascot");
+    EXPECT_EQ(parsed.getMarketDesc(), "WIN");
+    EXPECT_EQ(parsed.getMarketType(), "WIN");
+    EXPECT_EQ(parsed.getMarketStartTime(), BetfairAPI::Utils::Date("2024-06-01T15:00:00Z"));
+    EXPECT_EQ(parsed.getRunnerDesc(), "RunnerName");
+    EXPECT_EQ(parsed.getNumberOfWinners(), 1);
+    EXPECT_DOUBLE_EQ(parsed.getEachWayDivisor(), 0.25);
+}
+
+TEST(BettingTypeSerialiser, ClearedOrderSummaryTest) {
+    BetfairAPI::BettingType::ClearedOrderSummary c;
+    c.setBetId("bet123");
+    c.setMarketId("market456");
+    c.setSelectionId(789);
+    c.setHandicap(1.5);
+    c.setSide(BetfairAPI::BettingEnum::Side::BACK);
+    c.setPriceRequested(100.0);
+    c.setSizeSettled(0.0);
+    c.setProfit(0.0);
+    c.setCommission(0.0);
+    c.setPlacedDate(BetfairAPI::Utils::Date("2024-06-01T12:34:56Z"));
+    c.setSettledDate(BetfairAPI::Utils::Date("2024-06-01T12:35:56Z"));
+    c.setCustomerOrderRef("orderRef");
+    c.setCustomerStrategyRef("strategyRef");
+
+    // Serialize to JSON
+    nlohmann::json j = c;
+    std::cout << "[DEBUG] Serialized JSON: " << j.dump(4) << std::endl;
+
+    // Deserialize with exception handling
+    BetfairAPI::BettingType::ClearedOrderSummary parsed;
+    try {
+        parsed = j.get<BetfairAPI::BettingType::ClearedOrderSummary>();
+    } catch (const std::exception& e) {
+        std::cerr << "[ERROR] Exception during deserialization: " << e.what() << std::endl;
+        FAIL() << "Deserialization failed.";
+    }
+
+    // Check values
+    EXPECT_EQ(parsed.getBetId(), "bet123");
+    EXPECT_EQ(parsed.getMarketId(), "market456");
+    EXPECT_EQ(parsed.getSelectionId(), 789);
+    EXPECT_DOUBLE_EQ(parsed.getHandicap(), 1.5);
+    EXPECT_EQ(parsed.getSide(), BetfairAPI::BettingEnum::Side::BACK);
+    EXPECT_DOUBLE_EQ(parsed.getPriceRequested(), 100.0);
+    EXPECT_DOUBLE_EQ(parsed.getSizeSettled(), 0.0);
+    EXPECT_EQ(parsed.getProfit(), 0.0);
+    EXPECT_DOUBLE_EQ(parsed.getCommission(), 0.0);
+    EXPECT_EQ(parsed.getPlacedDate(), BetfairAPI::Utils::Date("2024-06-01T12:34:56Z"));
+    EXPECT_EQ(parsed.getSettledDate(), BetfairAPI::Utils::Date("2024-06-01T12:35:56Z"));
+    EXPECT_EQ(parsed.getCustomerOrderRef(), "orderRef");
+    EXPECT_EQ(parsed.getCustomerStrategyRef(), "strategyRef");
+}
+
+TEST(BettingTypeSerialiser, ClearedOrderSummaryReportTest)  {
+    // Prepare a ClearedOrderSummaryReport with multiple ClearedOrderSummary entries
+    BetfairAPI::BettingType::ClearedOrderSummary summary1;
+    summary1.setBetId("bet1");
+
+    BetfairAPI::BettingType::ClearedOrderSummary summary2;
+    summary2.setBetId("bet2");
+
+    std::vector<BetfairAPI::BettingType::ClearedOrderSummary> summaries = {summary1, summary2};
+    bool more_available = true;
+    BetfairAPI::BettingType::ClearedOrderSummaryReport report(summaries, more_available);
+
+    // Serialize to JSON
+    nlohmann::json j = report;
+    BetfairAPI::BettingType::ClearedOrderSummaryReport parsed = j;
+
+    EXPECT_EQ(parsed.isMoreAvailable(), more_available);
+    ASSERT_EQ(parsed.getClearedOrders().size(), 2);
+
+    // Check first summary
+    const auto& p1 = parsed.getClearedOrders()[0];
+    EXPECT_EQ(p1.getBetId(), summary1.getBetId());
+
+    // Check second summary
+    const auto& p2 = parsed.getClearedOrders()[1];
+    EXPECT_EQ(p2.getBetId(), summary2.getBetId());
+}

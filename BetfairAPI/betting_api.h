@@ -12,6 +12,9 @@
 #include "match_projection.hpp"
 #include "betting_enum/order_by.hpp"
 #include "betting_enum/sort_dir.hpp"
+#include "betting_enum/bet_status.hpp"
+#include "betting_enum/group_by.hpp"
+#include "betting_enum/side.hpp"
 
 namespace BetfairAPI {
 
@@ -68,5 +71,17 @@ namespace BetfairAPI {
         bool include_item_desc, bool include_source_id,
         const std::vector<std::string>& customer_order_refs,
         const std::vector<std::string>& customer_strategy_ref);
+
+    Utils::Response listClearedOrders(std::string application_token,std::string session_token,
+        BettingEnum::BetStatus bet_status,const std::vector<std::string>& event_type_ids,
+        const std::vector<std::string>& event_ids, const std::vector<std::string>& market_ids,
+        const std::vector<long>& runner_ids, const std::vector<std::string>& bet_ids,
+        BettingEnum::Side side, const BettingType::TimeRange& settled_date_range,
+        BettingEnum::GroupBy group_by, bool include_item_description, bool include_source_id,
+        const std::string& locale, int from_record, int record_count,
+        const std::vector<std::string>& customer_order_refs,
+        const std::vector<std::string>& customer_strategy_ref
+    );
+
 
 }

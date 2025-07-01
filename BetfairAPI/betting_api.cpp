@@ -314,7 +314,6 @@ namespace BetfairAPI {
         bool include_item_desc, bool include_source_id, const std::vector<std::string>& customer_order_refs,
         const std::vector<std::string>& customer_strategy_ref) {
 
-
         cpr::Url url {std::string(betting_endpoint_url) + "listCurrentOrders/"};
         cpr::Header headers {
         {"X-Application",application_token},
@@ -374,5 +373,101 @@ namespace BetfairAPI {
         
         cpr::Response r = cpr::Post(url,headers,body);
         return BetfairAPI::Utils::Response(r);
+    }
+
+    Utils::Response listClearedOrders(std::string application_token,std::string session_token,
+        BettingEnum::BetStatus bet_status,const std::vector<std::string>& event_type_ids,
+        const std::vector<std::string>& event_ids, const std::vector<std::string>& market_ids,
+        const std::vector<long>& runner_ids, const std::vector<std::string>& bet_ids,
+        BettingEnum::Side side, const BettingType::TimeRange& settled_date_range,
+        BettingEnum::GroupBy group_by, bool include_item_description, bool include_source_id,
+        const std::string& locale, int from_record, int record_count,
+        const std::vector<std::string>& customer_order_refs,
+        const std::vector<std::string>& customer_strategy_ref
+    ) {
+
+        cpr::Url url {std::string(betting_endpoint_url) + "listClearedOrders/"};
+        cpr::Header headers {
+        {"X-Application",application_token},
+        {"X-Authentication",session_token},
+        {"Content-Type","application/json"}
+        };
+        
+        nlohmann::json j;
+        
+        if(bet_status != BettingEnum::BetStatus::UNKNOWN) {
+            j["betStatus"]= Utils::to_string(bet_status);
+        }
+
+        if(!event_type_ids.empty()) {
+            j["eventTypeIds"] = event_type_ids;
+        }
+
+        if(!event_ids.empty()) {
+            j["eventIds"] = event_ids;
+        }
+
+        if(!market_ids.empty()) {
+            j["marketIds"] = market_ids;
+        }
+
+        if(!runner_ids.empty()) {
+            j["runnerIds"] = runner_ids;
+        }
+
+        //max 1000
+        if(!bet_ids.empty()) {
+            j["betIds"] = bet_ids;
+        }
+
+        if(!customer_order_refs.empty()) {
+            j["customerOrderRefs"] = customer_order_refs;
+        }
+
+        if(!customer_strategy_ref.empty()) {
+            j["customerStrategyRefs"] = customer_strategy_ref;
+        }
+
+        if(side != BettingEnum::Side::UNKNOWN) {
+            j["side"] = Utils::to_string(side);
+        }
+
+        if(settled_date_range.getFromDate().isValid() || settled_date_range.getToDate().isValid()) {
+            j["settledDateRange"] = settled_date_range;
+        }
+
+        if(group_by != BettingEnum::GroupBy::UNKNOWN) {
+            j["groupBy"] = Utils::to_string(group_by);
+        }
+
+        if(!locale.empty()) {
+            j["locale"] = locale;
+        }
+
+        //defaults to false
+        //do not include if false
+        if(include_item_description) {
+            j["includeItemDescription"] = include_item_description;
+        }
+
+        if(include_source_id) {
+            j["includeSourceId"] = include_source_id;
+        }
+
+        //defaults to 0
+        if(from_record != 0) {
+            j["fromRecord"] = from_record;
+        }
+
+        //max 1000, but defaults to 0 -> return all up to 1000
+        if(record_count != 0) {
+            j["recordCount"] = record_count;
+        }
+
+        cpr::Body body {j.dump()};
+        
+        cpr::Response r = cpr::Post(url,headers,body);
+        return BetfairAPI::Utils::Response(r);
+
     }
 }

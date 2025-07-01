@@ -20,8 +20,11 @@
 #include "betting_enum/match_projection.hpp"
 #include "betting_enum/order_by.hpp"
 #include "betting_enum/sort_dir.hpp"
+#include "betting_enum/bet_status.hpp"
+#include "betting_enum/group_by.hpp"
 #include "betting_type/market_profit_loss.h"
 #include "betting_type/current_order_summary_report.h"
+#include "betting_type/cleared_order_summary_report.h"
 
 namespace BetfairAPI {
     class BetfairManager {
@@ -80,6 +83,25 @@ namespace BetfairAPI {
             bool include_source_id = false,
             const std::vector<std::string>& customer_order_refs = {},
             const std::vector<std::string>& customer_strategy_ref = {}
+        );
+
+        BettingType::ClearedOrderSummaryReport listClearedOrders (
+            BettingEnum::BetStatus bet_status = BettingEnum::BetStatus::UNKNOWN,
+            const std::vector<BettingType::EventType>& event_types = {},
+            const std::vector<BettingType::Event>& events = {},
+            const std::vector<BettingType::MarketTypeResult>& market_types = {},
+            const std::vector<BettingType::Runner>& runners = {},
+            const std::vector<std::string>& bet_ids = {},
+            BettingEnum::Side side = BettingEnum::Side::UNKNOWN,
+            const BettingType::TimeRange& settled_date_range = {},
+            BettingEnum::GroupBy group_by = BettingEnum::GroupBy::UNKNOWN,
+            int from_record = 0,
+            int record_count = 0, //0 for get all up to limit
+            bool include_item_desc = false,
+            bool include_source_id = false,
+            const std::vector<std::string>& customer_order_refs = {},
+            const std::vector<std::string>& customer_strategy_ref = {},
+            const std::string& locale = "en"
         );
 
     private:
