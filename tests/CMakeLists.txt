@@ -10,7 +10,7 @@ add_executable(test_suite
 
 target_include_directories(test_suite
     PRIVATE
-        ${PROJECT_SOURCE_DIR}/BetfairAPI
+        ${PROJECT_SOURCE_DIR} 
 )
 
 target_link_libraries(test_suite

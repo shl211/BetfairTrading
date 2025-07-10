@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
-#include "date.h"
+#include "BetfairAPI/date.h"
+
 class DateParamTest : public ::testing::TestWithParam<std::string> {};
 
 TEST_P(DateParamTest, IsoStringRoundTrip) {

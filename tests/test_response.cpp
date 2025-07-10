@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
-#include "response.h"
+#include "BetfairAPI/response.h"
 
 TEST(ResponseTest, ConstructorStoresStatus) {
     BetfairAPI::Response resp(200, R"({"key":"value"})");
