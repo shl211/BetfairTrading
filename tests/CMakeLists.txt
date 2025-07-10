@@ -1,3 +1,5 @@
+enable_testing()
+
 file(GLOB_RECURSE TEST_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
