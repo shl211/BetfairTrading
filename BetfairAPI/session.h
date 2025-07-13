@@ -14,4 +14,8 @@ namespace BetfairAPI {
     Response keepAlive(const std::string& apiKey,
         const std::string& session_token,
         Jurisdiction j = Jurisdiction::GLOBAL);
+
+    Response logout(const std::string& api_key,
+        const std::string& session_token,
+        Jurisdiction j = Jurisdiction::GLOBAL);
 }

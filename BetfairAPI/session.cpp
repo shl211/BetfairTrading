@@ -6,6 +6,7 @@ namespace BetfairAPI {
     namespace {
         constexpr std::string_view login_path{"login/"}; 
         constexpr std::string_view keep_alive_path{"keepAlive/"};
+        constexpr std::string_view logout_path{"logout/"};
 
         Response toResponse(cpr::Response& r) {
             //cpr Response will be made unsafe, but that is ok, as it should be discarded anyway
@@ -44,6 +45,21 @@ namespace BetfairAPI {
         };
 
         cpr::Response response = cpr::Post(keep_alive_url,headers);
+        return toResponse(response);
+    }
+
+    Response logout(const std::string& api_key,
+        const std::string& session_token,
+        Jurisdiction j) {
+
+        cpr::Url logout_url{std::string(getBetfairUrl(j)) + std::string(logout_path)};
+        cpr::Header headers {
+            {"Accept","application/json"},
+            {"X-Application",api_key},
+            {"X-Authentication",session_token},
+        };
+
+        cpr::Response response = cpr::Post(logout_url,headers);
         return toResponse(response);
     }
 }

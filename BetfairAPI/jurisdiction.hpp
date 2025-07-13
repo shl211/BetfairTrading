@@ -10,6 +10,8 @@ namespace BetfairAPI {
         SPAIN,
         ROMANIA,
         SWEDEN,
+        UK,
+        IRELAND,
     };
 
     namespace detail {
@@ -24,6 +26,8 @@ namespace BetfairAPI {
     constexpr std::string_view getBetfairUrl(Jurisdiction j) {
         switch (j) {
             case Jurisdiction::GLOBAL:
+            case Jurisdiction::UK:
+            case Jurisdiction::IRELAND:
                 return detail::global_url;
             case Jurisdiction::AUSTRALIA:
             case Jurisdiction::NEWZEALAND:
@@ -38,6 +42,19 @@ namespace BetfairAPI {
                 return detail::sweden_url;
             default:
                 return detail::global_url;
+        }
+    }
+
+    constexpr int getTimeoutMinutes(Jurisdiction j) {
+        switch (j) {
+            case Jurisdiction::UK:
+            case Jurisdiction::IRELAND:
+                return 24 * 60;
+            case Jurisdiction::ITALY:
+            case Jurisdiction::SPAIN:
+                return 20;
+            default:
+                return 12 * 60;
         }
     }
 }
