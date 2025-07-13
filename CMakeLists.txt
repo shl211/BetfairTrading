@@ -51,6 +51,7 @@ FetchContent_MakeAvailable(cpr json googletest magic_enum date)
 ###################################
 
 add_subdirectory(BetfairAPI)
+add_subdirectory(Logging)
 
 add_executable(app main.cpp)
 target_link_libraries(app 
