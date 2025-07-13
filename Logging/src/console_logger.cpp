@@ -1,4 +1,4 @@
-#include "console_logger.h"
+#include "Logging/console_logger.h"
 
 void ConsoleLogger::info(const std::string& message) {
     std::lock_guard<std::mutex> lock(mutex_);

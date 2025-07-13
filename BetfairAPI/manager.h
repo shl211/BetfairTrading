@@ -8,6 +8,7 @@
 
 #include "jurisdiction.hpp"
 #include "date.h"
+#include "Logging/ILogger.h"
 
 namespace BetfairAPI {
     class BetfairManager {

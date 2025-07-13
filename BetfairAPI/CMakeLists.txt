@@ -21,9 +21,9 @@ target_compile_definitions(BetfairAPI PRIVATE HAS_REMOTE_API=1)
 target_link_libraries(BetfairAPI 
     PRIVATE 
         cpr::cpr
-        Logging
     PUBLIC
         nlohmann_json::nlohmann_json
         magic_enum
         date::date
+        Logging
 )

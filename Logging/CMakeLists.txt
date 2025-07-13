@@ -1,5 +1,5 @@
 file(GLOB SOURCES CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "src/*.cpp"
 )
 
 add_library(Logging STATIC
@@ -8,5 +8,5 @@ add_library(Logging STATIC
 
 target_include_directories(Logging
     PUBLIC 
-        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
