@@ -27,7 +27,7 @@ namespace BetfairAPI {
 
         if(status_code_good && successful_login) {
             session_token_ = json->at("token").get<std::string>();
-            if(logger_) {
+            if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
                 logger_->info(username + " logged in successfully.");
             }
         }
@@ -36,8 +36,8 @@ namespace BetfairAPI {
                                 json->at("error").get<std::string>() : "MALFORMED JSON";
             std::string msg = username + " failed to log in. Status code: " + std::to_string(r.getStatusCode()) +
                                     " Error: " + error;
-            if(logger_) {
-                logger_->error(msg);
+            if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Critical)) {
+                logger_->critical(msg);
             }
             throw std::runtime_error(msg);
         }
@@ -58,11 +58,13 @@ namespace BetfairAPI {
         
         try {
             endSession();
-            if(logger_) {
+            if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
                 logger_->info("Successfully logged out from session.");
             }
         } catch (const std::exception&) {
-            logger_->info("Failed to log out. Session still live. Manager now exiting.");
+            if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
+                logger_->info("Failed to log out. Session still live. Manager now exiting.");
+            }
             // swallow any exceptions
         }
     }
@@ -99,11 +101,11 @@ namespace BetfairAPI {
                 lock.unlock();
                 bool success = refreshSession();
                 if (!success) {
-                    if(logger_) {
+                    if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Warn)) {
                         logger_->warn("Warning: Failed to refresh Betfair session");
                     }
                 } else {
-                    if(logger_) {
+                    if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
                         logger_->info("Session refreshed");
                     }
                 }
