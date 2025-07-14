@@ -3,6 +3,8 @@
 #include <chrono>
 #include "BetfairAPI/manager.h"
 #include "BetfairAPI/session.h"
+#include "Logging/console_logger.h"
+#include "Logging/file_logger.h"
 
 int main() {
     const char* USERNAME = std::getenv("USERNAME");
@@ -13,7 +15,11 @@ int main() {
         return 1;
     }
 
-    auto r = BetfairAPI::BetfairManager(USERNAME,PASSWORD,APIKEYDELAY,BetfairAPI::Jurisdiction::UK);
+    auto r = BetfairAPI::BetfairManager(USERNAME,
+        PASSWORD,
+        APIKEYDELAY,
+        BetfairAPI::Jurisdiction::UK,
+        std::make_unique<Logging::SpdFileLogger>("a.log"));
 
     //std::this_thread::sleep_for(std::chrono::minutes(5));
 }

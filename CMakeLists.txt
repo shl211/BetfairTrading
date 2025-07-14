@@ -43,8 +43,15 @@ FetchContent_Declare(
     GIT_TAG v3.0.4
 )
 
+# Fetch spdlog
+FetchContent_Declare(
+  spdlog
+  GIT_REPOSITORY https://github.com/gabime/spdlog.git
+  GIT_TAG v1.13.0  # Or latest stable tag
+)
+
 # Download and make available
-FetchContent_MakeAvailable(cpr json googletest magic_enum date)
+FetchContent_MakeAvailable(cpr json googletest magic_enum date spdlog)
 
 ###################################
 # Project Targets

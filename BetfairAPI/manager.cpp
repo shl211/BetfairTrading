@@ -11,10 +11,12 @@ namespace BetfairAPI {
     BetfairManager::BetfairManager(const std::string& username,
         const std::string& password,
         std::string api_key,
-        Jurisdiction j
+        Jurisdiction j,
+        std::unique_ptr<Logging::ILogger> logger
     ) : jurisdiction_(j),
         api_token_(std::move(api_key)),
-        refresh_time_(getTimeoutMinutes(j) - MINUTE_OFFSET)
+        refresh_time_(getTimeoutMinutes(j) - MINUTE_OFFSET),
+        logger_(std::move(logger))
     {
         BetfairAPI::Response r = interactiveLogin(api_token_,username,password,j);
         auto json = r.getBody();
@@ -25,13 +27,19 @@ namespace BetfairAPI {
 
         if(status_code_good && successful_login) {
             session_token_ = json->at("token").get<std::string>();
+            if(logger_) {
+                logger_->info(username + " logged in successfully.");
+            }
         }
         else {
             std::string error = (well_formed_json && json->contains("error")) ?
                                 json->at("error").get<std::string>() : "MALFORMED JSON";
-            
-            throw std::runtime_error("Failed to login. Status code: " + std::to_string(r.getStatusCode()) +
-                                    " Error: " + error);
+            std::string msg = username + " failed to log in. Status code: " + std::to_string(r.getStatusCode()) +
+                                    " Error: " + error;
+            if(logger_) {
+                logger_->error(msg);
+            }
+            throw std::runtime_error(msg);
         }
 
         //start the keep alive thread
@@ -50,7 +58,11 @@ namespace BetfairAPI {
         
         try {
             endSession();
+            if(logger_) {
+                logger_->info("Successfully logged out from session.");
+            }
         } catch (const std::exception&) {
+            logger_->info("Failed to log out. Session still live. Manager now exiting.");
             // swallow any exceptions
         }
     }
@@ -87,9 +99,13 @@ namespace BetfairAPI {
                 lock.unlock();
                 bool success = refreshSession();
                 if (!success) {
-                    std::cerr << "Warning: Failed to refresh Betfair session\n";
+                    if(logger_) {
+                        logger_->warn("Warning: Failed to refresh Betfair session");
+                    }
                 } else {
-                    std::cerr << "Session refreshed for: " << api_token_;
+                    if(logger_) {
+                        logger_->info("Session refreshed");
+                    }
                 }
                 lock.lock();
             }

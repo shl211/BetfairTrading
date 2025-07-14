@@ -1,14 +1,26 @@
 #pragma once
-#include "ILogger.h"
-#include <iostream>
 #include <mutex>
+#include "ILogger.h"
 
-class ConsoleLogger : public ILogger {
-public:
-    void info(const std::string& message) override;
-    void warn(const std::string& message) override;
-    void error(const std::string& message) override;
+namespace Logging {
 
-private:
-    std::mutex mutex_;
-};
+    class ConsoleLogger : public ILogger {
+        public:
+            ConsoleLogger();
+            ~ConsoleLogger() override = default;
+
+            void log(LogLevel level, const std::string& message) override;
+
+            bool isLevelEnabled(LogLevel level) const override;
+            void setLevel(LogLevel level) override;
+
+            void flush() override;
+
+        private:
+            mutable std::mutex mutex_;
+            LogLevel currentLevel_{LogLevel::Info};  // default log level
+
+            void output(const std::string& levelStr, const std::string& message);
+    };
+
+} // namespace Logging

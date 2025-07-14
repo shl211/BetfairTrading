@@ -5,6 +5,7 @@
 #include <mutex>
 #include <atomic>
 #include <thread>
+#include <memory>
 
 #include "jurisdiction.hpp"
 #include "date.h"
@@ -16,7 +17,8 @@ namespace BetfairAPI {
             BetfairManager(const std::string& username,
                 const std::string& password,
                 std::string api_key,
-                Jurisdiction j = Jurisdiction::GLOBAL
+                Jurisdiction j = Jurisdiction::GLOBAL,
+                std::unique_ptr<Logging::ILogger> logger = nullptr
             );
             ~BetfairManager();
             BetfairManager(const BetfairManager&) = delete;
@@ -33,6 +35,7 @@ namespace BetfairAPI {
             std::string session_token_;
             Jurisdiction jurisdiction_;
             int refresh_time_;
+            std::unique_ptr<Logging::ILogger> logger_;
 
             std::thread keep_alive_thread_;
             std::mutex mutex_;

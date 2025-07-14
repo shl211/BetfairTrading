@@ -10,3 +10,8 @@ target_include_directories(Logging
     PUBLIC 
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+target_link_libraries(Logging
+    PUBLIC
+        spdlog::spdlog
+)
