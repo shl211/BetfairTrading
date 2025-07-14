@@ -1,6 +1,6 @@
-#include "manager.h"
-#include "session.h"
 #include <iostream>
+#include "BetfairAPI/manager.h"
+#include "BetfairAPI/session.h"
 
 namespace BetfairAPI {
 

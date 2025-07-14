@@ -1,5 +1,5 @@
 file(GLOB SOURCES CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "src/*.cpp"
 )
 
 # Add Howard Hinnant date tz.cpp source explicitly
@@ -12,7 +12,7 @@ add_library(BetfairAPI STATIC
 
 target_include_directories(BetfairAPI 
     PUBLIC 
-        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${date_SOURCE_DIR}/include    # include date headers
 )
 

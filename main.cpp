@@ -19,7 +19,7 @@ int main() {
         PASSWORD,
         APIKEYDELAY,
         BetfairAPI::Jurisdiction::UK,
-        std::make_unique<Logging::SpdFileLogger>("a.log"));
+        std::make_unique<Logging::SpdFileLogger>("../a.log"));
 
     //std::this_thread::sleep_for(std::chrono::minutes(5));
 }
