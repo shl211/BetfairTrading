@@ -14,8 +14,7 @@ TEST(TimeRangeJson, BothDatesPresent) {
     
     auto json = BetfairAPI::BettingType::toJson(tr);
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::TimeRange>(json);
-    EXPECT_EQ(result.from, tr.from);
-    EXPECT_EQ(result.to, tr.to);
+    EXPECT_EQ(result, tr);
 }
 
 TEST(TimeRangeJson, OneDatePresnet) {
@@ -26,8 +25,7 @@ TEST(TimeRangeJson, OneDatePresnet) {
     
     auto json = BetfairAPI::BettingType::toJson(tr);
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::TimeRange>(json);
-    EXPECT_EQ(result.from, tr.from);
-    EXPECT_EQ(result.to, tr.to);
+    EXPECT_EQ(result, tr);
 }
 
 TEST(TimeRangeJson, OneDatePresnet2) {
@@ -38,8 +36,7 @@ TEST(TimeRangeJson, OneDatePresnet2) {
     
     auto json = BetfairAPI::BettingType::toJson(tr);
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::TimeRange>(json);
-    EXPECT_EQ(result.from, tr.from);
-    EXPECT_EQ(result.to, tr.to);
+    EXPECT_EQ(result, tr);
 }
 
 TEST(TimeRangeJson, NonePresent) {
@@ -47,8 +44,7 @@ TEST(TimeRangeJson, NonePresent) {
     
     auto json = BetfairAPI::BettingType::toJson(tr);
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::TimeRange>(json);
-    EXPECT_EQ(result.from, tr.from);
-    EXPECT_EQ(result.to, tr.to);
+    EXPECT_EQ(result, tr);
 }
 
 TEST(MarketFilterJson, Basic) {
@@ -65,8 +61,7 @@ TEST(MarketFilterJson, Basic) {
     ASSERT_TRUE(json.contains("bspOnly"));
 
     // Check that values round-trip correctly
-    EXPECT_EQ(mf.eventIds, result.eventIds);
-    EXPECT_EQ(mf.bspOnly, result.bspOnly);
+    EXPECT_EQ(mf, result);
 }
 
 TEST(EventTypeJson, Basic) {
@@ -77,9 +72,7 @@ TEST(EventTypeJson, Basic) {
     auto json = BetfairAPI::BettingType::toJson(et);
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::EventType>(json);
 
-    // Check that values round-trip correctly
-    EXPECT_EQ(et.name, result.name);
-    EXPECT_EQ(et.id, result.id);
+    EXPECT_EQ(et, result);
 }
 
 TEST(EventTypeResultJson, Basic) {
@@ -91,7 +84,5 @@ TEST(EventTypeResultJson, Basic) {
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::EventTypeResult>(json);
 
     // Check that values round-trip correctly
-    EXPECT_EQ(et.eventType.id, result.eventType.id);
-    EXPECT_EQ(et.eventType.name, result.eventType.name);
-    EXPECT_EQ(et.marketCount, result.marketCount);
+    EXPECT_EQ(et, result);
 }

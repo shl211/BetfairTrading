@@ -26,4 +26,26 @@ namespace BetfairAPI::BettingType {
         std::set<BettingEnum::OrderStatus> withOrders;
         std::set<std::string> raceTypes;
     };
+
+    inline bool operator==(const MarketFilter& lhs, const MarketFilter& rhs) {
+        return lhs.textQuery == rhs.textQuery &&
+                lhs.eventTypeIds == rhs.eventTypeIds &&
+                lhs.eventIds == rhs.eventIds &&
+                lhs.competitionIds == rhs.competitionIds &&
+                lhs.marketIds == rhs.marketIds &&
+                lhs.venues == rhs.venues &&
+                lhs.bspOnly == rhs.bspOnly &&
+                lhs.turnInPlayEnabled == rhs.turnInPlayEnabled &&
+                lhs.inPlayOnly == rhs.inPlayOnly &&
+                lhs.marketBettingTypes == rhs.marketBettingTypes &&
+                lhs.marketCountries == rhs.marketCountries &&
+                lhs.marketTypeCodes == rhs.marketTypeCodes &&
+                lhs.marketStartTime == rhs.marketStartTime &&
+                lhs.withOrders == rhs.withOrders &&
+                lhs.raceTypes == rhs.raceTypes;
+    }
+
+    inline bool operator!=(const MarketFilter& lhs, const MarketFilter& rhs) {
+        return !(lhs == rhs);
+    }
 }

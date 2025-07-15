@@ -36,28 +36,4 @@ namespace BetfairAPI {
         auto tp = date::floor<std::chrono::seconds>(utc_time_);
         iso_8601_ = date::format("%FT%TZ", tp);
     }
-
-    bool operator==(const Date& lhs,const Date& rhs) {
-        return lhs.utc_time_ == rhs.utc_time_;
-    }
-
-    bool operator!=(const Date& lhs, const Date& rhs) {
-        return !(lhs == rhs);
-    }
-
-    bool operator<(const Date& lhs,const Date& rhs) {
-        return lhs.utc_time_ < rhs.utc_time_;
-    }
-
-    bool operator>(const Date& lhs,const Date& rhs) {
-        return !(lhs < rhs);
-    }
-
-    bool operator<=(const Date& lhs,const Date& rhs) {
-        return lhs < rhs || lhs == rhs; 
-    }
-
-    bool operator>=(const Date& lhs,const Date& rhs) {
-        return lhs > rhs || lhs == rhs;
-    }
 }
