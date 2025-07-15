@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include "BetfairAPI/manager.h"
 #include "BetfairAPI/session_api.h"
 #include "BetfairAPI/betting_api.h"
@@ -126,10 +127,14 @@ namespace BetfairAPI {
         }
 
         std::vector<BettingType::EventTypeResult> result;
-        result.reserve(r.getBody()->size());
-
-        for(auto& event_type_result : *r.getBody()) {
-            result.push_back(BettingType::fromJson<BettingType::EventTypeResult>(event_type_result));
+        if(r.getBody() != nullptr) {
+            const auto& body = *r.getBody();
+            result.reserve(body.size());
+            auto json_conversion = [](const auto& event_type_result) -> BettingType::EventTypeResult {
+                return BettingType::fromJson<BettingType::EventTypeResult>(event_type_result);
+            };
+    
+            std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
         }
 
         return result;
