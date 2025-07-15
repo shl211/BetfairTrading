@@ -21,9 +21,12 @@ int main() {
         std::make_unique<Logging::ConsoleLogger>());
     
     BetfairAPI::BettingType::MarketFilter mf;
-    mf.inPlayOnly = false;
+    mf.marketBettingTypes = {BetfairAPI::BettingEnum::MarketBettingType::ASIAN_HANDICAP_DOUBLE_LINE};
     auto r = manager.getEventTypes(mf);
 
-    std::cout << r.getStatusCode() << " " << (*r.getBody()) << "\n";
+    if (!r.empty()) {
+        std::cout << r[0].eventType.name << "," << r[0].eventType.id << "\n";
+    }
+
     //std::this_thread::sleep_for(std::chrono::minutes(5));
 }

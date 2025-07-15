@@ -6,11 +6,13 @@
 #include <atomic>
 #include <thread>
 #include <memory>
+#include <vector>
 
 #include "Logging/ILogger.h"
 #include "jurisdiction.hpp"
 #include "date.h"
 #include "betting_type/market_filter.h"
+#include "betting_type/event_type_result.h"
 
 #include "response.h"
 namespace BetfairAPI {
@@ -28,7 +30,7 @@ namespace BetfairAPI {
             BetfairManager(BetfairManager&&) noexcept = delete;
             BetfairManager& operator=(BetfairManager&&) noexcept = delete;
 
-            Response getEventTypes(const BettingType::MarketFilter& mf);
+            std::vector<BettingType::EventTypeResult> getEventTypes(const BettingType::MarketFilter& mf);
 
             bool refreshSession();
             

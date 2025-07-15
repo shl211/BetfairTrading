@@ -3,6 +3,8 @@
 #include "BetfairAPI/betting_type/json_serialiser.hpp"
 #include "BetfairAPI/betting_type/time_range.h"
 #include "BetfairAPI/betting_type/market_filter.h"
+#include "BetfairAPI/betting_type/event_type_result.h"
+#include "BetfairAPI/betting_type/event_type.h"
 
 TEST(TimeRangeJson, BothDatesPresent) {
     BetfairAPI::BettingType::TimeRange tr{
@@ -65,4 +67,31 @@ TEST(MarketFilterJson, Basic) {
     // Check that values round-trip correctly
     EXPECT_EQ(mf.eventIds, result.eventIds);
     EXPECT_EQ(mf.bspOnly, result.bspOnly);
+}
+
+TEST(EventTypeJson, Basic) {
+    BetfairAPI::BettingType::EventType et;
+    et.name = "12erwef";
+    et.id = "sdf";
+
+    auto json = BetfairAPI::BettingType::toJson(et);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::EventType>(json);
+
+    // Check that values round-trip correctly
+    EXPECT_EQ(et.name, result.name);
+    EXPECT_EQ(et.id, result.id);
+}
+
+TEST(EventTypeResultJson, Basic) {
+    BetfairAPI::BettingType::EventTypeResult et;
+    et.eventType = BetfairAPI::BettingType::EventType{"name","12312"};
+    et.marketCount = 100;
+
+    auto json = BetfairAPI::BettingType::toJson(et);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::EventTypeResult>(json);
+
+    // Check that values round-trip correctly
+    EXPECT_EQ(et.eventType.id, result.eventType.id);
+    EXPECT_EQ(et.eventType.name, result.eventType.name);
+    EXPECT_EQ(et.marketCount, result.marketCount);
 }

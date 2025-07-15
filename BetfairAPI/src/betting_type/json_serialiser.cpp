@@ -2,6 +2,8 @@
 #include "BetfairAPI/betting_type/json_serialiser.hpp"
 #include "BetfairAPI/betting_type/time_range.h"
 #include "BetfairAPI/betting_type/market_filter.h"
+#include "BetfairAPI/betting_type/event_type.h"
+#include "BetfairAPI/betting_type/event_type_result.h"
 
 namespace BetfairAPI::BettingType {
 
@@ -40,6 +42,7 @@ namespace BetfairAPI::BettingType {
     }
 
     /**************************************************************************
+    * TimeRange  
     **************************************************************************/
     template<>
     nlohmann::json JsonSer<TimeRange>::toJson(const TimeRange& obj) {
@@ -58,30 +61,31 @@ namespace BetfairAPI::BettingType {
     }
     
     /**************************************************************************
+    * MarketFilter  
     **************************************************************************/
-
-    template<>
-    nlohmann::json JsonSer<MarketFilter>::toJson(const MarketFilter& obj) {
-        nlohmann::json j = {};
-        if(!obj.textQuery.empty()) j["textQuery"] = obj.textQuery;
-        if(!obj.eventTypeIds.empty()) j["eventTypeIds"] = obj.eventTypeIds;
-        if(!obj.eventIds.empty()) j["eventIds"] = obj.eventIds;
-        if(!obj.competitionIds.empty()) j["competitionIds"] = obj.competitionIds;
-        if(!obj.marketIds.empty()) j["marketIds"] = obj.marketIds;
-        if(!obj.venues.empty()) j["venues"] = obj.venues;
-        if(obj.bspOnly.has_value()) j["bspOnly"] = *(obj.bspOnly);
-        if(obj.turnInPlayEnabled.has_value()) j["turnInPlayEnabled"] = *(obj.turnInPlayEnabled);
-        if(obj.inPlayOnly.has_value()) j["inPlayOnly"] = *(obj.inPlayOnly);
-        if(!obj.marketBettingTypes.empty()) j["marketBettingTypes"] = to_string<BettingEnum::MarketBettingType>(obj.marketBettingTypes);
-        if(!obj.marketCountries.empty()) j["marketCountries"] = obj.marketCountries;
-        if(!obj.marketTypeCodes.empty()) j["marketTypeCodes"] = obj.marketTypeCodes;
-        if(obj.marketStartTime.has_value()) j["marketStartTime"] = JsonSer<TimeRange>::toJson(*(obj.marketStartTime));
-        if(!obj.withOrders.empty()) j["withOrders"] = to_string<BettingEnum::OrderStatus>(obj.withOrders);
-        if(!obj.raceTypes.empty()) j["raceTypes"] = obj.raceTypes;
-
-        return j.is_null() ? nlohmann::json::object() : j;
+   
+   template<>
+   nlohmann::json JsonSer<MarketFilter>::toJson(const MarketFilter& obj) {
+       nlohmann::json j = {};
+       if(!obj.textQuery.empty()) j["textQuery"] = obj.textQuery;
+       if(!obj.eventTypeIds.empty()) j["eventTypeIds"] = obj.eventTypeIds;
+       if(!obj.eventIds.empty()) j["eventIds"] = obj.eventIds;
+       if(!obj.competitionIds.empty()) j["competitionIds"] = obj.competitionIds;
+       if(!obj.marketIds.empty()) j["marketIds"] = obj.marketIds;
+       if(!obj.venues.empty()) j["venues"] = obj.venues;
+       if(obj.bspOnly.has_value()) j["bspOnly"] = *(obj.bspOnly);
+       if(obj.turnInPlayEnabled.has_value()) j["turnInPlayEnabled"] = *(obj.turnInPlayEnabled);
+       if(obj.inPlayOnly.has_value()) j["inPlayOnly"] = *(obj.inPlayOnly);
+       if(!obj.marketBettingTypes.empty()) j["marketBettingTypes"] = to_string<BettingEnum::MarketBettingType>(obj.marketBettingTypes);
+       if(!obj.marketCountries.empty()) j["marketCountries"] = obj.marketCountries;
+       if(!obj.marketTypeCodes.empty()) j["marketTypeCodes"] = obj.marketTypeCodes;
+       if(obj.marketStartTime.has_value()) j["marketStartTime"] = JsonSer<TimeRange>::toJson(*(obj.marketStartTime));
+       if(!obj.withOrders.empty()) j["withOrders"] = to_string<BettingEnum::OrderStatus>(obj.withOrders);
+       if(!obj.raceTypes.empty()) j["raceTypes"] = obj.raceTypes;
+       
+       return j.is_null() ? nlohmann::json::object() : j;
     }
-
+    
     template<>
     MarketFilter JsonSer<MarketFilter>::fromJson(const nlohmann::json& j) {
         MarketFilter mf;
@@ -103,14 +107,53 @@ namespace BetfairAPI::BettingType {
         if(j.contains("marketCountries")) mf.marketCountries = j.at("marketCountries").get<std::set<std::string>>();
         if(j.contains("marketTypeCodes")) mf.marketTypeCodes = j.at("marketTypeCodes").get<std::set<std::string>>();
         if(j.contains("marketStartTime")) mf.marketStartTime = JsonSer<TimeRange>::fromJson(j.at("marketStartTime"));
-
+        
         if(j.contains("withOrders")) {
             auto s = j.at("withOrders").get<std::set<std::string>>() ;
             mf.withOrders = from_string<BettingEnum::OrderStatus>(s);
         }
-
+        
         if(j.contains("raceTypes")) mf.raceTypes = j.at("raceTypes").get<std::set<std::string>>();
-
+        
         return mf;
+    }
+    
+    /**************************************************************************
+    * EventType  
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<EventType>::toJson(const EventType& obj) {
+        nlohmann::json j = {};
+        if(!obj.id.empty()) j["id"] = obj.id;
+        if(!obj.name.empty()) j["name"] = obj.name;
+        return j.is_null() ? nlohmann::json::object() : j;
+    }
+    
+    template<>
+    EventType JsonSer<EventType>::fromJson(const nlohmann::json& j) {
+        EventType et;
+        if(j.contains("id")) et.id = j.at("id").get<std::string>();
+        if(j.contains("name")) et.name = j.at("name").get<std::string>();
+        
+        return et;
+    }
+
+    /**************************************************************************
+    * EventTypeResult  
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<EventTypeResult>::toJson(const EventTypeResult& obj) {
+        nlohmann::json j = {};
+        if(!obj.eventType.name.empty() && !obj.eventType.name.empty()) j["eventType"] = JsonSer<EventType>::toJson(obj.eventType);
+        if(obj.marketCount > 0) j["marketCount"] = obj.marketCount;
+        return j.is_null() ? nlohmann::json::object() : j;
+    }
+    
+    template<>
+    EventTypeResult JsonSer<EventTypeResult>::fromJson(const nlohmann::json& j) {
+        EventTypeResult et;
+        if(j.contains("eventType")) et.eventType = JsonSer<EventType>::fromJson(j.at("eventType"));
+        if(j.contains("marketCount")) et.marketCount = j.at("marketCount").get<int>();
+        return et;
     }
 }

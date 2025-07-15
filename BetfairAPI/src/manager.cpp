@@ -118,14 +118,21 @@ namespace BetfairAPI {
         }
     }
 
-    Response BetfairManager::getEventTypes(const BettingType::MarketFilter& mf) {
+    std::vector<BettingType::EventTypeResult> BetfairManager::getEventTypes(const BettingType::MarketFilter& mf) {
         auto r = listEventTypes(api_token_,session_token_,mf,"en",jurisdiction_);
 
         if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
             logger_->info(username_ + " queried event types. Response status code " + std::to_string(r.getStatusCode()));
         }
 
-        return r;
+        std::vector<BettingType::EventTypeResult> result;
+        result.reserve(r.getBody()->size());
+
+        for(auto& event_type_result : *r.getBody()) {
+            result.push_back(BettingType::fromJson<BettingType::EventTypeResult>(event_type_result));
+        }
+
+        return result;
     }
 }
 
