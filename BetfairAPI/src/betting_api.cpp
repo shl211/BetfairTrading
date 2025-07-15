@@ -1,3 +1,4 @@
+#include <magic_enum.hpp>
 #include <cpr/cpr.h>
 #include "BetfairAPI/betting_api.h"
 #include "BetfairAPI/betting_type/json_serialiser.hpp"
@@ -16,6 +17,11 @@ namespace BetfairAPI {
             //cpr Response will be made unsafe, but that is ok, as it should be discarded anyway
             return Response(r.status_code,std::move(r.text));
         }
+
+        template<typename Enum>
+        std::string to_string(Enum value) {
+            return std::string(magic_enum::enum_name(value));
+        };
     }
 
     Response listEventTypes(const std::string& api_key,
@@ -37,6 +43,31 @@ namespace BetfairAPI {
         if(locale != detail::default_locale) {
             j["locale"] = locale;
         }
+        cpr::Body body{j.dump()};
+
+        cpr::Response response = cpr::Post(url,headers,body);
+        return toResponse(response);
+    }
+
+    
+    Response listTimeRanges(const std::string& api_key,
+        const std::string& session_key,
+        const BettingType::MarketFilter& mf,
+        const BettingEnum::TimeGranularity granularity,
+        const Jurisdiction jurisdiction
+    ) {
+        
+        cpr::Url url{std::string(getUrl(jurisdiction)) + "listTimeRanges/"};
+        cpr::Header headers {
+            {"Content-Type","application/json"},
+            {"X-Application",api_key},
+            {"X-Authentication",session_key},
+        };
+
+        nlohmann::json j;
+        j["filter"] = BetfairAPI::BettingType::toJson(mf);
+        j["granularity"] = to_string<BetfairAPI::BettingEnum::TimeGranularity>(granularity);
+
         cpr::Body body{j.dump()};
 
         cpr::Response response = cpr::Post(url,headers,body);

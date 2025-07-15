@@ -13,8 +13,12 @@
 #include "date.h"
 #include "betting_type/market_filter.h"
 #include "betting_type/event_type_result.h"
+#include "betting_type/time_range_result.h"
+#include "betting_enum/time_granularity.hpp"
 
 #include "response.h"
+
+//might want a locale str as member var
 namespace BetfairAPI {
     class BetfairManager {
         public:
@@ -30,7 +34,10 @@ namespace BetfairAPI {
             BetfairManager(BetfairManager&&) noexcept = delete;
             BetfairManager& operator=(BetfairManager&&) noexcept = delete;
 
-            std::vector<BettingType::EventTypeResult> getEventTypes(const BettingType::MarketFilter& mf);
+            std::vector<BettingType::EventTypeResult> getEventTypes(const BettingType::MarketFilter& mf = {});
+            std::vector<BettingType::TimeRangeResult> getTimeRanges(const BettingType::MarketFilter& mf = {},
+                BettingEnum::TimeGranularity granularity = BettingEnum::TimeGranularity::DAYS
+            );
 
             bool refreshSession();
             

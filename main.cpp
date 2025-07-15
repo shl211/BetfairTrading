@@ -21,11 +21,10 @@ int main() {
         std::make_unique<Logging::ConsoleLogger>());
     
     BetfairAPI::BettingType::MarketFilter mf;
-    mf.marketBettingTypes = {BetfairAPI::BettingEnum::MarketBettingType::ASIAN_HANDICAP_DOUBLE_LINE};
-    auto r = manager.getEventTypes(mf);
+    auto r = manager.getTimeRanges(mf);
 
     if (!r.empty()) {
-        std::cout << r[0].eventType.name << "," << r[0].eventType.id << "\n";
+        std::cout << r[0].timeRange.from->getIsoString() << "," << r[0].timeRange.to->getIsoString() << "\n";
     }
 
     //std::this_thread::sleep_for(std::chrono::minutes(5));

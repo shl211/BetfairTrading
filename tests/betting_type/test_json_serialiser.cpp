@@ -5,6 +5,7 @@
 #include "BetfairAPI/betting_type/market_filter.h"
 #include "BetfairAPI/betting_type/event_type_result.h"
 #include "BetfairAPI/betting_type/event_type.h"
+#include "BetfairAPI/betting_type/time_range_result.h"
 
 TEST(TimeRangeJson, BothDatesPresent) {
     BetfairAPI::BettingType::TimeRange tr{
@@ -85,4 +86,18 @@ TEST(EventTypeResultJson, Basic) {
 
     // Check that values round-trip correctly
     EXPECT_EQ(et, result);
+}
+
+TEST(TimeRangeResultJson, Basic) {
+    BetfairAPI::BettingType::TimeRangeResult trr;
+    trr.timeRange = BetfairAPI::BettingType::TimeRange{
+        BetfairAPI::Date{"2024-06-11T12:34:56Z"},
+        BetfairAPI::Date{"2024-06-13T12:34:59Z"}
+    };
+    trr.marketCount = 42;
+
+    auto json = BetfairAPI::BettingType::toJson(trr);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::TimeRangeResult>(json);
+
+    EXPECT_EQ(trr, result);
 }

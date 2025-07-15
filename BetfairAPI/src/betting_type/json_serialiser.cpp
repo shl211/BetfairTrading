@@ -4,6 +4,7 @@
 #include "BetfairAPI/betting_type/market_filter.h"
 #include "BetfairAPI/betting_type/event_type.h"
 #include "BetfairAPI/betting_type/event_type_result.h"
+#include "BetfairAPI/betting_type/time_range_result.h"
 
 namespace BetfairAPI::BettingType {
 
@@ -155,5 +156,26 @@ namespace BetfairAPI::BettingType {
         if(j.contains("eventType")) et.eventType = JsonSer<EventType>::fromJson(j.at("eventType"));
         if(j.contains("marketCount")) et.marketCount = j.at("marketCount").get<int>();
         return et;
+    }
+
+    /**************************************************************************
+    * TimeRangeResult  
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<TimeRangeResult>::toJson(const TimeRangeResult& obj) {
+        nlohmann::json j = {};
+        if(!obj.timeRange.from->getIsoString().empty() || !obj.timeRange.to->getIsoString().empty()) {
+            j["timeRange"] = JsonSer<TimeRange>::toJson(obj.timeRange);
+        } 
+        if(obj.marketCount > 0) j["marketCount"] = obj.marketCount;
+        return j.is_null() ? nlohmann::json::object() : j;
+    }
+    
+    template<>
+    TimeRangeResult JsonSer<TimeRangeResult>::fromJson(const nlohmann::json& j) {
+        TimeRangeResult trr;
+        if(j.contains("timeRange")) trr.timeRange = JsonSer<TimeRange>::fromJson(j.at("timeRange"));
+        if(j.contains("marketCount")) trr.marketCount = j.at("marketCount").get<int>();
+        return trr;
     }
 }
