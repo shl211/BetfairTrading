@@ -7,10 +7,12 @@
 #include <thread>
 #include <memory>
 
+#include "Logging/ILogger.h"
 #include "jurisdiction.hpp"
 #include "date.h"
-#include "Logging/ILogger.h"
+#include "betting_type/market_filter.h"
 
+#include "response.h"
 namespace BetfairAPI {
     class BetfairManager {
         public:
@@ -26,11 +28,15 @@ namespace BetfairAPI {
             BetfairManager(BetfairManager&&) noexcept = delete;
             BetfairManager& operator=(BetfairManager&&) noexcept = delete;
 
+            Response getEventTypes(const BettingType::MarketFilter& mf);
+
             bool refreshSession();
+            
             
         private:
             bool endSession();
 
+            std::string username_;
             std::string api_token_;//maybe need more secure storage in future
             std::string session_token_;
             Jurisdiction jurisdiction_;

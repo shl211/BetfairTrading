@@ -43,10 +43,10 @@ namespace BetfairAPI::BettingType {
     **************************************************************************/
     template<>
     nlohmann::json JsonSer<TimeRange>::toJson(const TimeRange& obj) {
-        nlohmann::json j;
+        nlohmann::json j{};
         if(obj.from) j["from"] = obj.from->getIsoString();
         if(obj.to) j["to"] = obj.to->getIsoString();
-        return j;
+        return j.is_null() ? nlohmann::json::object() : j;
     }
     
     template<>
@@ -62,7 +62,7 @@ namespace BetfairAPI::BettingType {
 
     template<>
     nlohmann::json JsonSer<MarketFilter>::toJson(const MarketFilter& obj) {
-        nlohmann::json j;
+        nlohmann::json j = {};
         if(!obj.textQuery.empty()) j["textQuery"] = obj.textQuery;
         if(!obj.eventTypeIds.empty()) j["eventTypeIds"] = obj.eventTypeIds;
         if(!obj.eventIds.empty()) j["eventIds"] = obj.eventIds;
@@ -78,7 +78,8 @@ namespace BetfairAPI::BettingType {
         if(obj.marketStartTime.has_value()) j["marketStartTime"] = JsonSer<TimeRange>::toJson(*(obj.marketStartTime));
         if(!obj.withOrders.empty()) j["withOrders"] = to_string<BettingEnum::OrderStatus>(obj.withOrders);
         if(!obj.raceTypes.empty()) j["raceTypes"] = obj.raceTypes;
-        return j;
+
+        return j.is_null() ? nlohmann::json::object() : j;
     }
 
     template<>

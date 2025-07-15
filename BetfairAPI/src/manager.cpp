@@ -1,6 +1,7 @@
 #include <iostream>
 #include "BetfairAPI/manager.h"
 #include "BetfairAPI/session_api.h"
+#include "BetfairAPI/betting_api.h"
 #include "BetfairAPI/betting_type/json_serialiser.hpp"
 
 namespace BetfairAPI {
@@ -17,7 +18,8 @@ namespace BetfairAPI {
     ) : jurisdiction_(j),
         api_token_(std::move(api_key)),
         refresh_time_(getTimeoutMinutes(j) - MINUTE_OFFSET),
-        logger_(std::move(logger))
+        logger_(std::move(logger)),
+        username_(username)
     {
         BetfairAPI::Response r = interactiveLogin(api_token_,username,password,j);
         auto json = r.getBody();
@@ -60,11 +62,11 @@ namespace BetfairAPI {
         try {
             endSession();
             if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
-                logger_->info("Successfully logged out from session.");
+                logger_->info(username_ + " successfully logged out from session.");
             }
         } catch (const std::exception&) {
             if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
-                logger_->info("Failed to log out. Session still live. Manager now exiting.");
+                logger_->info(username_ + " failed to log out. Session still live. Manager now exiting.");
             }
             // swallow any exceptions
         }
@@ -114,6 +116,16 @@ namespace BetfairAPI {
             }
             // If notified (e.g., destructor), loop will check stop_thread_
         }
+    }
+
+    Response BetfairManager::getEventTypes(const BettingType::MarketFilter& mf) {
+        auto r = listEventTypes(api_token_,session_token_,mf,"en",jurisdiction_);
+
+        if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
+            logger_->info(username_ + " queried event types. Response status code " + std::to_string(r.getStatusCode()));
+        }
+
+        return r;
     }
 }
 

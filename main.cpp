@@ -14,11 +14,16 @@ int main() {
         return 1;
     }
 
-    auto r = BetfairAPI::BetfairManager(USERNAME,
+    auto manager = BetfairAPI::BetfairManager(USERNAME,
         PASSWORD,
         APIKEYDELAY,
         BetfairAPI::Jurisdiction::UK,
         std::make_unique<Logging::ConsoleLogger>());
+    
+    BetfairAPI::BettingType::MarketFilter mf;
+    mf.inPlayOnly = false;
+    auto r = manager.getEventTypes(mf);
 
+    std::cout << r.getStatusCode() << " " << (*r.getBody()) << "\n";
     //std::this_thread::sleep_for(std::chrono::minutes(5));
 }
