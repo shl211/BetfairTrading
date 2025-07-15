@@ -1,6 +1,7 @@
 #include <iostream>
 #include "BetfairAPI/manager.h"
-#include "BetfairAPI/session.h"
+#include "BetfairAPI/session_api.h"
+#include "BetfairAPI/betting_type/json_serialiser.hpp"
 
 namespace BetfairAPI {
 

@@ -2,7 +2,6 @@
 #include <thread>
 #include <chrono>
 #include "BetfairAPI/manager.h"
-#include "BetfairAPI/session.h"
 #include "Logging/console_logger.h"
 #include "Logging/file_logger.h"
 
@@ -19,7 +18,7 @@ int main() {
         PASSWORD,
         APIKEYDELAY,
         BetfairAPI::Jurisdiction::UK,
-        std::make_unique<Logging::SpdFileLogger>("../a.log"));
+        std::make_unique<Logging::ConsoleLogger>());
 
     //std::this_thread::sleep_for(std::chrono::minutes(5));
 }

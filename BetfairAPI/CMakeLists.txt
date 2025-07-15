@@ -1,5 +1,6 @@
 file(GLOB SOURCES CONFIGURE_DEPENDS
     "src/*.cpp"
+    "src/betting_type/*.cpp"
 )
 
 # Add Howard Hinnant date tz.cpp source explicitly

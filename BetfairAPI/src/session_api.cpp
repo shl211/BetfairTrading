@@ -1,5 +1,5 @@
 #include <cpr/cpr.h>
-#include "BetfairAPI/session.h"
+#include "BetfairAPI/session_api.h"
 
 namespace BetfairAPI {
     

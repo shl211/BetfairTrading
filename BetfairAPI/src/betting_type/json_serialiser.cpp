@@ -1,0 +1,115 @@
+#include <magic_enum.hpp>
+#include "BetfairAPI/betting_type/json_serialiser.hpp"
+#include "BetfairAPI/betting_type/time_range.h"
+#include "BetfairAPI/betting_type/market_filter.h"
+
+namespace BetfairAPI::BettingType {
+
+    namespace {
+        template<typename Enum>
+        std::string to_string(Enum value) {
+            return std::string(magic_enum::enum_name(value));
+        };
+
+        template<typename Enum>
+        std::set<std::string> to_string(const std::set<Enum>& value) {
+            std::set<std::string> result;
+            for (const auto& v : magic_enum::enum_values<Enum>()) {
+                result.insert(to_string<Enum>(v));
+            }
+            return result;
+        };
+
+        template<typename Enum>
+        Enum from_string(std::string_view name) {
+            auto result = magic_enum::enum_cast<Enum>(name);
+            if (!result) {
+                throw std::invalid_argument("Invalid enum string: " + std::string(name));
+            }
+            return result.value();
+        };
+
+        template<typename Enum>
+        std::set<Enum> from_string(const std::set<std::string>& name) {
+            std::set<Enum> result;
+            for (const auto& v : name) {
+                result.insert(from_string<Enum>(v));
+            }
+            return result;
+        };
+    }
+
+    /**************************************************************************
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<TimeRange>::toJson(const TimeRange& obj) {
+        nlohmann::json j;
+        if(obj.from) j["from"] = obj.from->getIsoString();
+        if(obj.to) j["to"] = obj.to->getIsoString();
+        return j;
+    }
+    
+    template<>
+    TimeRange JsonSer<TimeRange>::fromJson(const nlohmann::json& j) {
+        TimeRange tr;
+        if(j.contains("from")) tr.from = BetfairAPI::Date(j.at("from").get<std::string>());
+        if(j.contains("to")) tr.to = BetfairAPI::Date(j.at("to").get<std::string>());
+        return tr;
+    }
+    
+    /**************************************************************************
+    **************************************************************************/
+
+    template<>
+    nlohmann::json JsonSer<MarketFilter>::toJson(const MarketFilter& obj) {
+        nlohmann::json j;
+        if(!obj.textQuery.empty()) j["textQuery"] = obj.textQuery;
+        if(!obj.eventTypeIds.empty()) j["eventTypeIds"] = obj.eventTypeIds;
+        if(!obj.eventIds.empty()) j["eventIds"] = obj.eventIds;
+        if(!obj.competitionIds.empty()) j["competitionIds"] = obj.competitionIds;
+        if(!obj.marketIds.empty()) j["marketIds"] = obj.marketIds;
+        if(!obj.venues.empty()) j["venues"] = obj.venues;
+        if(obj.bspOnly.has_value()) j["bspOnly"] = *(obj.bspOnly);
+        if(obj.turnInPlayEnabled.has_value()) j["turnInPlayEnabled"] = *(obj.turnInPlayEnabled);
+        if(obj.inPlayOnly.has_value()) j["inPlayOnly"] = *(obj.inPlayOnly);
+        if(!obj.marketBettingTypes.empty()) j["marketBettingTypes"] = to_string<BettingEnum::MarketBettingType>(obj.marketBettingTypes);
+        if(!obj.marketCountries.empty()) j["marketCountries"] = obj.marketCountries;
+        if(!obj.marketTypeCodes.empty()) j["marketTypeCodes"] = obj.marketTypeCodes;
+        if(obj.marketStartTime.has_value()) j["marketStartTime"] = JsonSer<TimeRange>::toJson(*(obj.marketStartTime));
+        if(!obj.withOrders.empty()) j["withOrders"] = to_string<BettingEnum::OrderStatus>(obj.withOrders);
+        if(!obj.raceTypes.empty()) j["raceTypes"] = obj.raceTypes;
+        return j;
+    }
+
+    template<>
+    MarketFilter JsonSer<MarketFilter>::fromJson(const nlohmann::json& j) {
+        MarketFilter mf;
+        if(j.contains("textQuery")) mf.textQuery = j.at("textQuery").get<std::string>();
+        if(j.contains("eventTypeIds")) mf.eventTypeIds = j.at("eventTypeIds").get<std::set<std::string>>();
+        if(j.contains("eventIds")) mf.eventIds = j.at("eventIds").get<std::set<std::string>>();
+        if(j.contains("competitionIds")) mf.competitionIds = j.at("competitionIds").get<std::set<std::string>>();
+        if(j.contains("marketIds")) mf.marketIds = j.at("marketIds").get<std::set<std::string>>();
+        if(j.contains("venues")) mf.venues = j.at("venues").get<std::set<std::string>>();
+        if(j.contains("bspOnly")) mf.bspOnly = j.at("bspOnly").get<bool>();
+        if(j.contains("turnInPlayEnabled")) mf.turnInPlayEnabled = j.at("turnInPlayEnabled").get<bool>();
+        if(j.contains("inPlayOnly")) mf.inPlayOnly = j.at("inPlayOnly").get<bool>();
+        
+        if(j.contains("marketBettingTypes")) {
+            auto s = j.at("marketBettingTypes").get<std::set<std::string>>();
+            mf.marketBettingTypes = from_string<BettingEnum::MarketBettingType>(s);
+        }
+        
+        if(j.contains("marketCountries")) mf.marketCountries = j.at("marketCountries").get<std::set<std::string>>();
+        if(j.contains("marketTypeCodes")) mf.marketTypeCodes = j.at("marketTypeCodes").get<std::set<std::string>>();
+        if(j.contains("marketStartTime")) mf.marketStartTime = JsonSer<TimeRange>::fromJson(j.at("marketStartTime"));
+
+        if(j.contains("withOrders")) {
+            auto s = j.at("withOrders").get<std::set<std::string>>() ;
+            mf.withOrders = from_string<BettingEnum::OrderStatus>(s);
+        }
+
+        if(j.contains("raceTypes")) mf.raceTypes = j.at("raceTypes").get<std::set<std::string>>();
+
+        return mf;
+    }
+}
