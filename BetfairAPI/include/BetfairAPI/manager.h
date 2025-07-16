@@ -14,6 +14,7 @@
 #include "betting_type/market_filter.h"
 #include "betting_type/event_type_result.h"
 #include "betting_type/time_range_result.h"
+#include "betting_type/competition_result.h"
 #include "betting_enum/time_granularity.hpp"
 
 #include "response.h"
@@ -35,9 +36,11 @@ namespace BetfairAPI {
             BetfairManager& operator=(BetfairManager&&) noexcept = delete;
 
             std::vector<BettingType::EventTypeResult> getEventTypes(const BettingType::MarketFilter& mf = {});
+            std::vector<BettingType::CompetitionResult> getCompetitions(const BettingType::MarketFilter& mf = {});
             std::vector<BettingType::TimeRangeResult> getTimeRanges(const BettingType::MarketFilter& mf = {},
                 BettingEnum::TimeGranularity granularity = BettingEnum::TimeGranularity::DAYS
             );
+
 
             bool refreshSession();
             

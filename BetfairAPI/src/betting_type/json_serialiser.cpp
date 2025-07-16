@@ -5,6 +5,8 @@
 #include "BetfairAPI/betting_type/event_type.h"
 #include "BetfairAPI/betting_type/event_type_result.h"
 #include "BetfairAPI/betting_type/time_range_result.h"
+#include "BetfairAPI/betting_type/competition.h"
+#include "BetfairAPI/betting_type/competition_result.h"
 
 namespace BetfairAPI::BettingType {
 
@@ -177,5 +179,45 @@ namespace BetfairAPI::BettingType {
         if(j.contains("timeRange")) trr.timeRange = JsonSer<TimeRange>::fromJson(j.at("timeRange"));
         if(j.contains("marketCount")) trr.marketCount = j.at("marketCount").get<int>();
         return trr;
+    }
+
+    /**************************************************************************
+    * Competition  
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<Competition>::toJson(const Competition& obj) {
+        nlohmann::json j = {};
+        if(!obj.id.empty()) j["id"] = obj.id;
+        if(!obj.name.empty()) j["name"] = obj.name;
+        return j.is_null() ? nlohmann::json::object() : j;
+    }
+    
+    template<>
+    Competition JsonSer<Competition>::fromJson(const nlohmann::json& j) {
+        Competition comp;
+        if(j.contains("id")) comp.id = j.at("id").get<std::string>();
+        if(j.contains("name")) comp.name = j.at("name").get<std::string>();
+        return comp;
+    }
+
+    /**************************************************************************
+    * CompetitionResult
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<CompetitionResult>::toJson(const CompetitionResult& obj) {
+        nlohmann::json j = {};
+        j["competition"] = JsonSer<Competition>::toJson(obj.competition);
+        if(obj.marketCount != 0) j["marketCount"] = obj.marketCount;
+        if(!obj.competitionRegion.empty()) j["competitionRegion"] = obj.competitionRegion;
+        return j.is_null() ? nlohmann::json::object() : j;
+    }
+    
+    template<>
+    CompetitionResult JsonSer<CompetitionResult>::fromJson(const nlohmann::json& j) {
+        CompetitionResult comp_res;
+        if(j.contains("competition")) comp_res.competition = JsonSer<Competition>::fromJson(j.at("competition"));
+        if(j.contains("marketCount")) comp_res.marketCount = j.at("marketCount").get<int>();
+        if(j.contains("competitionRegion")) comp_res.competitionRegion = j.at("competitionRegion").get<std::string>();
+        return comp_res;
     }
 }

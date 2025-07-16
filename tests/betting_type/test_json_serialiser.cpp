@@ -6,6 +6,8 @@
 #include "BetfairAPI/betting_type/event_type_result.h"
 #include "BetfairAPI/betting_type/event_type.h"
 #include "BetfairAPI/betting_type/time_range_result.h"
+#include "BetfairAPI/betting_type/competition.h"
+#include "BetfairAPI/betting_type/competition_result.h"
 
 TEST(TimeRangeJson, BothDatesPresent) {
     BetfairAPI::BettingType::TimeRange tr{
@@ -100,4 +102,29 @@ TEST(TimeRangeResultJson, Basic) {
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::TimeRangeResult>(json);
 
     EXPECT_EQ(trr, result);
+}
+
+TEST(CompetitionJson, Basic) {
+    // Basic test for Competition
+    BetfairAPI::BettingType::Competition comp;
+    comp.id = "comp123";
+    comp.name = "Premier League";
+
+    auto json = BetfairAPI::BettingType::toJson(comp);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::Competition>(json);
+
+    EXPECT_EQ(comp, result);
+}
+
+TEST(CompetitionResultJson, Basic) {
+    BetfairAPI::BettingType::CompetitionResult comp_res;
+    comp_res.competition.id = "comp456";
+    comp_res.competition.name = "Champions League";
+    comp_res.marketCount = 77;
+    comp_res.competitionRegion = "EU";
+
+    auto json = BetfairAPI::BettingType::toJson(comp_res);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CompetitionResult>(json);
+
+    EXPECT_EQ(comp_res, result);
 }

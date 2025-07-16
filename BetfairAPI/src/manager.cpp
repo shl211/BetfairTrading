@@ -139,6 +139,27 @@ namespace BetfairAPI {
 
         return result;
     }
+    
+    std::vector<BettingType::CompetitionResult> BetfairManager::getCompetitions(const BettingType::MarketFilter& mf) {
+        auto r = listCompetitions(api_token_,session_token_,mf,"en",jurisdiction_);
+
+        if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
+            logger_->info(username_ + " queried competitions. Response status code " + std::to_string(r.getStatusCode()));
+        }
+
+        std::vector<BettingType::CompetitionResult> result;
+        if(r.getBody() != nullptr) {
+            const auto& body = *r.getBody();
+            result.reserve(body.size());
+            auto json_conversion = [](const auto& competition_result) -> BettingType::CompetitionResult {
+                return BettingType::fromJson<BettingType::CompetitionResult>(competition_result);
+            };
+    
+            std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
+        }
+
+        return result;
+    }
 
     std::vector<BettingType::TimeRangeResult> BetfairManager::getTimeRanges(const BettingType::MarketFilter& mf,
         BettingEnum::TimeGranularity granularity
@@ -161,7 +182,8 @@ namespace BetfairAPI {
         }
 
         return result;
-
     }
+
+
 }
 

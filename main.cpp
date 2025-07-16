@@ -21,10 +21,10 @@ int main() {
         std::make_unique<Logging::ConsoleLogger>());
     
     BetfairAPI::BettingType::MarketFilter mf;
-    auto r = manager.getTimeRanges(mf);
+    auto r = manager.getCompetitions(mf);
 
     if (!r.empty()) {
-        std::cout << r[0].timeRange.from->getIsoString() << "," << r[0].timeRange.to->getIsoString() << "\n";
+        std::cout << r[0] << "\n";
     }
 
     //std::this_thread::sleep_for(std::chrono::minutes(5));
