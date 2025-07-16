@@ -18,6 +18,7 @@ int main() {
         PASSWORD,
         APIKEYDELAY,
         BetfairAPI::Jurisdiction::UK,
+        "en",
         std::make_unique<Logging::ConsoleLogger>());
     
     BetfairAPI::BettingType::MarketFilter mf;

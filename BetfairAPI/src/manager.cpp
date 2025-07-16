@@ -15,12 +15,14 @@ namespace BetfairAPI {
         const std::string& password,
         std::string api_key,
         Jurisdiction j,
+        std::string locale,
         std::unique_ptr<Logging::ILogger> logger
     ) : jurisdiction_(j),
         api_token_(std::move(api_key)),
         refresh_time_(getTimeoutMinutes(j) - MINUTE_OFFSET),
         logger_(std::move(logger)),
-        username_(username)
+        username_(username),
+        locale_(std::move(locale))
     {
         BetfairAPI::Response r = interactiveLogin(api_token_,username,password,j);
         auto json = r.getBody();
@@ -120,7 +122,7 @@ namespace BetfairAPI {
     }
 
     std::vector<BettingType::EventTypeResult> BetfairManager::getEventTypes(const BettingType::MarketFilter& mf) {
-        auto r = listEventTypes(api_token_,session_token_,mf,"en",jurisdiction_);
+        auto r = listEventTypes(api_token_,session_token_,mf,locale_,jurisdiction_);
 
         if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
             logger_->info(username_ + " queried event types. Response status code " + std::to_string(r.getStatusCode()));
@@ -141,7 +143,7 @@ namespace BetfairAPI {
     }
     
     std::vector<BettingType::CompetitionResult> BetfairManager::getCompetitions(const BettingType::MarketFilter& mf) {
-        auto r = listCompetitions(api_token_,session_token_,mf,"en",jurisdiction_);
+        auto r = listCompetitions(api_token_,session_token_,mf,locale_,jurisdiction_);
 
         if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
             logger_->info(username_ + " queried competitions. Response status code " + std::to_string(r.getStatusCode()));

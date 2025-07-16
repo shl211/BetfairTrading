@@ -27,6 +27,7 @@ namespace BetfairAPI {
                 const std::string& password,
                 std::string api_key,
                 Jurisdiction j = Jurisdiction::GLOBAL,
+                std::string locale = "en",
                 std::unique_ptr<Logging::ILogger> logger = nullptr
             );
             ~BetfairManager();
@@ -52,6 +53,7 @@ namespace BetfairAPI {
             std::string api_token_;//maybe need more secure storage in future
             std::string session_token_;
             Jurisdiction jurisdiction_;
+            std::string locale_;
             int refresh_time_;
             std::unique_ptr<Logging::ILogger> logger_;
 
