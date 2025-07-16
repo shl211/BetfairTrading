@@ -19,6 +19,7 @@
 #include "betting_enum/time_granularity.hpp"
 #include "betting_type/market_type_result.h"
 #include "betting_type/country_code_result.h"
+#include "betting_type/venue_result.h"
 
 #include "response.h"
 
@@ -47,6 +48,7 @@ namespace BetfairAPI {
             std::vector<BettingType::EventResult> getEvents(const BettingType::MarketFilter& mf = {});
             std::vector<BettingType::MarketTypeResult> getMarketTypeResults(const BettingType::MarketFilter& mf = {});
             std::vector<BettingType::CountryCodeResult> getCountries(const BettingType::MarketFilter& mf = {});
+            std::vector<BettingType::VenueResult> getVenues(const BettingType::MarketFilter& mf = {});
 
 
             bool refreshSession();

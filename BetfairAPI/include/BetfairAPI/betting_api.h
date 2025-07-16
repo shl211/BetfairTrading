@@ -52,5 +52,12 @@ namespace BetfairAPI {
         const std::string& locale = detail::default_locale,
         const Jurisdiction j = Jurisdiction::GLOBAL
     );
+    
+    Response listVenues(const std::string& api_key,
+        const std::string& session_key,
+        const BettingType::MarketFilter& mf,
+        const std::string& locale = detail::default_locale,
+        const Jurisdiction j = Jurisdiction::GLOBAL
+    );
 
 }

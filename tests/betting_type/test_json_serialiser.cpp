@@ -12,6 +12,7 @@
 #include "BetfairAPI/betting_type/event_result.h"
 #include "BetfairAPI/betting_type/market_type_result.h"
 #include "BetfairAPI/betting_type/country_code_result.h"
+#include "BetfairAPI/betting_type/venue_result.h"
 
 TEST(TimeRangeJson, BothDatesPresent) {
     BetfairAPI::BettingType::TimeRange tr{
@@ -184,4 +185,15 @@ TEST(CountryCodeResultJson,Basic) {
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CountryCodeResult>(json);
 
     EXPECT_EQ(ccr, result);
+}
+
+TEST(VenueResultJson,Basic) {
+    BetfairAPI::BettingType::VenueResult vr;
+    vr.venue = "Cheltenham";
+    vr.marketCount = 456;
+
+    auto json = BetfairAPI::BettingType::toJson(vr);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::VenueResult>(json);
+
+    EXPECT_EQ(vr, result);
 }

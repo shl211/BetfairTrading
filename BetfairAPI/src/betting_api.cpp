@@ -168,4 +168,28 @@ namespace BetfairAPI {
         cpr::Response response = cpr::Post(url,headers,body);
         return toResponse(response);
     }
+
+    Response listVenues(const std::string& api_key,
+        const std::string& session_key,
+        const BettingType::MarketFilter& mf,
+        const std::string& locale,
+        const Jurisdiction jurisdiction
+    ) {
+        cpr::Url url{std::string(getUrl(jurisdiction)) + "listVenues/"};
+        cpr::Header headers {
+            {"Content-Type","application/json"},
+            {"X-Application",api_key},
+            {"X-Authentication",session_key},
+        };
+
+        nlohmann::json j;
+        j["filter"] = BetfairAPI::BettingType::toJson(mf);
+        if(locale != detail::default_locale) {
+            j["locale"] = locale;
+        }
+        cpr::Body body{j.dump()};
+
+        cpr::Response response = cpr::Post(url,headers,body);
+        return toResponse(response);
+    }
 }
