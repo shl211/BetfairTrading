@@ -11,6 +11,7 @@
 #include "BetfairAPI/betting_type/event.h"
 #include "BetfairAPI/betting_type/event_result.h"
 #include "BetfairAPI/betting_type/market_type_result.h"
+#include "BetfairAPI/betting_type/country_code_result.h"
 
 TEST(TimeRangeJson, BothDatesPresent) {
     BetfairAPI::BettingType::TimeRange tr{
@@ -172,4 +173,15 @@ TEST(MarketTypeResultJson,Basic) {
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::MarketTypeResult>(json);
 
     EXPECT_EQ(mtr, result);
+}
+
+TEST(CountryCodeResultJson,Basic) {
+    BetfairAPI::BettingType::CountryCodeResult ccr;
+    ccr.countryCode = "GB";
+    ccr.marketCount = 123;
+
+    auto json = BetfairAPI::BettingType::toJson(ccr);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CountryCodeResult>(json);
+
+    EXPECT_EQ(ccr, result);
 }

@@ -229,6 +229,27 @@ namespace BetfairAPI {
         return result;
     }
 
+    std::vector<BettingType::CountryCodeResult> BetfairManager::getCountries(const BettingType::MarketFilter& mf) {
+        auto r = listCountries(api_token_,session_token_,mf,locale_,jurisdiction_);
+
+        if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
+            logger_->info(username_ + " queried market types. Response status code " + std::to_string(r.getStatusCode()));
+        }
+
+        std::vector<BettingType::CountryCodeResult> result;
+        if(r.getBody() != nullptr) {
+            const auto& body = *r.getBody();
+            result.reserve(body.size());
+            auto json_conversion = [](const auto& event_result) -> BettingType::CountryCodeResult {
+                return BettingType::fromJson<BettingType::CountryCodeResult>(event_result);
+            };
+    
+            std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
+        }
+
+        return result;
+    }
+
 
 }
 

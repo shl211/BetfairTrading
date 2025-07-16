@@ -10,6 +10,7 @@
 #include "BetfairAPI/betting_type/event.h"
 #include "BetfairAPI/betting_type/event_result.h"
 #include "BetfairAPI/betting_type/market_type_result.h"
+#include "BetfairAPI/betting_type/country_code_result.h"
 
 namespace BetfairAPI::BettingType {
 
@@ -285,6 +286,25 @@ namespace BetfairAPI::BettingType {
     MarketTypeResult JsonSer<MarketTypeResult>::fromJson(const nlohmann::json& j) {
         MarketTypeResult mtr;
         if(j.contains("marketType")) mtr.marketType = j.at("marketType").get<std::string>();
+        if(j.contains("marketCount")) mtr.marketCount = j.at("marketCount").get<int>();
+        return mtr;
+    }
+
+    /**************************************************************************
+    * CountryCodeResult
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<CountryCodeResult>::toJson(const CountryCodeResult& obj) {
+        nlohmann::json j = {};
+        if(!obj.countryCode.empty()) j["countryCode"] = obj.countryCode;
+        if(obj.marketCount > 0) j["marketCount"] = obj.marketCount;
+        return j.is_null() ? nlohmann::json::object() : j;
+    }
+    
+    template<>
+    CountryCodeResult JsonSer<CountryCodeResult>::fromJson(const nlohmann::json& j) {
+        CountryCodeResult mtr;
+        if(j.contains("countryCode")) mtr.countryCode = j.at("countryCode").get<std::string>();
         if(j.contains("marketCount")) mtr.marketCount = j.at("marketCount").get<int>();
         return mtr;
     }
