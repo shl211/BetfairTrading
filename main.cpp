@@ -22,8 +22,8 @@ int main() {
         std::make_unique<Logging::ConsoleLogger>());
     
     BetfairAPI::BettingType::MarketFilter mf;
-    //mf.inPlayOnly = true;
-    auto r = manager.getEventTypes(mf);
+    mf.inPlayOnly = true;
+    auto r = manager.getEvents(mf);
 
     for(auto& v : r) {
         std::cout << v << "\n";

@@ -8,6 +8,8 @@
 #include "BetfairAPI/betting_type/time_range_result.h"
 #include "BetfairAPI/betting_type/competition.h"
 #include "BetfairAPI/betting_type/competition_result.h"
+#include "BetfairAPI/betting_type/event.h"
+#include "BetfairAPI/betting_type/event_result.h"
 
 TEST(TimeRangeJson, BothDatesPresent) {
     BetfairAPI::BettingType::TimeRange tr{
@@ -127,4 +129,35 @@ TEST(CompetitionResultJson, Basic) {
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CompetitionResult>(json);
 
     EXPECT_EQ(comp_res, result);
+}
+
+TEST(EventJson,Basic) {
+    BetfairAPI::BettingType::Event event;
+    event.id = "event789";
+    event.name = "FA Cup Final";
+    event.countryCode = "GB";
+    event.timezone = "Europe/London";
+    event.openDate = BetfairAPI::Date{"2024-06-15T17:00:00Z"};
+    event.venue = "Wembley Stadium";
+
+    auto json = BetfairAPI::BettingType::toJson(event);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::Event>(json);
+
+    EXPECT_EQ(event, result);
+}
+
+TEST(EventResultJson,Basic) {
+    BetfairAPI::BettingType::EventResult event_res;
+    event_res.event.id = "event101";
+    event_res.event.name = "World Cup Final";
+    event_res.event.countryCode = "FR";
+    event_res.event.timezone = "Europe/Paris";
+    event_res.event.openDate = BetfairAPI::Date{"2024-07-14T18:00:00Z"};
+    event_res.event.venue = "Stade de France";
+    event_res.marketCount = 99;
+
+    auto json = BetfairAPI::BettingType::toJson(event_res);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::EventResult>(json);
+
+    EXPECT_EQ(event_res, result);
 }
