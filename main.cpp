@@ -21,11 +21,13 @@ int main() {
         std::make_unique<Logging::ConsoleLogger>());
     
     BetfairAPI::BettingType::MarketFilter mf;
-    auto r = manager.getCompetitions(mf);
+    //mf.inPlayOnly = true;
+    auto r = manager.getEventTypes(mf);
 
-    if (!r.empty()) {
-        std::cout << r[0] << "\n";
+    for(auto& v : r) {
+        std::cout << v << "\n";
     }
+    std::cout << "Total: " << r.size() << "\n";
 
     //std::this_thread::sleep_for(std::chrono::minutes(5));
 }

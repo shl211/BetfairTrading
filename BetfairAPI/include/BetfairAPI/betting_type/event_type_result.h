@@ -1,6 +1,7 @@
 #pragma once
 
 #include "event_type.h"
+#include <ostream>
 
 namespace BetfairAPI::BettingType {
     struct EventTypeResult {
@@ -14,5 +15,10 @@ namespace BetfairAPI::BettingType {
 
     inline bool operator!=(const EventTypeResult& lhs,const EventTypeResult& rhs) {
         return !(lhs==rhs);
+    }
+
+    inline std::ostream& operator<<(std::ostream& os,const EventTypeResult& et_res) {
+        os << "Event type result: " << et_res.eventType << " with market count " << et_res.marketCount;
+        return os;
     }
 }

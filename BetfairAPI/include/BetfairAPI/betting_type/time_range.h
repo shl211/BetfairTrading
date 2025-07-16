@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <ostream>
 #include "BetfairAPI/date.h"
 
 namespace BetfairAPI::BettingType {
@@ -17,4 +18,11 @@ namespace BetfairAPI::BettingType {
         return !(lhs == rhs);
     }
 
+    inline std::ostream& operator<<(std::ostream& os,const TimeRange& tr) {
+        os << "Time range " << 
+            (tr.from ? tr.from->getIsoString() : "N/A") << " - " <<
+            (tr.to ? tr.to->getIsoString() : "N/A") << " - ";
+
+        return os;
+    }
 }

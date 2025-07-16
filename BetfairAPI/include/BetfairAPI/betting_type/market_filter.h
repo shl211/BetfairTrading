@@ -48,4 +48,6 @@ namespace BetfairAPI::BettingType {
     inline bool operator!=(const MarketFilter& lhs, const MarketFilter& rhs) {
         return !(lhs == rhs);
     }
+
+    //add ostream at some point
 }
