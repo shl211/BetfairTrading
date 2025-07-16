@@ -23,7 +23,7 @@ int main() {
     
     BetfairAPI::BettingType::MarketFilter mf;
     mf.inPlayOnly = true;
-    auto r = manager.getEvents(mf);
+    auto r = manager.getMarketTypeResults(mf);
 
     for(auto& v : r) {
         std::cout << v << "\n";

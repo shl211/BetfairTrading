@@ -17,6 +17,7 @@
 #include "betting_type/competition_result.h"
 #include "betting_type/event_result.h"
 #include "betting_enum/time_granularity.hpp"
+#include "betting_type/market_type_result.h"
 
 #include "response.h"
 
@@ -43,6 +44,7 @@ namespace BetfairAPI {
                 BettingEnum::TimeGranularity granularity = BettingEnum::TimeGranularity::DAYS
             );
             std::vector<BettingType::EventResult> getEvents(const BettingType::MarketFilter& mf = {});
+            std::vector<BettingType::MarketTypeResult> getMarketTypeResults(const BettingType::MarketFilter& mf = {});
 
 
             bool refreshSession();

@@ -9,6 +9,7 @@
 #include "BetfairAPI/betting_type/competition_result.h"
 #include "BetfairAPI/betting_type/event.h"
 #include "BetfairAPI/betting_type/event_result.h"
+#include "BetfairAPI/betting_type/market_type_result.h"
 
 namespace BetfairAPI::BettingType {
 
@@ -267,5 +268,24 @@ namespace BetfairAPI::BettingType {
         if(j.contains("event")) e.event = JsonSer<Event>::fromJson(j.at("event"));
         if(j.contains("marketCount")) e.marketCount = j.at("marketCount").get<int>();
         return e;
+    }
+
+    /**************************************************************************
+    * MarketTypeResult
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<MarketTypeResult>::toJson(const MarketTypeResult& obj) {
+        nlohmann::json j = {};
+        if(!obj.marketType.empty()) j["marketType"] = obj.marketType;
+        if(obj.marketCount > 0) j["marketCount"] = obj.marketCount;
+        return j.is_null() ? nlohmann::json::object() : j;
+    }
+    
+    template<>
+    MarketTypeResult JsonSer<MarketTypeResult>::fromJson(const nlohmann::json& j) {
+        MarketTypeResult mtr;
+        if(j.contains("marketType")) mtr.marketType = j.at("marketType").get<std::string>();
+        if(j.contains("marketCount")) mtr.marketCount = j.at("marketCount").get<int>();
+        return mtr;
     }
 }

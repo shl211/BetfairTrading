@@ -10,6 +10,7 @@
 #include "BetfairAPI/betting_type/competition_result.h"
 #include "BetfairAPI/betting_type/event.h"
 #include "BetfairAPI/betting_type/event_result.h"
+#include "BetfairAPI/betting_type/market_type_result.h"
 
 TEST(TimeRangeJson, BothDatesPresent) {
     BetfairAPI::BettingType::TimeRange tr{
@@ -160,4 +161,15 @@ TEST(EventResultJson,Basic) {
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::EventResult>(json);
 
     EXPECT_EQ(event_res, result);
+}
+
+TEST(MarketTypeResultJson,Basic) {
+    BetfairAPI::BettingType::MarketTypeResult mtr;
+    mtr.marketType = "MATCH_ODDS";
+    mtr.marketCount = 123;
+
+    auto json = BetfairAPI::BettingType::toJson(mtr);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::MarketTypeResult>(json);
+
+    EXPECT_EQ(mtr, result);
 }
