@@ -78,6 +78,12 @@ namespace BetfairAPI {
             std::atomic<bool> stop_thread_{false};
 
             void keepAliveLoop();
-
+            void setLoggingFlags();
+            //track log states
+            bool is_debug_level_;
+            bool is_info_level_;
+            bool is_warn_level_;
+            bool is_error_level_;
+            bool is_critical_level_;
     };
 }

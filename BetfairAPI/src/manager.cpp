@@ -10,6 +10,31 @@ namespace BetfairAPI {
     namespace {
         constexpr int MINUTE_OFFSET = 2;
         constexpr int MAX_API_DATA = 1000;
+
+        std::string printResponse(const Response& r,bool printResponseBody,bool printRequestBody) {
+            
+            std::string s {"Response status code: " + r.getStatusCode()};
+
+            if(printRequestBody) {
+                s += " Target endpoint " + r.getRequestTarget() + ", Request body: ";
+                if (r.getBody()) {
+                    s += r.getBody()->dump();
+                } else {
+                    s += "N/A";
+                }
+            }
+
+            if(printResponseBody) {
+                s += " Response body: ";
+                if (r.getRequestBody()) {
+                    s += r.getRequestBody()->dump();
+                } else {
+                    s += "N/A";
+                }
+            }
+
+            return s;
+        }
     }
 
     BetfairManager::BetfairManager(const std::string& username,
@@ -25,6 +50,8 @@ namespace BetfairAPI {
         username_(username),
         locale_(std::move(locale))
     {
+        setLoggingFlags();
+        
         BetfairAPI::Response r = interactiveLogin(api_token_,username,password,j);
         auto json = r.getBody();
         bool status_code_good = r.getStatusCode() == 200;
@@ -34,8 +61,12 @@ namespace BetfairAPI {
 
         if(status_code_good && successful_login) {
             session_token_ = json->at("token").get<std::string>();
-            if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
+            if(is_info_level_) {
                 logger_->info(username + " logged in successfully.");
+            }
+
+            if(is_debug_level_) {
+                logger_->debug(printResponse(r,true,true));
             }
         }
         else {
@@ -43,8 +74,9 @@ namespace BetfairAPI {
                                 json->at("error").get<std::string>() : "MALFORMED JSON";
             std::string msg = username + " failed to log in. Status code: " + std::to_string(r.getStatusCode()) +
                                     " Error: " + error;
-            if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Critical)) {
+            if(is_critical_level_) {
                 logger_->critical(msg);
+                logger_->critical(printResponse(r, true, true));
             }
             throw std::runtime_error(msg);
         }
@@ -65,15 +97,23 @@ namespace BetfairAPI {
         
         try {
             endSession();
-            if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
+            if(is_info_level_) {
                 logger_->info(username_ + " successfully logged out from session.");
             }
         } catch (const std::exception&) {
-            if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
+            if(is_info_level_) {
                 logger_->info(username_ + " failed to log out. Session still live. Manager now exiting.");
             }
             // swallow any exceptions
         }
+    }
+
+    void BetfairManager::setLoggingFlags() {
+        is_debug_level_ = logger_ && logger_->isLevelEnabled(Logging::LogLevel::Debug);
+        is_info_level_ = logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info);
+        is_critical_level_ = logger_ && logger_->isLevelEnabled(Logging::LogLevel::Critical);
+        is_error_level_ = logger_ && logger_->isLevelEnabled(Logging::LogLevel::Error);
+        is_warn_level_ = logger_ && logger_->isLevelEnabled(Logging::LogLevel::Warn);
     }
 
     bool BetfairManager::refreshSession() {
@@ -84,6 +124,10 @@ namespace BetfairAPI {
         bool status_code_good = r.getStatusCode() == 200;
         bool has_status_and_token = well_formed_json && json->contains("status") && json->contains("token");
         bool successful_refresh = has_status_and_token && json->at("status").get<std::string>() == "SUCCESS";
+
+        if (!successful_refresh && is_debug_level_) {
+            logger_->debug(printResponse(r, true, true));
+        }
 
         return status_code_good && successful_refresh;
     }
@@ -125,8 +169,12 @@ namespace BetfairAPI {
     std::vector<BettingType::EventTypeResult> BetfairManager::getEventTypes(const BettingType::MarketFilter& mf) {
         auto r = listEventTypes(api_token_,session_token_,mf,locale_,jurisdiction_);
 
-        if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
-            logger_->info(username_ + " queried event types. Response status code " + std::to_string(r.getStatusCode()));
+        if(is_info_level_) {
+            logger_->info(username_ + " queried event types." + printResponse(r,false,false));
+        }
+
+        if(is_debug_level_) {
+            logger_->debug(username_ + " queried event types." + printResponse(r,true,true));
         }
 
         std::vector<BettingType::EventTypeResult> result;
@@ -146,8 +194,12 @@ namespace BetfairAPI {
     std::vector<BettingType::CompetitionResult> BetfairManager::getCompetitions(const BettingType::MarketFilter& mf) {
         auto r = listCompetitions(api_token_,session_token_,mf,locale_,jurisdiction_);
 
-        if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
-            logger_->info(username_ + " queried competitions. Response status code " + std::to_string(r.getStatusCode()));
+        if(is_info_level_) {
+            logger_->info(username_ + " queried competitions. " + printResponse(r,false,false));
+        }
+        
+        if(is_debug_level_) {
+            logger_->debug(username_ + " queried competitions. " + printResponse(r,true,true));
         }
 
         std::vector<BettingType::CompetitionResult> result;
@@ -169,8 +221,12 @@ namespace BetfairAPI {
     ) {
         auto r = listTimeRanges(api_token_,session_token_,mf,granularity,jurisdiction_);
         
-        if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
-            logger_->info(username_ + " queried time ranges. Response status code " + std::to_string(r.getStatusCode()));
+        if(is_info_level_) {
+            logger_->info(username_ + " queried time ranges. " + printResponse(r,false,false));
+        }
+        
+        if(is_debug_level_) {
+            logger_->debug(username_ + " queried time ranges. " + printResponse(r,true,true));
         }
 
         std::vector<BettingType::TimeRangeResult> result;
@@ -190,8 +246,12 @@ namespace BetfairAPI {
     std::vector<BettingType::EventResult> BetfairManager::getEvents(const BettingType::MarketFilter& mf) {
         auto r = listEvents(api_token_,session_token_,mf,locale_,jurisdiction_);
 
-        if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
-            logger_->info(username_ + " queried events. Response status code " + std::to_string(r.getStatusCode()));
+        if(is_info_level_) {
+            logger_->info(username_ + " queried events. " + printResponse(r,false,false));
+        }
+
+        if(is_debug_level_) {
+            logger_->debug(username_ + " queried events. " + printResponse(r,true,true));
         }
 
         std::vector<BettingType::EventResult> result;
@@ -212,9 +272,14 @@ namespace BetfairAPI {
 
         auto r = listMarketTypes(api_token_,session_token_,mf,locale_,jurisdiction_);
 
-        if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
-            logger_->info(username_ + " queried market types. Response status code " + std::to_string(r.getStatusCode()));
+        if(is_info_level_) {
+            logger_->info(username_ + " queried market types. " + printResponse(r,false,false));
         }
+
+        if(is_debug_level_) {
+            logger_->debug(username_ + " queried market types. " + printResponse(r,true,true));
+        }
+
 
         std::vector<BettingType::MarketTypeResult> result;
         if(r.getBody() != nullptr) {
@@ -233,8 +298,12 @@ namespace BetfairAPI {
     std::vector<BettingType::CountryCodeResult> BetfairManager::getCountries(const BettingType::MarketFilter& mf) {
         auto r = listCountries(api_token_,session_token_,mf,locale_,jurisdiction_);
 
-        if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
-            logger_->info(username_ + " queried market types. Response status code " + std::to_string(r.getStatusCode()));
+        if(is_info_level_) {
+            logger_->info(username_ + " queried countries. " + printResponse(r,false,false));
+        }
+
+        if(is_debug_level_) {
+            logger_->debug(username_ + " queried countries. " + printResponse(r,true,true));
         }
 
         std::vector<BettingType::CountryCodeResult> result;
@@ -254,8 +323,12 @@ namespace BetfairAPI {
     std::vector<BettingType::VenueResult> BetfairManager::getVenues(const BettingType::MarketFilter& mf) {
         auto r = listVenues(api_token_,session_token_,mf,locale_,jurisdiction_);
 
-        if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
-            logger_->info(username_ + " queried market types. Response status code " + std::to_string(r.getStatusCode()));
+        if(is_info_level_) {
+            logger_->info(username_ + " queried venues. " + printResponse(r,false,false));
+        }
+
+        if(is_debug_level_) {
+            logger_->debug(username_ + " queried venues. " + printResponse(r,true,true));
         }
 
         std::vector<BettingType::VenueResult> result;
@@ -279,7 +352,7 @@ namespace BetfairAPI {
     ) {
 
         if(max_results <= 0) {
-            if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
+            if(is_info_level_) {
                 logger_->info(username_ + " queried market catalogue. Max results <= 0 so empty return");
             }
 
@@ -295,8 +368,12 @@ namespace BetfairAPI {
 
         auto r = listMarketCatalogue(api_token_,session_token_,mf,market_projection,market_sort,max_results);
 
-        if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
-            logger_->info(username_ + " queried market catalogue. Response status code " + std::to_string(r.getStatusCode()));
+        if(is_info_level_) {
+            logger_->info(username_ + " queried market catalogue. " + printResponse(r,false,false));
+        }
+
+        if(is_debug_level_) {
+            logger_->debug(username_ + " queried market catalogue. " + printResponse(r,true,true));
         }
 
         std::vector<BettingType::MarketCatalogue> result;
@@ -312,7 +389,5 @@ namespace BetfairAPI {
 
         return result;
     }
-
-
 }
 
