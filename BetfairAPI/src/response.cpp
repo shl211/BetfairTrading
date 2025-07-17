@@ -37,4 +37,9 @@ namespace BetfairAPI {
     const nlohmann::json* Response::getRequestBody() const {
         return request_body_.is_null() ? nullptr : &request_body_;
     }
+
+    bool Response::isReponseOk() const {
+        return status_code_ < 300 && status_code_ >= 200;
+    } 
+
 } //namespace BetfairAPI

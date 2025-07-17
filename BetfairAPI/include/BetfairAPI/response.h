@@ -17,6 +17,8 @@ namespace BetfairAPI {
             const std::string& getRequestTarget() const;
             [[nodiscard]] const nlohmann::json* getRequestBody() const;
 
+            bool isReponseOk() const; 
+
         private:
             int status_code_;
             std::string body_;

@@ -8,18 +8,32 @@ namespace BetfairAPI {
         constexpr std::string_view keep_alive_path{"keepAlive/"};
         constexpr std::string_view logout_path{"logout/"};
 
-        Response toResponse(cpr::Response& r) {
+        Response toResponse(cpr::Response& r,
+            bool saveRequestBody=false, 
+            const std::string& url = "", 
+            const nlohmann::json& requestBody = {}
+        ) {
+            
             //cpr Response will be made unsafe, but that is ok, as it should be discarded anyway
-            return Response(r.status_code,std::move(r.text));
+            Response response(r.status_code,std::move(r.text));
+
+            if(saveRequestBody || !response.isReponseOk()) {
+                response.setRequestInfo(url,requestBody);
+            }
+            
+            return response;
         }
     }
 
     Response interactiveLogin(const std::string& api_key,
         const std::string& username,
         const std::string& password,
-        Jurisdiction j) {
+        Jurisdiction j,
+        bool save_request_info
+    ) {
 
-        cpr::Url login_url{std::string(getBetfairUrl(j)) + std::string(login_path)};
+        std::string url{std::string(getBetfairUrl(j)) + std::string(login_path)};
+        cpr::Url login_url{url};
         cpr::Header headers {
             {"Accept","application/json"},
             {"X-Application",api_key},
@@ -30,14 +44,19 @@ namespace BetfairAPI {
                 "&password=" + cpr::util::urlEncode(password)};
 
         cpr::Response response = cpr::Post(login_url,headers,body);
-        return toResponse(response);
+
+        //don't reveal the actual body in this case if logged
+        return toResponse(response,save_request_info,url,{"username=***&password=***"});
     }
 
     Response keepAlive(const std::string& api_key,
         const std::string& session_token,
-        Jurisdiction j) {
+        Jurisdiction j,
+        bool save_request_info
+    ) {
 
-        cpr::Url keep_alive_url{std::string(getBetfairUrl(j)) + std::string(keep_alive_path)};
+        std::string url{std::string(getBetfairUrl(j)) + std::string(keep_alive_path)};
+        cpr::Url keep_alive_url{url};
         cpr::Header headers {
             {"Accept","application/json"},
             {"X-Application",api_key},
@@ -45,14 +64,17 @@ namespace BetfairAPI {
         };
 
         cpr::Response response = cpr::Post(keep_alive_url,headers);
-        return toResponse(response);
+        return toResponse(response,save_request_info,url);
     }
 
     Response logout(const std::string& api_key,
         const std::string& session_token,
-        Jurisdiction j) {
+        Jurisdiction j,
+        bool save_request_info
+    ) {
 
-        cpr::Url logout_url{std::string(getBetfairUrl(j)) + std::string(logout_path)};
+        std::string url{std::string(getBetfairUrl(j)) + std::string(logout_path)};
+        cpr::Url logout_url{url};
         cpr::Header headers {
             {"Accept","application/json"},
             {"X-Application",api_key},
@@ -60,6 +82,6 @@ namespace BetfairAPI {
         };
 
         cpr::Response response = cpr::Post(logout_url,headers);
-        return toResponse(response);
+        return toResponse(response,save_request_info,url);
     }
 }

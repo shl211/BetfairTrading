@@ -13,10 +13,21 @@ namespace BetfairAPI {
             return j == Jurisdiction::NEWZEALAND ? nz_url : global_url;
         }
 
-        Response toResponse(cpr::Response& r) {
+        Response toResponse(cpr::Response& r,
+            bool saveRequestBody=false, 
+            const std::string& url = "", 
+            const nlohmann::json& requestBody = {}
+        ) {
+            
             //cpr Response will be made unsafe, but that is ok, as it should be discarded anyway
-            return Response(r.status_code,std::move(r.text));
-        }
+            Response response(r.status_code,std::move(r.text));
+
+            if(saveRequestBody || !response.isReponseOk()) {
+                response.setRequestInfo(url,requestBody);
+            }
+            
+            return response;
+        };
 
         template<typename Enum>
         std::string to_string(Enum value) {
@@ -37,7 +48,8 @@ namespace BetfairAPI {
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
         const std::string& locale,
-        const Jurisdiction jurisdiction
+        const Jurisdiction jurisdiction,
+        bool save_request_info
     ) {
 
         cpr::Url url{std::string(getUrl(jurisdiction)) + "listEventTypes/"};
@@ -55,14 +67,15 @@ namespace BetfairAPI {
         cpr::Body body{j.dump()};
 
         cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response);
+        return toResponse(response,save_request_info,url.str(),j);
     }
 
     Response listCompetitions(const std::string& api_key,
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
         const std::string& locale,
-        const Jurisdiction jurisdiction
+        const Jurisdiction jurisdiction,
+        bool save_request_info
     ) {
         cpr::Url url{std::string(getUrl(jurisdiction)) + "listCompetitions/"};
         cpr::Header headers {
@@ -79,14 +92,15 @@ namespace BetfairAPI {
         cpr::Body body{j.dump()};
 
         cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response);
+        return toResponse(response,save_request_info,url.str(),j);
     }
     
     Response listTimeRanges(const std::string& api_key,
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
         const BettingEnum::TimeGranularity granularity,
-        const Jurisdiction jurisdiction
+        const Jurisdiction jurisdiction,
+        bool save_request_info
     ) {
         
         cpr::Url url{std::string(getUrl(jurisdiction)) + "listTimeRanges/"};
@@ -103,15 +117,17 @@ namespace BetfairAPI {
         cpr::Body body{j.dump()};
 
         cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response);
+        return toResponse(response,save_request_info,url.str(),j);
     }
 
     Response listEvents(const std::string& api_key,
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
         const std::string& locale,
-        const Jurisdiction jurisdiction
+        const Jurisdiction jurisdiction,
+        bool save_request_info
     ) {
+
         cpr::Url url{std::string(getUrl(jurisdiction)) + "listEvents/"};
         cpr::Header headers {
             {"Content-Type","application/json"},
@@ -127,14 +143,15 @@ namespace BetfairAPI {
         cpr::Body body{j.dump()};
 
         cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response);
+        return toResponse(response,save_request_info,url.str(),j);
     }
 
     Response listMarketTypes(const std::string& api_key,
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
         const std::string& locale,
-        const Jurisdiction jurisdiction
+        const Jurisdiction jurisdiction,
+        bool save_request_info
     ) {
         cpr::Url url{std::string(getUrl(jurisdiction)) + "listMarketTypes/"};
         cpr::Header headers {
@@ -151,14 +168,15 @@ namespace BetfairAPI {
         cpr::Body body{j.dump()};
 
         cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response);
+        return toResponse(response,save_request_info,url.str(),j);
     }
 
     Response listCountries(const std::string& api_key,
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
         const std::string& locale,
-        const Jurisdiction jurisdiction
+        const Jurisdiction jurisdiction,
+        bool save_request_info
     ) {
         cpr::Url url{std::string(getUrl(jurisdiction)) + "listCountries/"};
         cpr::Header headers {
@@ -175,14 +193,15 @@ namespace BetfairAPI {
         cpr::Body body{j.dump()};
 
         cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response);
+        return toResponse(response,save_request_info,url.str(),j);
     }
 
     Response listVenues(const std::string& api_key,
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
         const std::string& locale,
-        const Jurisdiction jurisdiction
+        const Jurisdiction jurisdiction,
+        bool save_request_info
     ) {
         cpr::Url url{std::string(getUrl(jurisdiction)) + "listVenues/"};
         cpr::Header headers {
@@ -199,7 +218,7 @@ namespace BetfairAPI {
         cpr::Body body{j.dump()};
 
         cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response);
+        return toResponse(response,save_request_info,url.str(),j);
     }
 
     Response listMarketCatalogue(const std::string& api_key,
@@ -209,7 +228,8 @@ namespace BetfairAPI {
         const std::set<BettingEnum::MarketSort>& market_sort,
         int max_results, 
         const std::string& locale,
-        const Jurisdiction jurisdiction
+        const Jurisdiction jurisdiction,
+        bool save_request_info
     ) {
         cpr::Url url{std::string(getUrl(jurisdiction)) + "listMarketCatalogue/"};
         cpr::Header headers {
@@ -228,6 +248,6 @@ namespace BetfairAPI {
 
         cpr::Body body{j.dump()};
         cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response);
+        return toResponse(response,save_request_info,url.str(),j);
     }
 }
