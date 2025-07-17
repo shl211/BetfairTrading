@@ -12,6 +12,11 @@
 #include "BetfairAPI/betting_type/market_type_result.h"
 #include "BetfairAPI/betting_type/country_code_result.h"
 #include "BetfairAPI/betting_type/venue_result.h"
+#include "BetfairAPI/betting_type/market_catalogue.h"
+#include "BetfairAPI/betting_type/market_line_range_info.h"
+#include "BetfairAPI/betting_type/price_ladder_description.h"
+#include "BetfairAPI/betting_type/market_description.h"
+#include "BetfairAPI/betting_type/runner_catalog.h"
 
 namespace BetfairAPI::BettingType {
 
@@ -327,6 +332,171 @@ namespace BetfairAPI::BettingType {
         if(j.contains("venue")) v_res.venue = j.at("venue").get<std::string>();
         if(j.contains("marketCount")) v_res.marketCount = j.at("marketCount").get<int>();
         return v_res;
+    }
+
+    /**************************************************************************
+    * MarketLineRangeInfo
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<MarketLineRangeInfo>::toJson(const MarketLineRangeInfo& obj) {
+        nlohmann::json j = {};
+        if(obj.minUnitValue >= 0) j["minUnitValue"] = obj.minUnitValue;
+        if(obj.maxUnitValue >= 0) j["maxUnitValue"] = obj.maxUnitValue;
+        if(obj.interval >= 0) j["interval"] = obj.interval;
+        if(!obj.marketUnit.empty()) j["marketUnit"] = obj.marketUnit;
+        return j.is_null() ? nlohmann::json::object() : j;
+    }
+    
+    template<>
+    MarketLineRangeInfo JsonSer<MarketLineRangeInfo>::fromJson(const nlohmann::json& j) {
+        MarketLineRangeInfo m_cat;
+        if(j.contains("minUnitValue")) m_cat.minUnitValue = j.at("minUnitValue").get<double>();
+        if(j.contains("maxUnitValue")) m_cat.maxUnitValue = j.at("maxUnitValue").get<double>();
+        if(j.contains("interval")) m_cat.interval = j.at("interval").get<double>();
+        if(j.contains("marketUnit")) m_cat.marketUnit = j.at("marketUnit").get<std::string>();
+        return m_cat;
+    }
+
+    /**************************************************************************
+    * PriceLadderDescription
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<PriceLadderDescription>::toJson(const PriceLadderDescription& obj) {
+        nlohmann::json j = {};
+        if(obj.type) j["type"] = to_string<BettingEnum::PriceLadderType>(*obj.type);
+        return j.is_null() ? nlohmann::json::object() : j;
+    }
+    
+    template<>
+    PriceLadderDescription JsonSer<PriceLadderDescription>::fromJson(const nlohmann::json& j) {
+        PriceLadderDescription obj;
+        if(j.contains("type")) obj.type = from_string<BettingEnum::PriceLadderType>(j.at("type").get<std::string>());
+        return obj;
+    }
+
+    /**************************************************************************
+    * RunnerCatalog
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<RunnerCatalog>::toJson(const RunnerCatalog& obj) {
+        nlohmann::json j = {};
+        j["selectionId"] = obj.selectionId;
+        j["runnerName"] = obj.runnerName;
+        j["handicap"] = obj.handicap;
+        j["sortPriority"] = obj.sortPriority;
+        if(!obj.metadata.empty()) j["metadata"] = obj.metadata;
+        return j.is_null() ? nlohmann::json::object() : j;
+    }
+    
+    template<>
+    RunnerCatalog JsonSer<RunnerCatalog>::fromJson(const nlohmann::json& j) {
+        RunnerCatalog obj;
+        if(j.contains("selectionId")) obj.selectionId = j.at("selectionId").get<int64_t>();
+        if(j.contains("runnerName")) obj.runnerName = j.at("runnerName").get<std::string>();
+        if(j.contains("handicap")) obj.handicap = j.at("handicap").get<double>();
+        if(j.contains("sortPriority")) obj.sortPriority = j.at("sortPriority").get<int>();
+        if(j.contains("metadata")) obj.metadata = j.at("metadata").get<std::map<std::string, std::string>>();
+        return obj;
+    }
+
+    /**************************************************************************
+    * MarketDescription
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<MarketDescription>::toJson(const MarketDescription& obj) {
+        nlohmann::json j = {};
+        j["persistenceEnabled"] = obj.persistenceEnabled;
+        j["bspMarket"] = obj.bspMarket;
+        if(obj.marketTime) j["marketTime"] = obj.marketTime->getIsoString();
+        if(obj.marketTime) j["suspendTime"] = obj.suspendTime->getIsoString();
+
+        if(obj.settleTime) j["settleTime"] = obj.settleTime->getIsoString();
+
+        j["bettingType"] = to_string<BettingEnum::MarketBettingType>(obj.bettingType);
+        j["turnInPlayEnabled"] = obj.turnInPlay;
+        j["marketType"] = obj.marketType;
+        j["regulator"] = obj.regulator;
+        j["marketBaseRate"] = obj.marketBaseRate;
+        j["discountAllowed"] = obj.discountAllowed;
+        if(!obj.wallet.empty()) j["wallet"] = obj.wallet;
+        if(!obj.rules.empty()) j["rules"] = obj.rules;
+        if(obj.rulesHasDate) j["rulesHasDates"] = *obj.rulesHasDate;
+        if(obj.eachWayDivisor > 0) j["eachWayDivisor"] = obj.eachWayDivisor;
+        if(!obj.clarifications.empty()) j["clarifications"] = obj.clarifications;
+        if(obj.lineRangeInfo) j["lineRangeInfo"] = JsonSer<MarketLineRangeInfo>::toJson(*obj.lineRangeInfo);
+        if(!obj.raceType.empty()) j["raceType"] = obj.raceType;
+        if(obj.priceLadderDescription) j["priceLadderDescription"] = JsonSer<PriceLadderDescription>::toJson(*obj.priceLadderDescription);
+        return j.is_null() ? nlohmann::json::object() : j;
+    }
+    
+    template<>
+    MarketDescription JsonSer<MarketDescription>::fromJson(const nlohmann::json& j) {
+        MarketDescription obj;
+        if(j.contains("persistenceEnabled")) obj.persistenceEnabled = j.at("persistenceEnabled").get<bool>();
+        if(j.contains("bspMarket")) obj.bspMarket = j.at("bspMarket").get<bool>();
+        if(j.contains("marketTime")) obj.marketTime = BetfairAPI::Date(j.at("marketTime").get<std::string>());
+        if(j.contains("suspendTime")) obj.suspendTime = BetfairAPI::Date(j.at("suspendTime").get<std::string>());
+        if(j.contains("settleTime")) obj.settleTime = BetfairAPI::Date(j.at("settleTime").get<std::string>());
+        if(j.contains("bettingType")) obj.bettingType = from_string<BettingEnum::MarketBettingType>(j.at("bettingType").get<std::string>());
+        if(j.contains("turnInPlayEnabled")) obj.turnInPlay = j.at("turnInPlayEnabled").get<bool>();
+        if(j.contains("marketType")) obj.marketType = j.at("marketType").get<std::string>();
+        if(j.contains("regulator")) obj.regulator = j.at("regulator").get<std::string>();
+        if(j.contains("marketBaseRate")) obj.marketBaseRate = j.at("marketBaseRate").get<double>();
+        if(j.contains("discountAllowed")) obj.discountAllowed = j.at("discountAllowed").get<bool>();
+        if(j.contains("wallet")) obj.wallet = j.at("wallet").get<std::string>();
+        if(j.contains("rules")) obj.rules = j.at("rules").get<std::string>();
+        if(j.contains("rulesHasDates")) obj.rulesHasDate = j.at("rulesHasDates").get<bool>();
+        if(j.contains("eachWayDivisor")) obj.eachWayDivisor = j.at("eachWayDivisor").get<double>();
+        if(j.contains("clarifications")) obj.clarifications = j.at("clarifications").get<std::string>();
+        if(j.contains("lineRangeInfo")) obj.lineRangeInfo = JsonSer<MarketLineRangeInfo>::fromJson(j.at("lineRangeInfo"));
+        if(j.contains("raceType")) obj.raceType = j.at("raceType").get<std::string>();
+        if(j.contains("priceLadderDescription")) obj.priceLadderDescription = JsonSer<PriceLadderDescription>::fromJson(j.at("priceLadderDescription"));
+        return obj;
+    }
+
+    /**************************************************************************
+    * MarketCatalogue
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<MarketCatalogue>::toJson(const MarketCatalogue& obj) {
+        nlohmann::json j = {};
+        if(!obj.marketId.empty()) j["marketId"] = obj.marketId;
+        if(!obj.marketName.empty()) j["marketName"] = obj.marketName;
+        if(!obj.marketStartTime) j["marketStartTime"] = obj.marketStartTime->getIsoString();
+        if(obj.totalMatched > 0) j["totalMatched"] = obj.totalMatched;
+        if(obj.eventType) j["eventType"] = JsonSer<EventType>::toJson(*(obj.eventType));
+        if(obj.competition) j["competition"] = JsonSer<Competition>::toJson(*(obj.competition));
+        if(obj.description) j["description"] = JsonSer<MarketDescription>::toJson(*obj.description);
+        if(obj.event) j["event"] = JsonSer<Event>::toJson(*obj.event);
+        if(!obj.runners.empty()) {
+            nlohmann::json runners_json = nlohmann::json::array();
+            for (const auto& runner : obj.runners) {
+                runners_json.push_back(JsonSer<RunnerCatalog>::toJson(runner));
+            }
+            j["runners"] = runners_json;
+        } 
+        return j.is_null() ? nlohmann::json::object() : j;
+    }
+    
+    template<>
+    MarketCatalogue JsonSer<MarketCatalogue>::fromJson(const nlohmann::json& j) {
+        MarketCatalogue m_cat;
+        if(j.contains("marketId")) m_cat.marketId = j.at("marketId").get<std::string>();
+        if(j.contains("marketName")) m_cat.marketName = j.at("marketName").get<std::string>();
+        if(j.contains("marketStartTime")) m_cat.marketStartTime = Date{j.at("marketStartTime").get<std::string>()};
+        if(j.contains("totalMatched")) m_cat.totalMatched = j.at("totalMatched").get<double>();
+        if(j.contains("eventType")) m_cat.eventType = JsonSer<EventType>::fromJson(j.at("eventType"));
+        if(j.contains("competition")) m_cat.competition = JsonSer<Competition>::fromJson(j.at("competition"));
+        if(j.contains("description")) m_cat.description = JsonSer<MarketDescription>::fromJson(j.at("description"));
+        if(j.contains("event")) m_cat.event = JsonSer<Event>::fromJson(j.at("event"));
+        if(j.contains("runners")) {
+            m_cat.runners.reserve(std::size(j.at("runners")));
+            for (const auto& runner_json : j.at("runners")) {
+                m_cat.runners.push_back(JsonSer<RunnerCatalog>::fromJson(runner_json));
+            }
+        }
+
+        return m_cat;
     }
 
 

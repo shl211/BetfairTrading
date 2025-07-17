@@ -1,10 +1,13 @@
 #pragma once
 
 #include <string>
+#include <set>
 #include "response.h"
 #include "jurisdiction.hpp"
 #include "betting_type/market_filter.h"
 #include "betting_enum/time_granularity.hpp"
+#include "betting_enum/market_projection.hpp"
+#include "betting_enum/market_sort.hpp"
 namespace BetfairAPI {
     
     namespace detail {
@@ -56,6 +59,16 @@ namespace BetfairAPI {
     Response listVenues(const std::string& api_key,
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
+        const std::string& locale = detail::default_locale,
+        const Jurisdiction j = Jurisdiction::GLOBAL
+    );
+
+    Response listMarketCatalogue(const std::string& api_key,
+        const std::string& session_key,
+        const BettingType::MarketFilter& mf,
+        const std::set<BettingEnum::MarketProjection>& market_projection = {},
+        const std::set<BettingEnum::MarketSort>& market_sort = {},
+        int max_results = 1000, 
         const std::string& locale = detail::default_locale,
         const Jurisdiction j = Jurisdiction::GLOBAL
     );

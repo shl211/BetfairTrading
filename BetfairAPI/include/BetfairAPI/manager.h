@@ -20,6 +20,9 @@
 #include "betting_type/market_type_result.h"
 #include "betting_type/country_code_result.h"
 #include "betting_type/venue_result.h"
+#include "betting_type/market_catalogue.h"
+#include "betting_enum/market_projection.hpp"
+#include "betting_enum/market_sort.hpp"
 
 #include "response.h"
 
@@ -49,7 +52,11 @@ namespace BetfairAPI {
             std::vector<BettingType::MarketTypeResult> getMarketTypeResults(const BettingType::MarketFilter& mf = {});
             std::vector<BettingType::CountryCodeResult> getCountries(const BettingType::MarketFilter& mf = {});
             std::vector<BettingType::VenueResult> getVenues(const BettingType::MarketFilter& mf = {});
-
+            std::vector<BettingType::MarketCatalogue> getMarketCatalogues(const BettingType::MarketFilter& = {},
+                const std::set<BettingEnum::MarketProjection>& market_projection = {},
+                const std::set<BettingEnum::MarketSort>& market_sort = {},
+                int maxResults = 1000
+            );
 
             bool refreshSession();
             

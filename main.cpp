@@ -23,7 +23,13 @@ int main() {
     
     BetfairAPI::BettingType::MarketFilter mf;
     //mf.inPlayOnly = true;
-    auto r = manager.getVenues(mf);
+    auto r = manager.getMarketCatalogues(mf,
+        {BetfairAPI::BettingEnum::MarketProjection::RUNNER_DESCRIPTION,
+        BetfairAPI::BettingEnum::MarketProjection::RUNNER_METADATA,
+        BetfairAPI::BettingEnum::MarketProjection::EVENT_TYPE,
+        },
+        {},
+        10);
 
     for(auto& v : r) {
         std::cout << v << "\n";

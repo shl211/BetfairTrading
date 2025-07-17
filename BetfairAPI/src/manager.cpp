@@ -9,6 +9,7 @@ namespace BetfairAPI {
 
     namespace {
         constexpr int MINUTE_OFFSET = 2;
+        constexpr int MAX_API_DATA = 1000;
     }
 
     BetfairManager::BetfairManager(const std::string& username,
@@ -270,6 +271,48 @@ namespace BetfairAPI {
 
         return result;
     }
+
+    std::vector<BettingType::MarketCatalogue> BetfairManager::getMarketCatalogues(const BettingType::MarketFilter& mf,
+        const std::set<BettingEnum::MarketProjection>& market_projection,
+        const std::set<BettingEnum::MarketSort>& market_sort,
+        int max_results
+    ) {
+
+        if(max_results <= 0) {
+            if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
+                logger_->info(username_ + " queried market catalogue. Max results <= 0 so empty return");
+            }
+
+            return {};
+        }
+        if(max_results > MAX_API_DATA) {
+            if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
+                logger_->info(username_ + " queried market catalogue. Max results >= " + 
+                    std::to_string(MAX_API_DATA) + " so limited to that number");
+            }
+            max_results = MAX_API_DATA;
+        }
+
+        auto r = listMarketCatalogue(api_token_,session_token_,mf,market_projection,market_sort,max_results);
+
+        if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
+            logger_->info(username_ + " queried market catalogue. Response status code " + std::to_string(r.getStatusCode()));
+        }
+
+        std::vector<BettingType::MarketCatalogue> result;
+        if(r.getBody() != nullptr) {
+            const auto& body = *r.getBody();
+            result.reserve(body.size());
+            auto json_conversion = [](const auto& m_cat) -> BettingType::MarketCatalogue {
+                return BettingType::fromJson<BettingType::MarketCatalogue>(m_cat);
+            };
+    
+            std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
+        }
+
+        return result;
+    }
+
 
 }
 

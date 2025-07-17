@@ -22,6 +22,15 @@ namespace BetfairAPI {
         std::string to_string(Enum value) {
             return std::string(magic_enum::enum_name(value));
         };
+
+        template<typename Enum>
+        std::set<std::string> to_string(std::set<Enum> value) {
+            std::set<std::string> res;            
+            for(auto& v : value) {
+                res.insert(to_string<Enum>(v));
+            }
+            return res;
+        };
     }
 
     Response listEventTypes(const std::string& api_key,
@@ -189,6 +198,35 @@ namespace BetfairAPI {
         }
         cpr::Body body{j.dump()};
 
+        cpr::Response response = cpr::Post(url,headers,body);
+        return toResponse(response);
+    }
+
+    Response listMarketCatalogue(const std::string& api_key,
+        const std::string& session_key,
+        const BettingType::MarketFilter& mf,
+        const std::set<BettingEnum::MarketProjection>& market_projection,
+        const std::set<BettingEnum::MarketSort>& market_sort,
+        int max_results, 
+        const std::string& locale,
+        const Jurisdiction jurisdiction
+    ) {
+        cpr::Url url{std::string(getUrl(jurisdiction)) + "listMarketCatalogue/"};
+        cpr::Header headers {
+            {"Content-Type","application/json"},
+            {"X-Application",api_key},
+            {"X-Authentication",session_key},
+        };
+
+        nlohmann::json j;
+        j["filter"] = BetfairAPI::BettingType::toJson(mf);
+        j["maxResults"] = max_results;
+
+        if(locale != detail::default_locale) j["locale"] = locale;
+        if(!market_sort.empty()) j["sort"] = to_string<BettingEnum::MarketSort>(market_sort);
+        if(!market_projection.empty()) j["marketProjection"] = to_string<BettingEnum::MarketProjection>(market_projection);
+
+        cpr::Body body{j.dump()};
         cpr::Response response = cpr::Post(url,headers,body);
         return toResponse(response);
     }

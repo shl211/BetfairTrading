@@ -13,6 +13,10 @@
 #include "BetfairAPI/betting_type/market_type_result.h"
 #include "BetfairAPI/betting_type/country_code_result.h"
 #include "BetfairAPI/betting_type/venue_result.h"
+#include "BetfairAPI/betting_type/market_line_range_info.h"
+#include "BetfairAPI/betting_type/price_ladder_description.h"
+#include "BetfairAPI/betting_type/market_description.h"
+#include "BetfairAPI/betting_type/runner_catalog.h"
 
 TEST(TimeRangeJson, BothDatesPresent) {
     BetfairAPI::BettingType::TimeRange tr{
@@ -196,4 +200,63 @@ TEST(VenueResultJson,Basic) {
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::VenueResult>(json);
 
     EXPECT_EQ(vr, result);
+}
+
+TEST(MarketLineRangeInfoJson,Basic) {
+    BetfairAPI::BettingType::MarketLineRangeInfo mlri;
+    mlri.marketUnit = "GOALS";
+    mlri.minUnitValue = 0.5;
+    mlri.maxUnitValue = 5.5;
+    mlri.interval = 0.5;
+
+    auto json = BetfairAPI::BettingType::toJson(mlri);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::MarketLineRangeInfo>(json);
+
+    EXPECT_EQ(mlri, result);
+}
+
+TEST(PriceLadderDescriptionJson,Basic) {
+    BetfairAPI::BettingType::PriceLadderDescription pld;
+    pld.type = BetfairAPI::BettingEnum::PriceLadderType::CLASSIC;
+
+    auto json = BetfairAPI::BettingType::toJson(pld);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::PriceLadderDescription>(json);
+
+    EXPECT_EQ(pld, result);
+}
+
+TEST(MarketDescriptionJson,Basic) {
+    BetfairAPI::BettingType::MarketDescription md;
+    md.persistenceEnabled = true;
+    md.bspMarket = true;
+    md.persistenceEnabled = true;
+    md.bspMarket = true;
+    md.marketTime = BetfairAPI::Date{"2024-06-20T15:00:00Z"};
+    md.suspendTime = BetfairAPI::Date{"2024-06-20T14:55:00Z"};
+    md.settleTime = BetfairAPI::Date{"2024-06-20T18:00:00Z"};
+    md.bettingType = BetfairAPI::BettingEnum::MarketBettingType::ODDS;
+    md.turnInPlay = false;
+    md.marketType = "MATCH_ODDS";
+    md.regulator = "UKGC";
+    md.marketBaseRate = 5.0;
+    md.discountAllowed = true;
+        
+    auto json = BetfairAPI::BettingType::toJson(md);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::MarketDescription>(json);
+
+    EXPECT_EQ(md, result);
+}
+
+TEST(RunnerCatalogJson,Basic) {
+    BetfairAPI::BettingType::RunnerCatalog rc;
+    rc.selectionId = 123456;
+    rc.runnerName = "Runner One";
+    rc.handicap = 0.0;
+    rc.sortPriority = 1;
+    rc.metadata = {{"JOCKEY", "John Doe"}, {"TRAINER", "Jane Smith"}};
+
+    auto json = BetfairAPI::BettingType::toJson(rc);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::RunnerCatalog>(json);
+
+    EXPECT_EQ(rc, result);
 }
