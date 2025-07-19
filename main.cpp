@@ -3,6 +3,7 @@
 #include <chrono>
 #include "BetfairAPI/manager.h"
 #include "Logging/console_logger.h"
+#include "Logging/coloured_console_logger.h"
 #include "Logging/file_logger.h"
 
 template <typename T>
@@ -22,7 +23,7 @@ int main() {
         return 1;
     }
 
-    auto logger = std::make_unique<Logging::ConsoleLogger>();
+    auto logger = std::make_unique<Logging::ColouredConsoleLogger>();
     logger->setLevel(Logging::LogLevel::Info);
 
     auto manager = BetfairAPI::BetfairManager(USERNAME,
