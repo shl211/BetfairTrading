@@ -5,6 +5,14 @@
 #include "Logging/console_logger.h"
 #include "Logging/file_logger.h"
 
+template <typename T>
+void printVector(std::vector<T> v) {
+    for(auto& i : v) {
+        std::cout << i << "\n";
+    }
+    std::cout << "Total: " << v.size() << "\n";
+};
+
 int main() {
     const char* USERNAME = std::getenv("USERNAME");
     const char* PASSWORD = std::getenv("PASSWORD");
@@ -14,12 +22,15 @@ int main() {
         return 1;
     }
 
+    auto logger = std::make_unique<Logging::ConsoleLogger>();
+    logger->setLevel(Logging::LogLevel::Info);
+
     auto manager = BetfairAPI::BetfairManager(USERNAME,
         PASSWORD,
         APIKEYDELAY,
         BetfairAPI::Jurisdiction::UK,
         "en",
-        std::make_unique<Logging::ConsoleLogger>());
+        std::unique_ptr<Logging::ILogger>(std::move(logger)));
     
     BetfairAPI::BettingType::MarketFilter mf;
     //mf.inPlayOnly = true;
@@ -30,11 +41,16 @@ int main() {
         },
         {},
         10);
+    printVector(r);
 
-    for(auto& v : r) {
-        std::cout << v << "\n";
+    std::set<std::string> bet_ids;
+    for (int i = 0; i < 251; ++i) {
+        bet_ids.insert("bet_id_" + std::to_string(i));
     }
-    std::cout << "Total: " << r.size() << "\n";
+
+    auto r2 = manager.getCurrentOrders(bet_ids);
+
+    printVector(r2);
 
     //std::this_thread::sleep_for(std::chrono::minutes(5));
 }

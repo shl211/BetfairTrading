@@ -1,3 +1,4 @@
+#include <optional>
 #include <magic_enum.hpp>
 #include <cpr/cpr.h>
 #include "BetfairAPI/betting_api.h"
@@ -245,6 +246,50 @@ namespace BetfairAPI {
         if(locale != detail::default_locale) j["locale"] = locale;
         if(!market_sort.empty()) j["sort"] = to_string<BettingEnum::MarketSort>(market_sort);
         if(!market_projection.empty()) j["marketProjection"] = to_string<BettingEnum::MarketProjection>(market_projection);
+
+        cpr::Body body{j.dump()};
+        cpr::Response response = cpr::Post(url,headers,body);
+        return toResponse(response,save_request_info,url.str(),j);
+    }
+
+    Response listCurrentOrders(const std::string& api_key,
+        const std::string& session_key,
+        const std::set<std::string>& bet_ids,
+        const std::set<std::string>& market_ids,
+        std::optional<BettingEnum::OrderProjection> order_projection,
+        const std::set<std::string>& customer_order_refs,
+        const std::set<std::string>& customter_strategy_refs,
+        std::optional<BettingType::TimeRange> dateRange,
+        std::optional<BettingEnum::OrderBy> order_by,
+        std::optional<BettingEnum::SortDir> sort_dir,
+        int from_record,
+        int to_record,
+        std::optional<bool> include_item_description,
+        std::optional<bool> include_source_id,
+        const Jurisdiction jurisdiction,
+        bool save_request_info
+    ) {
+        cpr::Url url{std::string(getUrl(jurisdiction)) + "listMarketCatalogue/"};
+        cpr::Header headers {
+            {"Content-Type","application/json"},
+            {"X-Application",api_key},
+            {"X-Authentication",session_key},
+        };
+
+        nlohmann::json j {};
+
+        if(!bet_ids.empty()) j["betIds"] = bet_ids;
+        if(!market_ids.empty()) j["marketIds"] = market_ids;
+        if(order_projection) j["orderProjection"] = to_string<BettingEnum::OrderProjection>(*order_projection);
+        if(!customer_order_refs.empty()) j["customerOrderRefs"] = customer_order_refs;
+        if(!customter_strategy_refs.empty()) j["customerStrategyRefs"] = customter_strategy_refs;
+        if(dateRange) j["dateRange"] = BettingType::toJson<BettingType::TimeRange>(*dateRange);
+        if(order_by) j["orderBy"] = to_string<BettingEnum::OrderBy>(*order_by);
+        if(sort_dir) j["sortDir"] = to_string<BettingEnum::SortDir>(*sort_dir);
+        if(from_record >= 0) j["fromRecord"] = from_record;
+        if(to_record >= 0 && to_record <= 1000) j["toRecord"] = to_record;
+        if(include_item_description) j["includeItemDescription"] = *include_item_description;
+        if(include_source_id) j["includeSourceId"] = *include_source_id;
 
         cpr::Body body{j.dump()};
         cpr::Response response = cpr::Post(url,headers,body);

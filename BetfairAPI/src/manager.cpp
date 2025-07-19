@@ -358,6 +358,7 @@ namespace BetfairAPI {
 
             return {};
         }
+
         if(max_results > MAX_API_DATA) {
             if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
                 logger_->info(username_ + " queried market catalogue. Max results >= " + 
@@ -388,6 +389,67 @@ namespace BetfairAPI {
         }
 
         return result;
+    }
+
+    std::vector<BettingType::CurrentOrderSummary> BetfairManager::getCurrentOrders(
+        const std::set<std::string> bet_ids,
+        const std::set<std::string> market_ids,
+        std::optional<BettingEnum::OrderProjection> order_projection,
+        const std::set<std::string> customer_order_refs,
+        const std::set<std::string> customer_strategy_refs,
+        std::optional<BettingType::TimeRange> date_range,
+        std::optional<BettingEnum::OrderBy> order_by,
+        std::optional<BettingEnum::SortDir> sort_dir,
+        bool include_item_description,
+        bool include_source_id
+    ) {
+        int search_start = 0;
+        constexpr int MAX_RESULTS_PER_QUERY = 1000;
+
+        std::vector<BettingType::CurrentOrderSummary> results;
+
+        //market_id + bet_id size <= 250 else rejection
+        constexpr int MAX_CHUNK_SIZE = 250;
+        if(int total_size = std::size(market_ids) + std::size(bet_ids); total_size > MAX_CHUNK_SIZE) {
+            if(is_warn_level_) {
+                logger_->warn("While querying current orders, std::size(market_ids) + std::size(bet_ids) exceeded 250 items. You have " + 
+                    std::to_string(total_size) + ". API call skipped as listCurrentOrders/ accepts hard limit of 250 of market_ids + bet_ids.");
+            }
+            return results;
+        }
+
+        BettingType::CurrentOrderSummaryReport report;
+        report.moreAvailable = true;//dummy variable for loop purposes
+        
+        while (report.moreAvailable) {
+            auto response = listCurrentOrders(api_token_,session_token_,bet_ids,market_ids,
+                order_projection,customer_order_refs,customer_strategy_refs,
+                date_range,order_by,sort_dir,search_start,MAX_RESULTS_PER_QUERY,
+                include_item_description,include_source_id,jurisdiction_
+            );
+
+            if(is_info_level_) {
+                logger_->info(username_ + " queried current orders. " + printResponse(response,false,false));
+            }
+    
+            if(is_debug_level_) {
+                logger_->debug(username_ + " queried current orders. " + printResponse(response,true,true));
+            }
+
+            if(auto body = response.getBody()) {
+                report = BettingType::fromJson<BettingType::CurrentOrderSummaryReport>(*body);
+                results.insert(results.end(),
+                    std::make_move_iterator(report.currentOrders.begin()),
+                    std::make_move_iterator(report.currentOrders.end())
+                );
+                search_start += MAX_RESULTS_PER_QUERY;
+            } 
+            else {
+                report.moreAvailable = false; //terminating condition if no valid response
+            }
+        }
+
+        return results;
     }
 }
 

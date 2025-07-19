@@ -17,6 +17,11 @@
 #include "BetfairAPI/betting_type/price_ladder_description.h"
 #include "BetfairAPI/betting_type/market_description.h"
 #include "BetfairAPI/betting_type/runner_catalog.h"
+#include "BetfairAPI/betting_type/market_version.h"
+#include "BetfairAPI/betting_type/current_item_description.h"
+#include "BetfairAPI/betting_type/price_size.h"
+#include "BetfairAPI/betting_type/current_order_summary.h"
+#include "BetfairAPI/betting_type/current_order_summary_report.h"
 
 TEST(TimeRangeJson, BothDatesPresent) {
     BetfairAPI::BettingType::TimeRange tr{
@@ -259,4 +264,85 @@ TEST(RunnerCatalogJson,Basic) {
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::RunnerCatalog>(json);
 
     EXPECT_EQ(rc, result);
+}
+
+TEST(MarketVersionJson,Basic) {
+    BetfairAPI::BettingType::MarketVersion mv;
+    mv.version = 987654321;
+
+    auto json = BetfairAPI::BettingType::toJson(mv);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::MarketVersion>(json);
+
+    EXPECT_EQ(mv, result);
+}
+
+TEST(CurrentItemDescriptionJson,Basic) {
+    BetfairAPI::BettingType::CurrentItemDescription cid;
+    cid.marketVersion = BetfairAPI::BettingType::MarketVersion{1234};
+
+    auto json = BetfairAPI::BettingType::toJson(cid);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CurrentItemDescription>(json);
+
+    EXPECT_EQ(cid, result);
+}
+
+TEST(PriceSizeJson,Basic) {
+    BetfairAPI::BettingType::PriceSize ps;
+    ps.price = 2.5;
+    ps.size = 100.0;
+
+    auto json = BetfairAPI::BettingType::toJson(ps);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::PriceSize>(json);
+
+    EXPECT_EQ(ps, result);
+}
+
+TEST(CurrentOrderSummaryJson,Basic) {
+    BetfairAPI::BettingType::CurrentOrderSummary cos;
+    cos.betId = "bet123";
+    cos.marketId = "market456";
+    cos.selectionId = 789;
+    cos.handicap = 0.0;
+    cos.priceSize = BetfairAPI::BettingType::PriceSize{2.0, 50.0};
+    cos.side = BetfairAPI::BettingEnum::Side::BACK;
+    cos.status = BetfairAPI::BettingEnum::OrderStatus::EXECUTABLE;
+    cos.persistenceType = BetfairAPI::BettingEnum::PersistenceType::LAPSE;
+    cos.orderType = BetfairAPI::BettingEnum::OrderType::LIMIT;
+    cos.placedDate = BetfairAPI::Date{"2024-06-10T12:00:00Z"};
+    cos.averagePriceMatched = 2.0;
+    cos.sizeMatched = 25.0;
+    cos.sizeRemaining = 25.0;
+    cos.sizeLapsed = 0.0;
+    cos.sizeCancelled = 0.0;
+    cos.sizeVoided = 0.0;
+    cos.regulatorAuthCode = "authcode";
+    cos.regulatorCode = "UKGC";
+
+    auto json = BetfairAPI::BettingType::toJson(cos);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CurrentOrderSummary>(json);
+
+    EXPECT_EQ(cos, result);
+}
+
+TEST(CurrentOrderSummaryReportJson,Basic) {
+    BetfairAPI::BettingType::CurrentOrderSummary cos;
+    cos.betId = "bet123";
+    cos.marketId = "market456";
+    cos.selectionId = 789;
+    cos.handicap = 0.0;
+    cos.priceSize = BetfairAPI::BettingType::PriceSize{2.0, 50.0};
+    cos.side = BetfairAPI::BettingEnum::Side::BACK;
+    cos.status = BetfairAPI::BettingEnum::OrderStatus::EXECUTABLE;
+    cos.persistenceType = BetfairAPI::BettingEnum::PersistenceType::LAPSE;
+    cos.orderType = BetfairAPI::BettingEnum::OrderType::LIMIT;
+    cos.placedDate = BetfairAPI::Date{"2024-06-10T12:00:00Z"};
+    cos.averagePriceMatched = 2.0;
+    
+
+    BetfairAPI::BettingType::CurrentOrderSummaryReport report;
+    report.currentOrders.push_back(std::move(cos));
+    auto json = BetfairAPI::BettingType::toJson(report);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CurrentOrderSummaryReport>(json);
+
+    EXPECT_EQ(report, result);
 }

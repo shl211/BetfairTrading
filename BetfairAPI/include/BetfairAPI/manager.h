@@ -23,6 +23,13 @@
 #include "betting_type/market_catalogue.h"
 #include "betting_enum/market_projection.hpp"
 #include "betting_enum/market_sort.hpp"
+#include "betting_enum/order_projection.hpp"
+#include "betting_enum/side.hpp"
+#include "betting_enum/sort_dir.hpp"
+#include "betting_enum/persistence_type.hpp"
+#include "betting_enum/order_by.hpp"
+#include "betting_enum/order_type.hpp"
+#include "betting_type/current_order_summary_report.h"
 
 #include "response.h"
 
@@ -57,6 +64,18 @@ namespace BetfairAPI {
                 const std::set<BettingEnum::MarketSort>& market_sort = {},
                 int maxResults = 1000
             );
+            std::vector<BettingType::CurrentOrderSummary> getCurrentOrders(
+                const std::set<std::string> bet_ids = {},
+                const std::set<std::string> market_ids = {},
+                std::optional<BettingEnum::OrderProjection> order_projection = std::nullopt,
+                const std::set<std::string> customer_order_refs = {},
+                const std::set<std::string> customer_strategy_refs = {},
+                std::optional<BettingType::TimeRange> date_range = std::nullopt,
+                std::optional<BettingEnum::OrderBy> order_by = std::nullopt,
+                std::optional<BettingEnum::SortDir> sort_die = std::nullopt,
+                bool include_item_description = false,
+                bool include_source_id = false
+            );
 
             bool refreshSession();
             
@@ -79,6 +98,7 @@ namespace BetfairAPI {
 
             void keepAliveLoop();
             void setLoggingFlags();
+            
             //track log states
             bool is_debug_level_;
             bool is_info_level_;

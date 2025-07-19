@@ -17,6 +17,11 @@
 #include "BetfairAPI/betting_type/price_ladder_description.h"
 #include "BetfairAPI/betting_type/market_description.h"
 #include "BetfairAPI/betting_type/runner_catalog.h"
+#include "BetfairAPI/betting_type/market_version.h"
+#include "BetfairAPI/betting_type/current_item_description.h"
+#include "BetfairAPI/betting_type/price_size.h"
+#include "BetfairAPI/betting_type/current_order_summary.h"
+#include "BetfairAPI/betting_type/current_order_summary_report.h"
 
 namespace BetfairAPI::BettingType {
 
@@ -499,5 +504,163 @@ namespace BetfairAPI::BettingType {
         return m_cat;
     }
 
+    /**************************************************************************
+    * MarketVersion
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<MarketVersion>::toJson(const MarketVersion& obj) {
+        nlohmann::json j = {};
+        j["version"] = obj.version;
+        return j;
+    }
+    
+    template<>
+    MarketVersion JsonSer<MarketVersion>::fromJson(const nlohmann::json& j) {
+        MarketVersion mv;
+        if(j.contains("version")) mv.version = j.at("version").get<long>();
 
+        return mv;
+    }
+
+    /**************************************************************************
+    * CurrentItemDescription
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<CurrentItemDescription>::toJson(const CurrentItemDescription& obj) {
+        nlohmann::json j = {};
+        j["marketVersion"] = JsonSer<MarketVersion>::toJson(obj.marketVersion);
+        return j;
+    }
+    
+    template<>
+    CurrentItemDescription JsonSer<CurrentItemDescription>::fromJson(const nlohmann::json& j) {
+        CurrentItemDescription cid;
+        if(j.contains("marketVersion")) cid.marketVersion = std::move(
+            JsonSer<MarketVersion>::fromJson(j.at("marketVersion"))
+        );
+
+        return cid;
+    }
+
+    /**************************************************************************
+    * PriceSize
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<PriceSize>::toJson(const PriceSize& obj) {
+        nlohmann::json j = {};
+        j["price"] = obj.price;
+        j["size"] = obj.size;
+        return j;
+    }
+    
+    template<>
+    PriceSize JsonSer<PriceSize>::fromJson(const nlohmann::json& j) {
+        PriceSize ps;
+        if(j.contains("price")) ps.price = j.at("price").get<double>();
+        if(j.contains("size")) ps.size = j.at("size").get<double>();
+
+        return ps;
+    }
+
+    /**************************************************************************
+    * CurrentOrderSummary
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<CurrentOrderSummary>::toJson(const CurrentOrderSummary& obj) {
+        nlohmann::json j = {};
+
+        j["betId"] = obj.betId;
+        j["marketId"] = obj.marketId;
+        j["selectionId"] = obj.selectionId;
+        j["handicap"] = obj.handicap;
+        j["priceSize"] = JsonSer<PriceSize>::toJson(obj.priceSize);
+        j["bspLiability"] = obj.bspLiability;
+        j["side"] = to_string<BettingEnum::Side>(obj.side);
+        j["status"] = to_string<BettingEnum::OrderStatus>(obj.status);
+        j["persistenceType"] = to_string<BettingEnum::PersistenceType>(obj.persistenceType);
+        j["orderType"] = to_string<BettingEnum::OrderType>(obj.orderType);
+        if (obj.placedDate) j["placedDate"] = obj.placedDate->getIsoString();
+        if (obj.matchedDate) j["matchedDate"] = obj.matchedDate->getIsoString();
+
+        if(obj.averagePriceMatched) j["averagePriceMatched"] = *obj.averagePriceMatched;
+        if(obj.sizeMatched) j["sizeMatched"] = *obj.sizeMatched;
+        if(obj.sizeRemaining) j["sizeRemaining"] = *obj.sizeRemaining;
+        if(obj.sizeLapsed) j["sizeLapsed"] = *obj.sizeLapsed;
+        if(obj.sizeCancelled) j["sizeCancelled"] = *obj.sizeCancelled;
+        if(obj.sizeVoided) j["sizeVoided"] = *obj.sizeVoided;
+        if(obj.regulatorAuthCode) j["regulatorAuthCode"] = *obj.regulatorAuthCode;
+        if(obj.regulatorCode) j["regulatorCode"] = *obj.regulatorCode;
+        if(obj.customerOrderRef) j["customerOrderRef"] = *obj.customerOrderRef;
+        if(obj.customerStrategyRef) j["customerStrategyRef"] = *obj.customerStrategyRef;
+        if(obj.currentItemDescription) j["currentItemDescription"] = JsonSer<CurrentItemDescription>::toJson(*obj.currentItemDescription);
+        if(obj.sourceIdKey) j["sourceIdKey"] = *obj.sourceIdKey;
+        if(obj.sourceIdDescription) j["sourceIdDescription"] = *obj.sourceIdDescription;
+
+        return j;
+    }
+    
+    template<>
+    CurrentOrderSummary JsonSer<CurrentOrderSummary>::fromJson(const nlohmann::json& j) {
+        CurrentOrderSummary summary;
+
+        if(j.contains("betId")) summary.betId = j.at("betId").get<std::string>();
+        if(j.contains("marketId")) summary.marketId = j.at("marketId").get<std::string>();
+        if(j.contains("selectionId")) summary.selectionId = j.at("selectionId").get<long>();
+        if(j.contains("handicap")) summary.handicap = j.at("handicap").get<double>();
+        if(j.contains("priceSize")) summary.priceSize = JsonSer<PriceSize>::fromJson(j.at("priceSize"));
+        if(j.contains("bspLiability")) summary.bspLiability = j.at("bspLiability").get<double>();
+        if(j.contains("side")) summary.side = from_string<BettingEnum::Side>(j.at("side").get<std::string>());
+        if(j.contains("status")) summary.status = from_string<BettingEnum::OrderStatus>(j.at("status").get<std::string>());
+        if(j.contains("persistenceType")) summary.persistenceType = from_string<BettingEnum::PersistenceType>(j.at("persistenceType").get<std::string>());
+        if(j.contains("orderType")) summary.orderType = from_string<BettingEnum::OrderType>(j.at("orderType").get<std::string>());
+        if(j.contains("placedDate")) summary.placedDate = BetfairAPI::Date(j.at("placedDate").get<std::string>());
+        if(j.contains("matchedDate")) summary.matchedDate = BetfairAPI::Date(j.at("matchedDate").get<std::string>());
+        if(j.contains("averagePriceMatched")) summary.averagePriceMatched = j.at("averagePriceMatched").get<double>();
+        if(j.contains("sizeMatched")) summary.sizeMatched = j.at("sizeMatched").get<double>();
+        if(j.contains("sizeRemaining")) summary.sizeRemaining = j.at("sizeRemaining").get<double>();
+        if(j.contains("sizeLapsed")) summary.sizeLapsed = j.at("sizeLapsed").get<double>();
+        if(j.contains("sizeCancelled")) summary.sizeCancelled = j.at("sizeCancelled").get<double>();
+        if(j.contains("sizeVoided")) summary.sizeVoided = j.at("sizeVoided").get<double>();
+        if(j.contains("regulatorAuthCode")) summary.regulatorAuthCode = j.at("regulatorAuthCode").get<std::string>();
+        if(j.contains("regulatorCode")) summary.regulatorCode = j.at("regulatorCode").get<std::string>();
+        if(j.contains("customerOrderRef")) summary.customerOrderRef = j.at("customerOrderRef").get<std::string>();
+        if(j.contains("customerStrategyRef")) summary.customerStrategyRef = j.at("customerStrategyRef").get<std::string>();
+        if(j.contains("currentItemDescription")) summary.currentItemDescription = JsonSer<CurrentItemDescription>::fromJson(j.at("currentItemDescription"));
+        if(j.contains("sourceIdKey")) summary.sourceIdKey = j.at("sourceIdKey").get<std::string>();
+        if(j.contains("sourceIdDescription")) summary.sourceIdDescription = j.at("sourceIdDescription").get<std::string>();
+        return summary;
+    }
+
+    /**************************************************************************
+    * CurrentOrderSummaryReport
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<CurrentOrderSummaryReport>::toJson(const CurrentOrderSummaryReport& obj) {
+        nlohmann::json j = {};
+
+        if (!obj.currentOrders.empty()) {
+            nlohmann::json orders_json = nlohmann::json::array();
+            for (const auto& order : obj.currentOrders) {
+                orders_json.push_back(JsonSer<CurrentOrderSummary>::toJson(order));
+            }
+            j["currentOrders"] = orders_json;
+        }
+
+        j["moreAvailable"] = obj.moreAvailable;
+        return j;
+    }
+    
+    template<>
+    CurrentOrderSummaryReport JsonSer<CurrentOrderSummaryReport>::fromJson(const nlohmann::json& j) {
+        CurrentOrderSummaryReport r;
+
+        if(j.contains("currentOrders")) {
+            r.currentOrders.reserve(std::size(j.at("currentOrders")));
+            for (const auto& order_json : j.at("currentOrders")) {
+                r.currentOrders.push_back(JsonSer<CurrentOrderSummary>::fromJson(order_json));
+            }
+        }
+        if(j.contains("moreAvailable")) r.moreAvailable = j.at("moreAvailable").get<bool>();
+        return r;
+    }
 }
