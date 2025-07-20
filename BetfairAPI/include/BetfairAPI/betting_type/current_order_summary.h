@@ -17,7 +17,7 @@ namespace BetfairAPI::BettingType {
         long selectionId;
         double handicap;
         PriceSize priceSize;
-        double bspLiability;
+        double bspLiability = 0;
         BettingEnum::Side side;
         BettingEnum::OrderStatus status;
         BettingEnum::PersistenceType persistenceType;
@@ -40,31 +40,40 @@ namespace BetfairAPI::BettingType {
     };
 
     inline bool operator==(const CurrentOrderSummary& lhs, const CurrentOrderSummary& rhs) {
+        constexpr double EPSILON = 1e-9;
+        auto double_eq = [](double a, double b) {
+            return std::fabs(a - b) < EPSILON;
+        };
+        auto opt_double_eq = [&](const std::optional<double>& a, const std::optional<double>& b) {
+            if (a.has_value() != b.has_value()) return false;
+            if (!a.has_value()) return true;
+            return double_eq(*a, *b);
+        };
         return lhs.betId == rhs.betId &&
-                lhs.marketId == rhs.marketId &&
-                lhs.selectionId == rhs.selectionId &&
-                lhs.handicap == rhs.handicap &&
-                lhs.priceSize == rhs.priceSize &&
-                lhs.bspLiability == rhs.bspLiability &&
-                lhs.side == rhs.side &&
-                lhs.status == rhs.status &&
-                lhs.persistenceType == rhs.persistenceType &&
-                lhs.orderType == rhs.orderType &&
-                lhs.placedDate == rhs.placedDate &&
-                lhs.matchedDate == rhs.matchedDate &&
-                lhs.averagePriceMatched == rhs.averagePriceMatched &&
-                lhs.sizeMatched == rhs.sizeMatched &&
-                lhs.sizeRemaining == rhs.sizeRemaining &&
-                lhs.sizeLapsed == rhs.sizeLapsed &&
-                lhs.sizeCancelled == rhs.sizeCancelled &&
-                lhs.sizeVoided == rhs.sizeVoided &&
-                lhs.regulatorAuthCode == rhs.regulatorAuthCode &&
-                lhs.regulatorCode == rhs.regulatorCode &&
-                lhs.customerOrderRef == rhs.customerOrderRef &&
-                lhs.customerStrategyRef == rhs.customerStrategyRef &&
-                lhs.currentItemDescription == rhs.currentItemDescription &&
-                lhs.sourceIdKey == rhs.sourceIdKey &&
-                lhs.sourceIdDescription == rhs.sourceIdDescription;
+            lhs.marketId == rhs.marketId &&
+            lhs.selectionId == rhs.selectionId &&
+            double_eq(lhs.handicap, rhs.handicap) &&
+            lhs.priceSize == rhs.priceSize &&
+            double_eq(lhs.bspLiability, rhs.bspLiability) &&
+            lhs.side == rhs.side &&
+            lhs.status == rhs.status &&
+            lhs.persistenceType == rhs.persistenceType &&
+            lhs.orderType == rhs.orderType &&
+            lhs.placedDate == rhs.placedDate &&
+            lhs.matchedDate == rhs.matchedDate &&
+            opt_double_eq(lhs.averagePriceMatched, rhs.averagePriceMatched) &&
+            opt_double_eq(lhs.sizeMatched, rhs.sizeMatched) &&
+            opt_double_eq(lhs.sizeRemaining, rhs.sizeRemaining) &&
+            opt_double_eq(lhs.sizeLapsed, rhs.sizeLapsed) &&
+            opt_double_eq(lhs.sizeCancelled, rhs.sizeCancelled) &&
+            opt_double_eq(lhs.sizeVoided, rhs.sizeVoided) &&
+            lhs.regulatorAuthCode == rhs.regulatorAuthCode &&
+            lhs.regulatorCode == rhs.regulatorCode &&
+            lhs.customerOrderRef == rhs.customerOrderRef &&
+            lhs.customerStrategyRef == rhs.customerStrategyRef &&
+            lhs.currentItemDescription == rhs.currentItemDescription &&
+            lhs.sourceIdKey == rhs.sourceIdKey &&
+            lhs.sourceIdDescription == rhs.sourceIdDescription;
     }
 
     inline bool operator!=(const CurrentOrderSummary& lhs, const CurrentOrderSummary& rhs) {

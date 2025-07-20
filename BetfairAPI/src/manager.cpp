@@ -12,11 +12,10 @@ namespace BetfairAPI {
         constexpr int MAX_API_DATA = 1000;
 
         std::string printResponse(const Response& r,bool printResponseBody,bool printRequestBody) {
-            
-            std::string s {"Response status code: " + r.getStatusCode()};
+            std::string s {"Queried " + r.getRequestTarget() + " (Status " + std::to_string(r.getStatusCode()) +  ")"};
 
             if(printRequestBody) {
-                s += " Target endpoint " + r.getRequestTarget() + ", Request body: ";
+                s += ", Request body: ";
                 if (r.getBody()) {
                     s += r.getBody()->dump();
                 } else {
@@ -152,11 +151,11 @@ namespace BetfairAPI {
                 lock.unlock();
                 bool success = refreshSession();
                 if (!success) {
-                    if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Warn)) {
+                    if(is_warn_level_) {
                         logger_->warn("Warning: Failed to refresh Betfair session");
                     }
                 } else {
-                    if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Info)) {
+                    if(is_info_level_) {
                         logger_->info("Session refreshed");
                     }
                 }
