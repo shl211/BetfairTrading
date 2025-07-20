@@ -21,6 +21,7 @@
 #include "betting_type/country_code_result.h"
 #include "betting_type/venue_result.h"
 #include "betting_type/market_catalogue.h"
+#include "betting_type/time_range.h"
 #include "betting_enum/market_projection.hpp"
 #include "betting_enum/market_sort.hpp"
 #include "betting_enum/order_projection.hpp"
@@ -29,7 +30,11 @@
 #include "betting_enum/persistence_type.hpp"
 #include "betting_enum/order_by.hpp"
 #include "betting_enum/order_type.hpp"
+#include "betting_enum/bet_status.hpp"
+#include "betting_enum/group_by.hpp"
 #include "betting_type/current_order_summary_report.h"
+#include "betting_type/cleared_order_summary_report.h"
+#include "betting_type/runner_id.h"
 
 #include "response.h"
 
@@ -73,6 +78,19 @@ namespace BetfairAPI {
                 std::optional<BettingType::TimeRange> date_range = std::nullopt,
                 std::optional<BettingEnum::OrderBy> order_by = std::nullopt,
                 std::optional<BettingEnum::SortDir> sort_die = std::nullopt,
+                bool include_item_description = false,
+                bool include_source_id = false
+            );
+            std::vector<BettingType::ClearedOrderSummary> getClearedOrders(
+                BettingEnum::BetStatus bet_status = BettingEnum::BetStatus::SETTLED,
+                std::optional<BettingType::TimeRange> settled_date_range = std::nullopt,
+                const std::set<std::string>& event_type_ids = {},
+                const std::set<std::string>& event_ids = {},
+                const std::set<std::string>& market_ids = {},
+                const std::set<BettingType::RunnerId>& runner_ids = {},
+                const std::set<std::string> bet_ids = {},
+                std::optional<BettingEnum::Side> side = std::nullopt,
+                std::optional<BettingEnum::GroupBy> group_by = std::nullopt,
                 bool include_item_description = false,
                 bool include_source_id = false
             );

@@ -269,7 +269,7 @@ namespace BetfairAPI {
         const Jurisdiction jurisdiction,
         bool save_request_info
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "listMarketCatalogue/"};
+        cpr::Url url{std::string(getUrl(jurisdiction)) + "listCurrentOrders/"};
         cpr::Header headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
@@ -290,6 +290,60 @@ namespace BetfairAPI {
         if(to_record >= 0 && to_record <= 1000) j["toRecord"] = to_record;
         if(include_item_description) j["includeItemDescription"] = *include_item_description;
         if(include_source_id) j["includeSourceId"] = *include_source_id;
+
+        cpr::Body body{j.dump()};
+        cpr::Response response = cpr::Post(url,headers,body);
+        return toResponse(response,save_request_info,url.str(),j);
+    }
+
+    Response listClearedOrders(const std::string& api_key,
+        const std::string& session_key,
+        BettingEnum::BetStatus bet_status,
+        const std::set<std::string>& event_type_ids,
+        const std::set<std::string>& event_ids,
+        const std::set<std::string>& market_ids,
+        const std::set<BettingType::RunnerId>& runner_ids,
+        const std::set<std::string>bet_ids,
+        std::optional<BettingEnum::Side> side,
+        std::optional<BettingType::TimeRange> settled_date_range,
+        std::optional<BettingEnum::GroupBy> group_by,
+        std::optional<bool> include_item_description,
+        std::optional<bool> include_source_id,
+        std::string locale,
+        int from_record,
+        int record_count,
+        const Jurisdiction jurisdiction,
+        bool save_request_info
+    ) {
+        cpr::Url url{std::string(getUrl(jurisdiction)) + "listClearedOrders/"};
+        cpr::Header headers {
+            {"Content-Type","application/json"},
+            {"X-Application",api_key},
+            {"X-Authentication",session_key},
+        };
+
+        nlohmann::json j {};
+        j["betStatus"] = to_string<BettingEnum::BetStatus>(bet_status);
+        if(!event_type_ids.empty()) j["eventTypeIds"] = event_type_ids;
+        if(!event_ids.empty()) j["eventIds"] = event_ids;
+        if(!market_ids.empty()) j["marketIds"] = market_ids;
+        if(!runner_ids.empty()) {
+            std::vector<nlohmann::json> runner_ids_json;
+            runner_ids_json.reserve(std::size(runner_ids));
+            for (const auto& runner_id : runner_ids) {
+                runner_ids_json.push_back(BettingType::toJson<BettingType::RunnerId>(runner_id));
+            }
+            j["runnerIds"] = runner_ids_json;
+        }
+        if(!bet_ids.empty()) j["betIds"] = bet_ids;
+        if(side) j["side"] = to_string<BettingEnum::Side>(*side);
+        if(settled_date_range) j["settledDateRange"] = BettingType::toJson<BettingType::TimeRange>(*settled_date_range);
+        if(group_by) j["groupBy"] = to_string<BettingEnum::GroupBy>(*group_by);
+        if(include_item_description) j["includeItemDescription"] = *include_item_description;
+        if(include_source_id) j["includeSourceId"] = *include_source_id;
+        if(locale != detail::default_locale) j["locale"] = locale;
+        if(from_record != 0) j["fromRecord"] = 0;
+        if(record_count != 0) j["recordCount"] = 1000;
 
         cpr::Body body{j.dump()};
         cpr::Response response = cpr::Post(url,headers,body);

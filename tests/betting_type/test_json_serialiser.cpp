@@ -22,6 +22,10 @@
 #include "BetfairAPI/betting_type/price_size.h"
 #include "BetfairAPI/betting_type/current_order_summary.h"
 #include "BetfairAPI/betting_type/current_order_summary_report.h"
+#include "BetfairAPI/betting_type/runner_id.h"
+#include "BetfairAPI/betting_type/item_description.h"
+#include "BetfairAPI/betting_type/cleared_order_summary.h"
+#include "BetfairAPI/betting_type/cleared_order_summary_report.h"
 
 TEST(TimeRangeJson, BothDatesPresent) {
     BetfairAPI::BettingType::TimeRange tr{
@@ -343,6 +347,87 @@ TEST(CurrentOrderSummaryReportJson,Basic) {
     report.currentOrders.push_back(std::move(cos));
     auto json = BetfairAPI::BettingType::toJson(report);
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CurrentOrderSummaryReport>(json);
+
+    EXPECT_EQ(report, result);
+}
+
+TEST(RunnerIdJson,Basic) {
+    BetfairAPI::BettingType::RunnerId rid;
+    rid.selectionId = 12345;
+    rid.handicap = 0.0;
+
+    auto json = BetfairAPI::BettingType::toJson(rid);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::RunnerId>(json);
+
+    EXPECT_EQ(rid, result);
+}
+
+TEST(ItemDescriptionJson,Basic) {
+    BetfairAPI::BettingType::ItemDescription idesc;
+    idesc.eventTypeDesc = "Soccer";
+    idesc.marketType = "MATCH_ODDS";
+    idesc.marketDesc = "OPEN";
+    idesc.runnerDesc = "Team A";
+
+    auto json = BetfairAPI::BettingType::toJson(idesc);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::ItemDescription>(json);
+
+    EXPECT_EQ(idesc, result);
+}
+
+TEST(ClearedOrderSummaryJson,Basic) {
+    BetfairAPI::BettingType::ClearedOrderSummary cos;
+    cos.eventTypeId = "1";
+    cos.eventId = "2";
+    cos.marketId = "3";
+    cos.selectionId = 4;
+    cos.handicap = 0.0;
+    cos.betId = "bet567";
+    cos.placedDate = BetfairAPI::Date{"2024-06-12T12:00:00Z"};
+    cos.persistenceType = BetfairAPI::BettingEnum::PersistenceType::LAPSE;
+    cos.orderType = BetfairAPI::BettingEnum::OrderType::LIMIT;
+    cos.side = BetfairAPI::BettingEnum::Side::BACK;
+    BetfairAPI::BettingType::ItemDescription idesc;
+    idesc.eventTypeDesc = "Soccer";
+    idesc.marketType = "MATCH_ODDS";
+    idesc.marketDesc = "OPEN";
+    idesc.runnerDesc = "Team B";
+    cos.itemDescription = idesc;
+    cos.betOutcome = "WIN";
+    cos.priceRequested = 2.5;
+    cos.settledDate = BetfairAPI::Date{"2024-06-13T12:00:00Z"};
+    cos.lastMatchedDate = BetfairAPI::Date{"2024-06-12T13:00:00Z"};
+    cos.betCount = 1;
+    cos.commission = 5.0;
+    cos.priceMatched = 2.5;
+    cos.priceReduced = false;
+    cos.sizeSettled = 100.0;
+    cos.profit = 195.0;
+    cos.sizeCancelled = 0.0;
+    cos.customerOrderRef = "orderRef";
+    cos.customerStrategyRef = "strategyRef";
+    cos.sourceIdKey = "srcKey";
+    cos.sourceIdDescription = "srcDesc";
+
+    auto json = BetfairAPI::BettingType::toJson(cos);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::ClearedOrderSummary>(json);
+
+    EXPECT_EQ(cos, result);
+}
+
+TEST(ClearedOrderSummaryReportJson,Basic) {
+    BetfairAPI::BettingType::ClearedOrderSummary cos1;
+    cos1.eventTypeId = "1";
+    cos1.marketId = "2";
+    
+    BetfairAPI::BettingType::ClearedOrderSummary cos2;
+    cos2.sourceIdDescription = "12asfsadfsd";
+
+    BetfairAPI::BettingType::ClearedOrderSummaryReport report;
+    report.clearedOrders = {cos1,cos2};
+
+    auto json = BetfairAPI::BettingType::toJson(report);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::ClearedOrderSummaryReport>(json);
 
     EXPECT_EQ(report, result);
 }

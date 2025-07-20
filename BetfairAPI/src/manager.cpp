@@ -450,5 +450,68 @@ namespace BetfairAPI {
 
         return results;
     }
+
+    std::vector<BettingType::ClearedOrderSummary> BetfairManager::getClearedOrders(
+        BettingEnum::BetStatus bet_status,
+        std::optional<BettingType::TimeRange> settled_date_range,
+        const std::set<std::string>& event_type_ids,
+        const std::set<std::string>& event_ids,
+        const std::set<std::string>& market_ids,
+        const std::set<BettingType::RunnerId>& runner_ids,
+        const std::set<std::string> bet_ids,
+        std::optional<BettingEnum::Side> side,
+        std::optional<BettingEnum::GroupBy> group_by,
+        bool include_item_description,
+        bool include_source_id
+    ) {
+        int search_start = 0;
+        constexpr int MAX_RESULTS_PER_QUERY = 1000;
+
+        std::vector<BettingType::ClearedOrderSummary> results;
+
+        BettingType::ClearedOrderSummaryReport report;
+        
+        constexpr int MAX_CHUNK_SIZE = 1000;
+        if(int total_size = std::size(bet_ids); total_size > MAX_CHUNK_SIZE) {
+            if(is_warn_level_) {
+                logger_->warn("While querying cleared orders, std::size(bet_ids) exceeded 1000 items. You have " +
+                    std::to_string(total_size) + ". API call skipped as listClearedOrders accepts a hard limit of 1000 bet_ids.");
+            }
+            return results;
+        }
+
+
+        report.moreAvailable = true;//dummy variable for auto-pagination purposes
+
+        while (report.moreAvailable) {
+            auto response = listClearedOrders(api_token_,session_token_,
+                bet_status,event_type_ids,event_ids,market_ids,runner_ids,
+                bet_ids,side,settled_date_range,group_by,include_item_description,
+                include_source_id,locale_,search_start,MAX_RESULTS_PER_QUERY,jurisdiction_
+            );
+
+            if(is_info_level_) {
+                logger_->info(username_ + " queried cleared orders. " + printResponse(response,false,false));
+            }
+
+            if(is_debug_level_) {
+                logger_->debug(username_ + " queried cleared orders. " + printResponse(response,true,true));
+            }
+
+            if(auto body = response.getBody()) {
+                report = BettingType::fromJson<BettingType::ClearedOrderSummaryReport>(*body);
+                results.insert(results.end(),
+                    std::make_move_iterator(report.clearedOrders.begin()),
+                    std::make_move_iterator(report.clearedOrders.end())
+                );
+                search_start += MAX_RESULTS_PER_QUERY;
+            } 
+            else {
+                report.moreAvailable = false; //terminating condition if no valid response
+            }
+        }
+
+        return results;
+    }
 }
 

@@ -22,6 +22,10 @@
 #include "BetfairAPI/betting_type/price_size.h"
 #include "BetfairAPI/betting_type/current_order_summary.h"
 #include "BetfairAPI/betting_type/current_order_summary_report.h"
+#include "BetfairAPI/betting_type/runner_id.h"
+#include "BetfairAPI/betting_type/item_description.h"
+#include "BetfairAPI/betting_type/cleared_order_summary.h"
+#include "BetfairAPI/betting_type/cleared_order_summary_report.h"
 
 namespace BetfairAPI::BettingType {
 
@@ -662,5 +666,162 @@ namespace BetfairAPI::BettingType {
         }
         if(j.contains("moreAvailable")) r.moreAvailable = j.at("moreAvailable").get<bool>();
         return r;
+    }
+
+    /**************************************************************************
+    * RunnerId
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<RunnerId>::toJson(const RunnerId& obj) {
+        nlohmann::json j = {};
+        j["marketId"] = obj.marketId;
+        j["selectionId"] = obj.selectionId;
+        if(obj.handicap) j["handicap"] = *obj.handicap;
+
+        return j;
+    }
+    
+    template<>
+    RunnerId JsonSer<RunnerId>::fromJson(const nlohmann::json& j) {
+        RunnerId r;
+        if(j.contains("marketId")) r.marketId = j.at("marketId").get<std::string>();
+        if(j.contains("selectionId")) r.selectionId = j.at("selectionId").get<long>();
+        if(j.contains("handicap")) r.handicap = j.at("handicap").get<double>();
+        
+        return r;
+    }
+
+    /**************************************************************************
+    * ItemDescription
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<ItemDescription>::toJson(const ItemDescription& obj) {
+        nlohmann::json j = {};
+        if(obj.eventTypeDesc) j["eventTypeDesc"] = *obj.eventTypeDesc;
+        if(obj.eventDesc) j["eventDesc"] = *obj.eventDesc;
+        if(obj.marketDesc) j["marketDesc"] = *obj.marketDesc;
+        if(obj.marketType) j["marketType"] = *obj.marketType;
+        if(obj.marketStartTime) j["marketStartTime"] = obj.marketStartTime->getIsoString();
+        if(obj.runnerDesc) j["runnerDesc"] = *obj.runnerDesc;
+        if(obj.numberOfWinners) j["numberOfWinners"] = *obj.numberOfWinners;
+        if(obj.eachWayDivisor) j["eachWayDivisor"] = *obj.eachWayDivisor;
+
+        return j.is_null() ? nlohmann::json::object() : j;
+    }
+    
+    template<>
+    ItemDescription JsonSer<ItemDescription>::fromJson(const nlohmann::json& j) {
+        ItemDescription desc;
+        if(j.contains("eventTypeDesc")) desc.eventTypeDesc = j.at("eventTypeDesc").get<std::string>();
+        if(j.contains("eventDesc")) desc.eventDesc = j.at("eventDesc").get<std::string>();
+        if(j.contains("marketDesc")) desc.marketDesc = j.at("marketDesc").get<std::string>();
+        if(j.contains("marketType")) desc.marketType = j.at("marketType").get<std::string>();
+        if(j.contains("marketStartTime")) desc.marketStartTime = BetfairAPI::Date(j.at("marketStartTime").get<std::string>());
+        if(j.contains("runnerDesc")) desc.runnerDesc = j.at("runnerDesc").get<std::string>();
+        if(j.contains("numberOfWinners")) desc.numberOfWinners = j.at("numberOfWinners").get<int>();
+        if(j.contains("eachWayDivisor")) desc.eachWayDivisor = j.at("eachWayDivisor").get<double>();
+
+        return desc;
+    }
+
+    /**************************************************************************
+    * ClearedOrderSummary
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<ClearedOrderSummary>::toJson(const ClearedOrderSummary& obj) {
+        nlohmann::json j = {};
+        if(obj.eventTypeId) j["eventTypeId"] = *obj.eventTypeId;
+        if(obj.eventId) j["eventId"] = *obj.eventId;
+        if(obj.marketId) j["marketId"] = *obj.marketId;
+        if(obj.selectionId) j["selectionId"] = *obj.selectionId;
+        if(obj.handicap) j["handicap"] = *obj.handicap;
+        if(obj.betId) j["betId"] = *obj.betId;
+        if(obj.placedDate) j["placedDate"] = obj.placedDate->getIsoString();
+        if(obj.persistenceType) j["persistenceType"] = to_string<BettingEnum::PersistenceType>(*obj.persistenceType);
+        if(obj.orderType) j["orderType"] = to_string<BettingEnum::OrderType>(*obj.orderType);
+        if(obj.side) j["side"] = to_string<BettingEnum::Side>(*obj.side);
+        if(obj.itemDescription) j["itemDescription"] = JsonSer<ItemDescription>::toJson(*obj.itemDescription);
+        if(obj.betOutcome) j["betOutcome"] = *obj.betOutcome;
+        if(obj.priceRequested) j["priceRequested"] = *obj.priceRequested;
+        if(obj.settledDate) j["settledDate"] = obj.settledDate->getIsoString();
+        if(obj.lastMatchedDate) j["lastMatchedDate"] = obj.lastMatchedDate->getIsoString();
+        if(obj.betCount) j["betCount"] = *obj.betCount;
+        if(obj.commission) j["commission"] = *obj.commission;
+        if(obj.priceMatched) j["priceMatched"] = *obj.priceMatched;
+        if(obj.priceReduced) j["priceReduced"] = *obj.priceReduced;
+        if(obj.sizeSettled) j["sizeSettled"] = *obj.sizeSettled;
+        if(obj.profit) j["profit"] = *obj.profit;
+        if(obj.sizeCancelled) j["sizeCancelled"] = *obj.sizeCancelled;
+        if(obj.customerOrderRef) j["customerOrderRef"] = *obj.customerOrderRef;
+        if(obj.customerStrategyRef) j["customerStrategyRef"] = *obj.customerStrategyRef;
+        if(obj.sourceIdKey) j["sourceIdKey"] = *obj.sourceIdKey;
+        if(obj.sourceIdDescription) j["sourceIdDescription"] = *obj.sourceIdDescription;
+
+        return j.is_null() ? nlohmann::json::object() : j;
+    }
+    
+    template<>
+    ClearedOrderSummary JsonSer<ClearedOrderSummary>::fromJson(const nlohmann::json& j) {
+        ClearedOrderSummary desc;
+        if(j.contains("eventTypeId")) desc.eventTypeId = j.at("eventTypeId").get<std::string>();
+        if(j.contains("eventId")) desc.eventId = j.at("eventId").get<std::string>();
+        if(j.contains("marketId")) desc.marketId = j.at("marketId").get<std::string>();
+        if(j.contains("selectionId")) desc.selectionId = j.at("selectionId").get<long>();
+        if(j.contains("handicap")) desc.handicap = j.at("handicap").get<double>();
+        if(j.contains("betId")) desc.betId = j.at("betId").get<std::string>();
+        if(j.contains("placedDate")) desc.placedDate = BetfairAPI::Date(j.at("placedDate").get<std::string>());
+        if(j.contains("persistenceType")) desc.persistenceType = from_string<BettingEnum::PersistenceType>(j.at("persistenceType").get<std::string>());
+        if(j.contains("orderType")) desc.orderType = from_string<BettingEnum::OrderType>(j.at("orderType").get<std::string>());
+        if(j.contains("side")) desc.side = from_string<BettingEnum::Side>(j.at("side").get<std::string>());
+        if(j.contains("itemDescription")) desc.itemDescription = JsonSer<ItemDescription>::fromJson(j.at("itemDescription"));
+        if(j.contains("betOutcome")) desc.betOutcome = j.at("betOutcome").get<std::string>();
+        if(j.contains("priceRequested")) desc.priceRequested = j.at("priceRequested").get<double>();
+        if(j.contains("settledDate")) desc.settledDate = BetfairAPI::Date(j.at("settledDate").get<std::string>());
+        if(j.contains("lastMatchedDate")) desc.lastMatchedDate = BetfairAPI::Date(j.at("lastMatchedDate").get<std::string>());
+        if(j.contains("betCount")) desc.betCount = j.at("betCount").get<int>();
+        if(j.contains("commission")) desc.commission = j.at("commission").get<double>();
+        if(j.contains("priceMatched")) desc.priceMatched = j.at("priceMatched").get<double>();
+        if(j.contains("priceReduced")) desc.priceReduced = j.at("priceReduced").get<bool>();
+        if(j.contains("sizeSettled")) desc.sizeSettled = j.at("sizeSettled").get<double>();
+        if(j.contains("profit")) desc.profit = j.at("profit").get<double>();
+        if(j.contains("sizeCancelled")) desc.sizeCancelled = j.at("sizeCancelled").get<double>();
+        if(j.contains("customerOrderRef")) desc.customerOrderRef = j.at("customerOrderRef").get<std::string>();
+        if(j.contains("customerStrategyRef")) desc.customerStrategyRef = j.at("customerStrategyRef").get<std::string>();
+        if(j.contains("sourceIdKey")) desc.sourceIdKey = j.at("sourceIdKey").get<std::string>();
+        if(j.contains("sourceIdDescription")) desc.sourceIdDescription = j.at("sourceIdDescription").get<std::string>();
+
+        return desc;
+    }
+
+    /**************************************************************************
+    * ClearedOrderSummaryReport
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<ClearedOrderSummaryReport>::toJson(const ClearedOrderSummaryReport& obj) {
+        nlohmann::json j = {};
+        {
+            nlohmann::json orders_json = nlohmann::json::array();
+            for (const auto& order : obj.clearedOrders) {
+                orders_json.push_back(JsonSer<ClearedOrderSummary>::toJson(order));
+            }
+            j["clearedOrders"] = orders_json;
+        }
+        j["moreAvailable"] = obj.moreAvailable;
+
+        return j;
+    }
+    
+    template<>
+    ClearedOrderSummaryReport JsonSer<ClearedOrderSummaryReport>::fromJson(const nlohmann::json& j) {
+        ClearedOrderSummaryReport desc;
+        if(j.contains("clearedOrders")) {
+            desc.clearedOrders.reserve(std::size(j.at("clearedOrders")));
+            for (const auto& order_json : j.at("clearedOrders")) {
+                desc.clearedOrders.push_back(JsonSer<ClearedOrderSummary>::fromJson(order_json));
+            }
+        }
+        if(j.contains("moreAvailable")) desc.moreAvailable = j.at("moreAvailable").get<bool>();
+
+        return desc;
     }
 }

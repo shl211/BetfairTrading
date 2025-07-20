@@ -5,12 +5,16 @@
 #include "response.h"
 #include "jurisdiction.hpp"
 #include "betting_type/market_filter.h"
+#include "betting_type/runner_id.h"
 #include "betting_enum/time_granularity.hpp"
 #include "betting_enum/market_projection.hpp"
 #include "betting_enum/market_sort.hpp"
 #include "betting_enum/order_projection.hpp"
 #include "betting_enum/order_by.hpp"
 #include "betting_enum/sort_dir.hpp"
+#include "betting_enum/bet_status.hpp"
+#include "betting_enum/side.hpp"
+#include "betting_enum/group_by.hpp"
 namespace BetfairAPI {
     //note that if api requests fail, the request body is automatically stored inside Response
 
@@ -102,4 +106,24 @@ namespace BetfairAPI {
         const Jurisdiction j = Jurisdiction::GLOBAL,
         bool save_request_info = false
     );
+
+    Response listClearedOrders(const std::string& api_key,
+        const std::string& session_key,
+        BettingEnum::BetStatus bet_status,
+        const std::set<std::string>& event_type_ids = {},
+        const std::set<std::string>& event_ids = {},
+        const std::set<std::string>& market_ids = {},
+        const std::set<BettingType::RunnerId>& runner_ids = {},
+        const std::set<std::string> bet_ids = {},
+        std::optional<BettingEnum::Side> side = std::nullopt,
+        std::optional<BettingType::TimeRange> settled_date_range = std::nullopt,
+        std::optional<BettingEnum::GroupBy> group_by = std::nullopt,
+        std::optional<bool> include_item_description = std::nullopt,
+        std::optional<bool> include_source_id = std::nullopt,
+        std::string locale = detail::default_locale,
+        int from_record = 0,
+        int record_count = 1000,
+        const Jurisdiction j = Jurisdiction::GLOBAL,
+        bool save_request_info = false
+    ); 
 }

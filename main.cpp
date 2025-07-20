@@ -45,11 +45,11 @@ int main() {
     printVector(r);
 
     std::set<std::string> bet_ids;
-    for (int i = 0; i < 251; ++i) {
+    for (int i = 0; i < 250; ++i) {
         bet_ids.insert("bet_id_" + std::to_string(i));
     }
 
-    auto r2 = manager.getCurrentOrders(bet_ids);
+    auto r2 = manager.getClearedOrders();
 
     printVector(r2);
 
