@@ -26,6 +26,12 @@
 #include "BetfairAPI/betting_type/item_description.h"
 #include "BetfairAPI/betting_type/cleared_order_summary.h"
 #include "BetfairAPI/betting_type/cleared_order_summary_report.h"
+#include "BetfairAPI/betting_type/limit_order.h"
+#include "BetfairAPI/betting_type/limit_on_close_order.h"
+#include "BetfairAPI/betting_type/market_on_close_order.h"
+#include "BetfairAPI/betting_type/place_instruction.h"
+#include "BetfairAPI/betting_type/place_instruction_report.h"
+#include "BetfairAPI/betting_type/place_execution_report.h"
 
 namespace BetfairAPI::BettingType {
 
@@ -822,6 +828,173 @@ namespace BetfairAPI::BettingType {
         }
         if(j.contains("moreAvailable")) desc.moreAvailable = j.at("moreAvailable").get<bool>();
 
+        return desc;
+    }
+
+    /**************************************************************************
+    * LimitOrder
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<LimitOrder>::toJson(const LimitOrder& obj) {
+        nlohmann::json j = {};
+        j["size"] = obj.size;
+        j["price"] = obj.price;
+        j["persistenceType"] = to_string<BettingEnum::PersistenceType>(obj.persistenceType);
+        
+        if(obj.timeInForce) j["timeInForce"] = to_string<BettingEnum::TimeInForce>(*obj.timeInForce);
+        if(obj.minFillSize) j["minFillSize"] = *obj.minFillSize;
+        if(obj.betTargetType) j["betTargetType"] = to_string<BettingEnum::BetTargetType>(*obj.betTargetType);
+        if(obj.betTargetSize) j["betTargetSize"] = *obj.betTargetSize;
+
+        return j;
+    }
+    
+    template<>
+    LimitOrder JsonSer<LimitOrder>::fromJson(const nlohmann::json& j) {
+        LimitOrder desc;
+        if(j.contains("size")) desc.size = j.at("size").get<double>();
+        if(j.contains("price")) desc.price = j.at("price").get<double>();
+        if(j.contains("persistenceType")) desc.persistenceType = from_string<BettingEnum::PersistenceType>(j.at("persistenceType").get<std::string>());
+        if(j.contains("timeInForce")) desc.timeInForce = from_string<BettingEnum::TimeInForce>(j.at("timeInForce").get<std::string>());
+        if(j.contains("minFillSize")) desc.minFillSize = j.at("minFillSize").get<double>();
+        if(j.contains("betTargetType")) desc.betTargetType = from_string<BettingEnum::BetTargetType>(j.at("betTargetType").get<std::string>());
+        if(j.contains("betTargetSize")) desc.betTargetSize = j.at("betTargetSize").get<double>();
+        return desc;
+    }
+
+    /**************************************************************************
+    * LimitOnCloseOrder
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<LimitOnCloseOrder>::toJson(const LimitOnCloseOrder& obj) {
+        nlohmann::json j = {};
+        j["liability"] = obj.liability;
+        j["price"] = obj.price;
+        return j;
+    }
+    
+    template<>
+    LimitOnCloseOrder JsonSer<LimitOnCloseOrder>::fromJson(const nlohmann::json& j) {
+        LimitOnCloseOrder desc;
+        if(j.contains("liability")) desc.liability = j.at("liability").get<double>();
+        if(j.contains("price")) desc.price = j.at("price").get<double>();
+        return desc;
+    }
+
+    /**************************************************************************
+    * MarketOnCloseOrder
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<MarketOnCloseOrder>::toJson(const MarketOnCloseOrder& obj) {
+        nlohmann::json j = {};
+        j["liability"] = obj.liability;
+        return j;
+    }
+    
+    template<>
+    MarketOnCloseOrder JsonSer<MarketOnCloseOrder>::fromJson(const nlohmann::json& j) {
+        MarketOnCloseOrder desc;
+        if(j.contains("liability")) desc.liability = j.at("liability").get<double>();
+        return desc;
+    }
+
+    /**************************************************************************
+    * PlaceInstruction
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<PlaceInstruction>::toJson(const PlaceInstruction& obj) {
+        nlohmann::json j = {};
+
+        j["orderType"] = to_string<BettingEnum::OrderType>(obj.orderType);
+        j["selectionId"] = obj.selectionId;
+        j["side"] = to_string<BettingEnum::Side>(obj.side);
+        
+        if(obj.handicap) j["handicap"] = *obj.handicap;
+        if(obj.limitOrder) j["limitOrder"] = JsonSer<LimitOrder>::toJson(*obj.limitOrder); 
+        if(obj.limitOnCloseOrder) j["limitOnCloseOrder"] = JsonSer<LimitOnCloseOrder>::toJson(*obj.limitOnCloseOrder); 
+        if(obj.marketOnCloseOrder) j["marketOnCloseOrder"] = JsonSer<MarketOnCloseOrder>::toJson(*obj.marketOnCloseOrder); 
+        if(obj.customerOrderRef) j["customerOrderRef"] = *obj.customerOrderRef;
+        return j;
+    }
+    
+    template<>
+    PlaceInstruction JsonSer<PlaceInstruction>::fromJson(const nlohmann::json& j) {
+        PlaceInstruction desc;
+        if(j.contains("orderType")) desc.orderType = from_string<BettingEnum::OrderType>(j.at("orderType").get<std::string>());
+        if(j.contains("selectionId")) desc.selectionId = j.at("selectionId").get<long>();
+        if(j.contains("side")) desc.side = from_string<BettingEnum::Side>(j.at("side").get<std::string>());
+        if(j.contains("handicap")) desc.handicap = j.at("handicap").get<double>();
+        if(j.contains("limitOrder")) desc.limitOrder = JsonSer<LimitOrder>::fromJson(j.at("limitOrder"));
+        if(j.contains("limitOnCloseOrder")) desc.limitOnCloseOrder = JsonSer<LimitOnCloseOrder>::fromJson(j.at("limitOnCloseOrder"));
+        if(j.contains("marketOnCloseOrder")) desc.marketOnCloseOrder = JsonSer<MarketOnCloseOrder>::fromJson(j.at("marketOnCloseOrder"));
+        if(j.contains("customerOrderRef")) desc.customerOrderRef = j.at("customerOrderRef").get<std::string>();
+        return desc;
+    }
+
+    /**************************************************************************
+    * PlaceInstructionReport
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<PlaceInstructionReport>::toJson(const PlaceInstructionReport& obj) {
+        nlohmann::json j = {};
+        j["status"] = to_string<BettingEnum::InstructionReportStatus>(obj.status);
+        if (obj.errorCode) j["errorCode"] = to_string<BettingEnum::InstructionReportErrorCode>(*obj.errorCode);
+        if (obj.orderStatus) j["orderStatus"] = to_string<BettingEnum::OrderStatus>(*obj.orderStatus);
+        j["instruction"] = JsonSer<PlaceInstruction>::toJson(obj.instruction);
+        if (obj.betId) j["betId"] = *obj.betId;
+        if (obj.placedDate) j["placedDate"] = obj.placedDate->getIsoString();
+        if (obj.averagePriceMatched) j["averagePriceMatched"] = *obj.averagePriceMatched;
+        if (obj.sizeMatched) j["sizeMatched"] = *obj.sizeMatched;
+        return j;
+    }
+    
+    template<>
+    PlaceInstructionReport JsonSer<PlaceInstructionReport>::fromJson(const nlohmann::json& j) {
+        PlaceInstructionReport desc;
+        if(j.contains("status")) desc.status = from_string<BettingEnum::InstructionReportStatus>(j.at("status").get<std::string>());
+        if(j.contains("errorCode")) desc.errorCode = from_string<BettingEnum::InstructionReportErrorCode>(j.at("errorCode").get<std::string>());
+        if(j.contains("orderStatus")) desc.orderStatus = from_string<BettingEnum::OrderStatus>(j.at("orderStatus").get<std::string>());
+        if(j.contains("instruction")) desc.instruction = JsonSer<PlaceInstruction>::fromJson(j.at("instruction"));
+        if(j.contains("betId")) desc.betId = j.at("betId").get<std::string>();
+        if(j.contains("placedDate")) desc.placedDate = BetfairAPI::Date(j.at("placedDate").get<std::string>());
+        if(j.contains("averagePriceMatched")) desc.averagePriceMatched = j.at("averagePriceMatched").get<double>();
+        if(j.contains("sizeMatched")) desc.sizeMatched = j.at("sizeMatched").get<double>();
+        return desc;
+    }
+
+    /**************************************************************************
+    * PlaceExecutionReport
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<PlaceExecutionReport>::toJson(const PlaceExecutionReport& obj) {
+        nlohmann::json j = {};
+        j["status"] = to_string<BettingEnum::ExecutionReportStatus>(obj.status);
+        if (obj.customerRef) j["customerRef"] = *obj.customerRef;
+        if (obj.errorCode) j["errorCode"] = to_string<BettingEnum::ExecutionReportErrorCode>(*obj.errorCode);
+        if (obj.marketId) j["marketId"] = *obj.marketId;
+        if (!obj.instructionReports.empty()) {
+            nlohmann::json reports_json = nlohmann::json::array();
+            for (const auto& report : obj.instructionReports) {
+            reports_json.push_back(JsonSer<PlaceInstructionReport>::toJson(report));
+            }
+            j["instructionReports"] = reports_json;
+        }
+        return j;
+    }
+    
+    template<>
+    PlaceExecutionReport JsonSer<PlaceExecutionReport>::fromJson(const nlohmann::json& j) {
+        PlaceExecutionReport desc;
+        if(j.contains("status")) desc.status = from_string<BettingEnum::ExecutionReportStatus>(j.at("status").get<std::string>());
+        if(j.contains("customerRef")) desc.customerRef = j.at("customerRef").get<std::string>();
+        if(j.contains("errorCode")) desc.errorCode = from_string<BettingEnum::ExecutionReportErrorCode>(j.at("errorCode").get<std::string>());
+        if(j.contains("marketId")) desc.marketId = j.at("marketId").get<std::string>();
+        if(j.contains("instructionReports")) {
+            desc.instructionReports.reserve(std::size(j.at("instructionReports")));
+            for (const auto& report_json : j.at("instructionReports")) {
+            desc.instructionReports.push_back(JsonSer<PlaceInstructionReport>::fromJson(report_json));
+            }
+        }
         return desc;
     }
 }

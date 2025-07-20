@@ -348,5 +348,40 @@ namespace BetfairAPI {
         cpr::Body body{j.dump()};
         cpr::Response response = cpr::Post(url,headers,body);
         return toResponse(response,save_request_info,url.str(),j);
+    };
+
+    Response placeOrders(const std::string& api_key,
+        const std::string& session_key,
+        std::string market_id,
+        const std::vector<BettingType::PlaceInstruction>& instructions,
+        std::optional<BettingType::MarketVersion> market_version,
+        std::optional<std::string> customer_ref,
+        std::optional<std::string> customer_strategy_ref,
+        std::optional<bool> async,
+        const Jurisdiction jurisdiction,
+        bool save_request_info
+    ) {
+
+        cpr::Url url{std::string(getUrl(jurisdiction)) + "placeOrders/"};
+        cpr::Header headers {
+            {"Content-Type","application/json"},
+            {"X-Application",api_key},
+            {"X-Authentication",session_key},
+        };
+
+        nlohmann::json j {};
+        j["marketId"] = market_id;
+        j["instructions"] = nlohmann::json::array();
+        for (const auto& instr : instructions) {
+            j["instructions"].push_back(BettingType::toJson<BettingType::PlaceInstruction>(instr));
+        }
+        if (market_version) j["marketVersion"] = BettingType::toJson<BettingType::MarketVersion>(*market_version);
+        if (customer_ref) j["customerRef"] = *customer_ref;
+        if (customer_strategy_ref) j["customerStrategyRef"] = *customer_strategy_ref;
+        if (async) j["async"] = *async;
+
+        cpr::Body body{j.dump()};
+        cpr::Response response = cpr::Post(url,headers,body);
+        return toResponse(response,save_request_info,url.str(),j);
     }
 }

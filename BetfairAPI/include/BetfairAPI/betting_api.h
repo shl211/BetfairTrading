@@ -15,6 +15,8 @@
 #include "betting_enum/bet_status.hpp"
 #include "betting_enum/side.hpp"
 #include "betting_enum/group_by.hpp"
+#include "betting_type/place_instruction.h"
+#include "betting_type/market_version.h"
 namespace BetfairAPI {
     //note that if api requests fail, the request body is automatically stored inside Response
 
@@ -126,4 +128,17 @@ namespace BetfairAPI {
         const Jurisdiction j = Jurisdiction::GLOBAL,
         bool save_request_info = false
     ); 
+
+    Response placeOrders(const std::string& api_key,
+        const std::string& session_key,
+        std::string market_id,
+        const std::vector<BettingType::PlaceInstruction>& instructions,
+        std::optional<BettingType::MarketVersion> market_version,
+        std::optional<std::string> customer_ref = std::nullopt,
+        std::optional<std::string> customer_strategy_ref = std::nullopt,
+        std::optional<bool> async = std::nullopt,
+        const Jurisdiction j = Jurisdiction::GLOBAL,
+        bool save_request_info = false
+    );
+
 }

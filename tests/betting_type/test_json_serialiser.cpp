@@ -26,6 +26,12 @@
 #include "BetfairAPI/betting_type/item_description.h"
 #include "BetfairAPI/betting_type/cleared_order_summary.h"
 #include "BetfairAPI/betting_type/cleared_order_summary_report.h"
+#include "BetfairAPI/betting_type/limit_order.h"
+#include "BetfairAPI/betting_type/limit_on_close_order.h"
+#include "BetfairAPI/betting_type/market_on_close_order.h"
+#include "BetfairAPI/betting_type/place_instruction.h"
+#include "BetfairAPI/betting_type/place_instruction_report.h"
+#include "BetfairAPI/betting_type/place_execution_report.h"
 
 TEST(TimeRangeJson, BothDatesPresent) {
     BetfairAPI::BettingType::TimeRange tr{
@@ -428,6 +434,112 @@ TEST(ClearedOrderSummaryReportJson,Basic) {
 
     auto json = BetfairAPI::BettingType::toJson(report);
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::ClearedOrderSummaryReport>(json);
+
+    EXPECT_EQ(report, result);
+}
+
+TEST(LimitOrderJson,Basic) {
+    BetfairAPI::BettingType::LimitOrder lo;
+    lo.size = 100.0;
+    lo.price = 2.5;
+    lo.persistenceType = BetfairAPI::BettingEnum::PersistenceType::LAPSE;
+    lo.minFillSize = 10.0;
+    lo.timeInForce = BetfairAPI::BettingEnum::TimeInForce::FILL_OR_KILL;
+
+    auto json = BetfairAPI::BettingType::toJson(lo);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::LimitOrder>(json);
+
+    EXPECT_EQ(lo, result);
+}
+
+TEST(LimitOnCloseOrderJson,Basic) {
+    BetfairAPI::BettingType::LimitOnCloseOrder loco;
+    loco.liability = 50.0;
+    loco.price = 1.8;
+
+    auto json = BetfairAPI::BettingType::toJson(loco);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::LimitOnCloseOrder>(json);
+
+    EXPECT_EQ(loco, result);
+}
+
+TEST(MarketOnCloseOrderJson,Basic) {
+    BetfairAPI::BettingType::MarketOnCloseOrder loco;
+    loco.liability = 50.0;
+
+    auto json = BetfairAPI::BettingType::toJson(loco);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::MarketOnCloseOrder>(json);
+
+    EXPECT_EQ(loco, result);
+}
+
+TEST(PlaceInstructionJson,Basic) {
+    BetfairAPI::BettingType::PlaceInstruction pi;
+    pi.selectionId = 12345;
+    pi.handicap = 0.0;
+    pi.side = BetfairAPI::BettingEnum::Side::BACK;
+    pi.orderType = BetfairAPI::BettingEnum::OrderType::LIMIT;
+    BetfairAPI::BettingType::LimitOrder lo;
+    lo.size = 100.0;
+    lo.price = 2.5;
+    lo.persistenceType = BetfairAPI::BettingEnum::PersistenceType::LAPSE;
+    pi.limitOrder = lo;
+    pi.customerOrderRef = "orderRef123";
+
+    auto json = BetfairAPI::BettingType::toJson(pi);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::PlaceInstruction>(json);
+
+    EXPECT_EQ(pi, result);
+}
+
+TEST(PlaceInstructionReportJson,Basic) {
+    BetfairAPI::BettingType::PlaceInstructionReport pir;
+    pir.status = BetfairAPI::BettingEnum::InstructionReportStatus::SUCCESS;
+    pir.errorCode = std::nullopt;
+    pir.betId = "bet123";
+    pir.orderStatus = BetfairAPI::BettingEnum::OrderStatus::EXECUTION_COMPLETE;
+    pir.instruction.selectionId = 12345;
+    pir.instruction.handicap = 0.0;
+    pir.instruction.side = BetfairAPI::BettingEnum::Side::BACK;
+    pir.instruction.orderType = BetfairAPI::BettingEnum::OrderType::LIMIT;
+    BetfairAPI::BettingType::LimitOrder lo;
+    lo.size = 100.0;
+    lo.price = 2.5;
+    lo.persistenceType = BetfairAPI::BettingEnum::PersistenceType::LAPSE;
+    pir.instruction.limitOrder = lo;
+    pir.instruction.customerOrderRef = "orderRef123";
+
+    auto json = BetfairAPI::BettingType::toJson(pir);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::PlaceInstructionReport>(json);
+
+    EXPECT_EQ(pir, result);
+}
+
+TEST(PlaceExecutionReportJson,Basic) {
+    BetfairAPI::BettingType::PlaceInstructionReport pir;
+    pir.status = BetfairAPI::BettingEnum::InstructionReportStatus::SUCCESS;
+    pir.errorCode = std::nullopt;
+    pir.betId = "bet123";
+    pir.orderStatus = BetfairAPI::BettingEnum::OrderStatus::EXECUTION_COMPLETE;
+    pir.instruction.selectionId = 12345;
+    pir.instruction.handicap = 0.0;
+    pir.instruction.side = BetfairAPI::BettingEnum::Side::BACK;
+    pir.instruction.orderType = BetfairAPI::BettingEnum::OrderType::LIMIT;
+    BetfairAPI::BettingType::LimitOrder lo;
+    lo.size = 100.0;
+    lo.price = 2.5;
+    lo.persistenceType = BetfairAPI::BettingEnum::PersistenceType::LAPSE;
+    pir.instruction.limitOrder = lo;
+    pir.instruction.customerOrderRef = "orderRef123";
+
+    BetfairAPI::BettingType::PlaceExecutionReport report;
+    report.status = BetfairAPI::BettingEnum::ExecutionReportStatus::SUCCESS;
+    report.errorCode = std::nullopt;
+    report.marketId = "market123";
+    report.instructionReports.push_back(pir);
+
+    auto json = BetfairAPI::BettingType::toJson(report);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::PlaceExecutionReport>(json);
 
     EXPECT_EQ(report, result);
 }

@@ -35,6 +35,7 @@
 #include "betting_type/current_order_summary_report.h"
 #include "betting_type/cleared_order_summary_report.h"
 #include "betting_type/runner_id.h"
+#include "betting_type/place_execution_report.h"
 
 #include "response.h"
 
@@ -94,6 +95,15 @@ namespace BetfairAPI {
                 bool include_item_description = false,
                 bool include_source_id = false
             );
+            BettingType::PlaceExecutionReport placeOrders(
+                std::string market_id,
+                const std::vector<BettingType::PlaceInstruction>& instructions,
+                std::optional<BettingType::MarketVersion> market_version = std::nullopt,
+                std::optional<std::string> customer_ref = std::nullopt,
+                std::optional<std::string> customer_strategy_ref = std::nullopt,
+                std::optional<bool> async = std::nullopt
+            );
+
 
             bool refreshSession();
             

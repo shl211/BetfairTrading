@@ -513,5 +513,50 @@ namespace BetfairAPI {
 
         return results;
     }
+
+    //async on will return immediatley
+    //use listCurrentOrders to get async orders
+    BettingType::PlaceExecutionReport BetfairManager::placeOrders(
+        std::string market_id,
+        const std::vector<BettingType::PlaceInstruction>& instructions,
+        std::optional<BettingType::MarketVersion> market_version,
+        std::optional<std::string> customer_ref,
+        std::optional<std::string> customer_strategy_ref,
+        std::optional<bool> async
+    ) {
+        const int MAX_INSTRUCTIONS = jurisdiction_ != Jurisdiction::ITALY ? 200 : 50;
+
+        const int instruction_size = std::size(instructions);
+        if(instruction_size > MAX_INSTRUCTIONS) {
+            if(is_warn_level_) {
+                logger_->warn("Attempted to place " + std::to_string(instruction_size) +
+                    " orders, which exceeds the maximum allowed (" + std::to_string(MAX_INSTRUCTIONS) +
+                    ") for jurisdiction " + std::to_string(static_cast<int>(jurisdiction_)) + ". No orders placed.");
+            }
+            return {};
+        }
+
+        auto response = BetfairAPI::placeOrders(
+            api_token_,session_token_,market_id,instructions,
+            market_version,customer_ref,customer_strategy_ref,async
+        );
+
+        if(is_info_level_) {
+            logger_->info(username_ + " placed " + std::to_string(instruction_size) + " orders. " 
+            + printResponse(response,false,false));
+        }
+        
+        if(is_debug_level_) {
+            logger_->debug(username_ + " placed " + std::to_string(instruction_size) + " orders. " 
+            + printResponse(response,true,true));
+        }
+
+        BettingType::PlaceExecutionReport report;
+        if(response.getBody() != nullptr) {
+            report = BettingType::fromJson<BettingType::PlaceExecutionReport>(*response.getBody());
+        }
+
+        return report;
+    }
 }
 
