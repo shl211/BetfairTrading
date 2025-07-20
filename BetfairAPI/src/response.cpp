@@ -7,8 +7,8 @@ namespace BetfairAPI {
         constexpr bool allow_exceptions = false;
     }
 
-    Response::Response(int status,const std::string& raw_body)
-        : status_code_(status), body_(raw_body) {}
+    Response::Response(int status,const std::string& raw_body,const std::string& target_url)
+        : status_code_(status), body_(raw_body), target_url_(target_url) {}
 
     int Response::getStatusCode() const {
         return status_code_;
@@ -25,8 +25,7 @@ namespace BetfairAPI {
         return valid_json_ ? &body_cached_ : nullptr;
     }
 
-    void Response::setRequestInfo(std::string target,nlohmann::json body) {
-        target_url_ = std::move(target);
+    void Response::setRequestInfo(nlohmann::json body) {
         request_body_ = std::move(body);
     }
 

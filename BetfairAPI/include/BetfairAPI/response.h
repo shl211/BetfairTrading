@@ -7,10 +7,10 @@ namespace BetfairAPI {
     class Response {
     
         public:
-            Response(int status,const std::string& raw_body);
+            Response(int status,const std::string& raw_body,const std::string& target_url);
             ~Response() = default;
 
-            void setRequestInfo(std::string target,nlohmann::json body);
+            void setRequestInfo(nlohmann::json body);
 
             int getStatusCode() const;
             [[nodiscard]] const nlohmann::json* getBody() const;
