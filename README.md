@@ -26,3 +26,7 @@ ctest
 ```
 
 **ctest** executes the test suite.
+
+## Examples
+
+Some examples of the BetfairAPI library can be seen in examples/, which contain some basic lightweight examples. These are very basic, with more advanced functionalities possible.
