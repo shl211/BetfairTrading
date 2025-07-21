@@ -3,6 +3,7 @@
 #This will place a bet at the specified terms, and after 5 second delay will print current orders on the market
 #Note that event is a query used to find the event names via text search query
 #Obviously not super robust
+#This just exposes some basic functionality, lots more detail under the hood with api calls
 
 #set correct script location
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

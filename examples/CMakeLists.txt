@@ -8,3 +8,6 @@ FetchContent_MakeAvailable(cxxopts)
 
 add_executable(example_place_order example_place_order.cpp)
 target_link_libraries(example_place_order PRIVATE BetfairAPI cxxopts)
+
+add_executable(example_cancel_order example_cancel_order.cpp)
+target_link_libraries(example_cancel_order PRIVATE BetfairAPI cxxopts)
