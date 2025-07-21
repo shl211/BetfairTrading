@@ -36,6 +36,7 @@
 #include "betting_type/cleared_order_summary_report.h"
 #include "betting_type/runner_id.h"
 #include "betting_type/place_execution_report.h"
+#include "betting_type/cancel_execution_report.h"
 
 #include "response.h"
 
@@ -102,6 +103,11 @@ namespace BetfairAPI {
                 std::optional<std::string> customer_ref = std::nullopt,
                 std::optional<std::string> customer_strategy_ref = std::nullopt,
                 std::optional<bool> async = std::nullopt
+            );
+            BettingType::CancelExecutionReport cancelOrders(
+                std::string market_id = "",
+                const std::vector<BettingType::CancelInstruction>& instructions = {},
+                std::optional<std::string> customer_ref = std::nullopt
             );
 
 

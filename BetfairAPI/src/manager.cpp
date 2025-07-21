@@ -558,5 +558,45 @@ namespace BetfairAPI {
 
         return report;
     }
+
+    BettingType::CancelExecutionReport BetfairManager::cancelOrders(
+        std::string market_id,
+        const std::vector<BettingType::CancelInstruction>& instructions,
+        std::optional<std::string> customer_ref
+    ) {
+        auto response = BetfairAPI::cancelOrders(
+            api_token_,session_token_,market_id,instructions,
+            customer_ref,jurisdiction_
+        );
+
+        std::string msg;
+        if(market_id.empty() && instructions.empty()) {
+            msg = "ALL ORDERS PLACED";
+        } 
+        else if(!market_id.empty()) {
+            msg = "ALL ORDERS IN MARKET " + market_id;
+        }
+        else {
+            msg = std::to_string(std::size(instructions));
+        }
+
+        if(is_info_level_) {
+            logger_->info(username_ + " cancelled " + msg + " orders. " 
+            + printResponse(response,false,false));
+        }
+        
+        if(is_debug_level_) {
+            logger_->debug(username_ + " cancelled " + msg + " orders. " 
+            + printResponse(response,true,true));
+        }
+
+        BettingType::CancelExecutionReport report;
+        if(response.getBody() != nullptr) {
+            report = BettingType::fromJson<BettingType::CancelExecutionReport>(*response.getBody());
+        }
+
+        return report;
+
+    }
 }
 

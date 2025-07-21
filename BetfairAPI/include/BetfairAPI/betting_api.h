@@ -17,6 +17,7 @@
 #include "betting_enum/group_by.hpp"
 #include "betting_type/place_instruction.h"
 #include "betting_type/market_version.h"
+#include "betting_type/cancel_instruction.h"
 namespace BetfairAPI {
     //note that if api requests fail, the request body is automatically stored inside Response
 
@@ -137,6 +138,15 @@ namespace BetfairAPI {
         std::optional<std::string> customer_ref = std::nullopt,
         std::optional<std::string> customer_strategy_ref = std::nullopt,
         std::optional<bool> async = std::nullopt,
+        const Jurisdiction j = Jurisdiction::GLOBAL,
+        bool save_request_info = false
+    );
+
+    Response cancelOrders(const std::string& api_key,
+        const std::string& session_key,
+        std::string market_id,
+        const std::vector<BettingType::CancelInstruction>& instructions,
+        std::optional<std::string> customer_ref = std::nullopt,
         const Jurisdiction j = Jurisdiction::GLOBAL,
         bool save_request_info = false
     );

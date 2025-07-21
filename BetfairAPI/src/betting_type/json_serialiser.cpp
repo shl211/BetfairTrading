@@ -32,6 +32,9 @@
 #include "BetfairAPI/betting_type/place_instruction.h"
 #include "BetfairAPI/betting_type/place_instruction_report.h"
 #include "BetfairAPI/betting_type/place_execution_report.h"
+#include "BetfairAPI/betting_type/cancel_instruction.h"
+#include "BetfairAPI/betting_type/cancel_instruction_report.h"
+#include "BetfairAPI/betting_type/cancel_execution_report.h"
 
 namespace BetfairAPI::BettingType {
 
@@ -993,6 +996,84 @@ namespace BetfairAPI::BettingType {
             desc.instructionReports.reserve(std::size(j.at("instructionReports")));
             for (const auto& report_json : j.at("instructionReports")) {
             desc.instructionReports.push_back(JsonSer<PlaceInstructionReport>::fromJson(report_json));
+            }
+        }
+        return desc;
+    }
+    
+    /**************************************************************************
+    * CancelInstruction
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<CancelInstruction>::toJson(const CancelInstruction& obj) {
+        nlohmann::json j = {};
+        j["betId"] = obj.betId;
+        if(obj.sizeReduction) j["sizeReduction"] = *obj.sizeReduction;
+        return j;
+    }
+    
+    template<>
+    CancelInstruction JsonSer<CancelInstruction>::fromJson(const nlohmann::json& j) {
+        CancelInstruction desc;
+        if(j.contains("betId")) desc.betId = j.at("betId").get<std::string>();
+        if(j.contains("sizeReduction")) desc.sizeReduction = j.at("sizeReduction").get<double>();
+        return desc;
+    }
+
+    /**************************************************************************
+    * CancelInstructionReport
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<CancelInstructionReport>::toJson(const CancelInstructionReport& obj) {
+        nlohmann::json j = {};
+        j["status"] = to_string<BettingEnum::InstructionReportStatus>(obj.status);
+        j["instruction"] = JsonSer<CancelInstruction>::toJson(obj.instruction);
+        j["sizeCancelled"] = obj.sizeCancelled;
+        if(obj.errorCode) j["errorCode"] = to_string<BettingEnum::InstructionReportStatus>(obj.status);
+        if(obj.cancelledDate) j["cancelledDate"] = obj.cancelledDate->getIsoString();
+        return j;
+    }
+    
+    template<>
+    CancelInstructionReport JsonSer<CancelInstructionReport>::fromJson(const nlohmann::json& j) {
+        CancelInstructionReport desc;
+        if(j.contains("status")) desc.status = from_string<BettingEnum::InstructionReportStatus>(j.at("status").get<std::string>());
+        if(j.contains("instruction")) desc.instruction = JsonSer<CancelInstruction>::fromJson(j.at("instruction"));
+        if(j.contains("sizeCancelled")) desc.sizeCancelled = j.at("sizeCancelled").get<double>();
+        if(j.contains("errorCode")) desc.errorCode = from_string<BettingEnum::InstructionReportErrorCode>(j.at("errorCode").get<std::string>());
+        if(j.contains("cancelledDate")) desc.cancelledDate = BetfairAPI::Date(j.at("cancelledDate").get<std::string>());
+        return desc;
+    }
+
+    /**************************************************************************
+    * CancelExecutionReport
+    **************************************************************************/
+    template<>
+    nlohmann::json JsonSer<CancelExecutionReport>::toJson(const CancelExecutionReport& obj) {
+        nlohmann::json j = {};
+        j["status"] = to_string<BettingEnum::ExecutionReportStatus>(obj.status);
+        if(obj.errorCode) j["errorCode"] = to_string<BettingEnum::ExecutionReportErrorCode>(*obj.errorCode);
+        if(obj.marketId) j["marketId"] = *obj.marketId;
+        if(!obj.instructionReports.empty()) {
+            nlohmann::json reports_json = nlohmann::json::array();
+            for(const auto& report : obj.instructionReports) {
+            reports_json.push_back(JsonSer<CancelInstructionReport>::toJson(report));
+            }
+            j["instructionReports"] = reports_json;
+        }
+        return j;
+    }
+    
+    template<>
+    CancelExecutionReport JsonSer<CancelExecutionReport>::fromJson(const nlohmann::json& j) {
+        CancelExecutionReport desc;
+        if(j.contains("status")) desc.status = from_string<BettingEnum::ExecutionReportStatus>(j.at("status").get<std::string>());
+        if(j.contains("errorCode")) desc.errorCode = from_string<BettingEnum::ExecutionReportErrorCode>(j.at("errorCode").get<std::string>());
+        if(j.contains("marketId")) desc.marketId = j.at("marketId").get<std::string>();
+        if(j.contains("instructionReports")) {
+            desc.instructionReports.reserve(std::size(j.at("instructionReports")));
+            for(const auto& report_json : j.at("instructionReports")) {
+            desc.instructionReports.push_back(JsonSer<CancelInstructionReport>::fromJson(report_json));
             }
         }
         return desc;

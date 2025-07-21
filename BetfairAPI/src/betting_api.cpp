@@ -384,4 +384,32 @@ namespace BetfairAPI {
         cpr::Response response = cpr::Post(url,headers,body);
         return toResponse(response,save_request_info,url.str(),j);
     }
+
+    Response cancelOrders(const std::string& api_key,
+        const std::string& session_key,
+        std::string market_id,
+        const std::vector<BettingType::CancelInstruction>& instructions,
+        std::optional<std::string> customer_ref,
+        const Jurisdiction jurisdiction,
+        bool save_request_info
+    ) {
+        cpr::Url url{std::string(getUrl(jurisdiction)) + "cancelOrders/"};
+        cpr::Header headers {
+            {"Content-Type","application/json"},
+            {"X-Application",api_key},
+            {"X-Authentication",session_key}
+        };
+
+        nlohmann::json j {};
+        if(!market_id.empty()) j["marketId"] = market_id;
+        j["instructions"] = nlohmann::json::array();
+        for (const auto& instr : instructions) {
+            j["instructions"].push_back(BettingType::toJson<BettingType::CancelInstruction>(instr));
+        }
+        if (customer_ref) j["customerRef"] = *customer_ref;
+
+        cpr::Body body{j.dump()};
+        cpr::Response response = cpr::Post(url,headers,body);
+        return toResponse(response,save_request_info,url.str(),j);  
+    }
 }

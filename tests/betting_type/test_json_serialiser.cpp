@@ -32,6 +32,9 @@
 #include "BetfairAPI/betting_type/place_instruction.h"
 #include "BetfairAPI/betting_type/place_instruction_report.h"
 #include "BetfairAPI/betting_type/place_execution_report.h"
+#include "BetfairAPI/betting_type/cancel_instruction.h"
+#include "BetfairAPI/betting_type/cancel_instruction_report.h"
+#include "BetfairAPI/betting_type/cancel_execution_report.h"
 
 TEST(TimeRangeJson, BothDatesPresent) {
     BetfairAPI::BettingType::TimeRange tr{
@@ -540,6 +543,53 @@ TEST(PlaceExecutionReportJson,Basic) {
 
     auto json = BetfairAPI::BettingType::toJson(report);
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::PlaceExecutionReport>(json);
+
+    EXPECT_EQ(report, result);
+}
+
+TEST(CancelInstructionJson,Basic) {
+    BetfairAPI::BettingType::CancelInstruction instr;
+    instr.betId = "323423";
+    instr.sizeReduction = 1.0;
+
+    auto json = BetfairAPI::BettingType::toJson(instr);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CancelInstruction>(json);
+
+    EXPECT_EQ(instr, result);
+}
+
+TEST(CancelInstructionReportJson,Basic) {
+    BetfairAPI::BettingType::CancelInstructionReport cir;
+    cir.status = BetfairAPI::BettingEnum::InstructionReportStatus::SUCCESS;
+    cir.errorCode = std::nullopt;
+    cir.instruction.betId = "323423";
+    cir.instruction.sizeReduction = 1.0;
+    cir.sizeCancelled = 1.0;
+    cir.cancelledDate = BetfairAPI::Date{"2024-06-12T12:00:00Z"};
+
+    auto json = BetfairAPI::BettingType::toJson(cir);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CancelInstructionReport>(json);
+
+    EXPECT_EQ(cir, result);
+}
+
+TEST(CancelExecutionReportJson,Basic) {
+    BetfairAPI::BettingType::CancelInstructionReport cir;
+    cir.status = BetfairAPI::BettingEnum::InstructionReportStatus::SUCCESS;
+    cir.errorCode = std::nullopt;
+    cir.instruction.betId = "bet999";
+    cir.instruction.sizeReduction = 2.0;
+    cir.sizeCancelled = 2.0;
+    cir.cancelledDate = BetfairAPI::Date{"2024-06-12T13:00:00Z"};
+
+    BetfairAPI::BettingType::CancelExecutionReport report;
+    report.status = BetfairAPI::BettingEnum::ExecutionReportStatus::SUCCESS;
+    report.errorCode = std::nullopt;
+    report.marketId = "market999";
+    report.instructionReports.push_back(cir);
+
+    auto json = BetfairAPI::BettingType::toJson(report);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CancelExecutionReport>(json);
 
     EXPECT_EQ(report, result);
 }
