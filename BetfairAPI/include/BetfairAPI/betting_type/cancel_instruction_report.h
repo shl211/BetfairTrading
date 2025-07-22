@@ -3,7 +3,7 @@
 #include <string>
 #include <optional>
 #include <ostream>
-#include <magic_enum.hpp>
+#include "BetfairAPI/utils.h"
 #include "cancel_instruction.h"
 #include "BetfairAPI/date.h"
 #include "BetfairAPI/betting_enum/instruction_report_error_code.hpp"
@@ -31,8 +31,8 @@ namespace BetfairAPI::BettingType {
     }
 
     inline std::ostream& operator<<(std::ostream& os, const CancelInstructionReport& obj) {
-        os << "CancelInstructionReport{ Status: " << magic_enum::enum_name(obj.status) <<
-            "errorCode: " << (obj.errorCode ? magic_enum::enum_name(*obj.errorCode) : "null") <<
+        os << "CancelInstructionReport{ Status: " << to_string(obj.status) <<
+            "errorCode: " << (obj.errorCode ? to_string(*obj.errorCode) : "null") <<
             "instruction: " << obj.instruction <<
             "sizeCancelled: " << std::to_string(obj.sizeCancelled) <<
             "cancelledDate: " << (obj.cancelledDate ? obj.cancelledDate->getIsoString() : "null");

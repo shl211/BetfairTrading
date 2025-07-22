@@ -3,6 +3,7 @@
 #include <optional>
 #include <string>
 #include <ostream>
+#include "BetfairAPI/utils.h"
 #include "BetfairAPI/date.h"
 #include "BetfairAPI/betting_enum/persistence_type.hpp"
 #include "BetfairAPI/betting_enum/order_type.hpp"
@@ -87,9 +88,9 @@ namespace BetfairAPI::BettingType {
         os << "handicap=" << (obj.handicap ? std::to_string(*obj.handicap) : "null") << ", ";
         os << "betId=" << (obj.betId ? *obj.betId : "null") << ", ";
         os << "placedDate=" << (obj.placedDate ? obj.placedDate->getIsoString() : "null") << ", ";
-        os << "persistenceType=" << (obj.persistenceType ? std::to_string(static_cast<int>(*obj.persistenceType)) : "null") << ", ";
-        os << "orderType=" << (obj.orderType ? std::to_string(static_cast<int>(*obj.orderType)) : "null") << ", ";
-        os << "side=" << (obj.side ? std::to_string(static_cast<int>(*obj.side)) : "null") << ", ";
+        os << "persistenceType=" << (obj.persistenceType ? to_string(*obj.persistenceType) : "null") << ", ";
+        os << "orderType=" << (obj.orderType ? to_string(*obj.orderType) : "null") << ", ";
+        os << "side=" << (obj.side ? to_string(*obj.side) : "null") << ", ";
         os << "itemDescription=" << (obj.itemDescription ? *obj.itemDescription : ItemDescription{}) << ", ";
         os << "betOutcome=" << (obj.betOutcome ? *obj.betOutcome : "null") << ", ";
         os << "priceRequested=" << (obj.priceRequested ? std::to_string(*obj.priceRequested) : "null") << ", ";

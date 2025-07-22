@@ -3,6 +3,7 @@
 #include <optional>
 #include <ostream>  
 #include "BetfairAPI/betting_enum/price_ladder_type.hpp"
+#include "BetfairAPI/utils.h"
 
 namespace BetfairAPI::BettingType {
     struct PriceLadderDescription {
@@ -20,7 +21,7 @@ namespace BetfairAPI::BettingType {
     inline std::ostream& operator<<(std::ostream& os, const PriceLadderDescription& desc) {
         os << "PriceLadderDescription type: ";
         if (desc.type) {
-            os << static_cast<int>(*desc.type); //replace with string at some point
+            os << to_string(*desc.type); //replace with string at some point
         } else {
             os << "N/A";
         }

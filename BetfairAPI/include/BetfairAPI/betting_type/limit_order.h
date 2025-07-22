@@ -2,6 +2,7 @@
 
 #include <optional>
 #include <ostream>
+#include "BetfairAPI/utils.h"
 #include "BetfairAPI/betting_enum/persistence_type.hpp"
 #include "BetfairAPI/betting_enum/time_in_force.hpp"
 #include "BetfairAPI/betting_enum/bet_target_type.hpp"
@@ -39,10 +40,10 @@ namespace BetfairAPI::BettingType {
     inline std::ostream& operator<<(std::ostream& os, const LimitOrder& order) {
         os << "LimitOrder{price=" << order.price
             << ", size=" << order.size
-            << ", persistenceType=" << static_cast<int>(order.persistenceType)
+            << ", persistenceType=" << to_string(order.persistenceType)
             << ", timeInForce=";
         if (order.timeInForce)
-            os << static_cast<int>(*order.timeInForce);
+            os << to_string(*order.timeInForce);
         else
             os << "nullopt";
         os << ", minFillSize=";
@@ -52,7 +53,7 @@ namespace BetfairAPI::BettingType {
             os << "nullopt";
         os << ", betTargetType=";
         if (order.betTargetType)
-            os << static_cast<int>(*order.betTargetType);
+            os << to_string(*order.betTargetType);
         else
             os << "nullopt";
         os << ", betTargetSize=";

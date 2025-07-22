@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include "BetfairAPI/manager.h"
+#include "BetfairAPI/utils.h"
 #include "BetfairAPI/session_api.h"
 #include "BetfairAPI/betting_api.h"
 #include "BetfairAPI/betting_type/json_serialiser.hpp"
@@ -532,7 +533,7 @@ namespace BetfairAPI {
             if(is_warn_level_) {
                 logger_->warn("Attempted to place " + std::to_string(instruction_size) +
                     " orders, which exceeds the maximum allowed (" + std::to_string(MAX_INSTRUCTIONS) +
-                    ") for jurisdiction " + std::to_string(static_cast<int>(jurisdiction_)) + ". No orders placed.");
+                    ") for jurisdiction " + to_string(jurisdiction_) + ". No orders placed.");
             }
             return {};
         }

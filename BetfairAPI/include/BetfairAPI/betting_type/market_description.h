@@ -3,6 +3,7 @@
 #include <optional>
 #include <string>
 #include "BetfairAPI/date.h"
+#include "BetfairAPI/utils.h"
 #include "BetfairAPI/betting_enum/market_betting_type.hpp"
 #include "market_line_range_info.h"
 #include "price_ladder_description.h"
@@ -66,7 +67,7 @@ namespace BetfairAPI::BettingType {
             << "suspendTime=" << ((md.suspendTime) ? md.suspendTime->getIsoString() : "N/A") << ", "
             << "settleTime=";
         if (md.settleTime) os << md.settleTime->getIsoString(); else os << "nullopt";
-        os << ", bettingType=" << static_cast<int>(md.bettingType) //replace at some point with string
+        os << ", bettingType=" << to_string(md.bettingType) //replace at some point with string
             << ", turnInPlay=" << md.turnInPlay 
             << ", marketType=" << md.marketType
             << ", regulator=" << md.regulator

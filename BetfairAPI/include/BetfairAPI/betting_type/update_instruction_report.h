@@ -2,7 +2,7 @@
 
 #include <optional>
 #include <ostream>
-#include <magic_enum.hpp>
+#include "BetfairAPI/utils.h"
 #include "update_instruction.h"
 #include "BetfairAPI/betting_enum/instruction_report_status.hpp"
 #include "BetfairAPI/betting_enum/instruction_report_error_code.hpp"
@@ -25,10 +25,10 @@ namespace BetfairAPI::BettingType {
     }
 
     inline std::ostream& operator<<(std::ostream& os, const UpdateInstructionReport& report) {
-        os << "UpdateInstructionReport{status=" << magic_enum::enum_name(report.status)
+        os << "UpdateInstructionReport{status=" << to_string(report.status)
            << ", instruction=" << report.instruction;
         if (report.errorCode) {
-            os << ", errorCode=" << magic_enum::enum_name(*report.errorCode);
+            os << ", errorCode=" << to_string(*report.errorCode);
         } else {
             os << ", errorCode=nullopt";
         }

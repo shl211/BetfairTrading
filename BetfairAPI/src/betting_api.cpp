@@ -1,6 +1,6 @@
 #include <optional>
-#include <magic_enum.hpp>
 #include <cpr/cpr.h>
+#include "BetfairAPI/utils.h"
 #include "BetfairAPI/betting_api.h"
 #include "BetfairAPI/betting_type/json_serialiser.hpp"
 
@@ -28,20 +28,6 @@ namespace BetfairAPI {
             }
             
             return response;
-        };
-
-        template<typename Enum>
-        std::string to_string(Enum value) {
-            return std::string(magic_enum::enum_name(value));
-        };
-
-        template<typename Enum>
-        std::set<std::string> to_string(std::set<Enum> value) {
-            std::set<std::string> res;            
-            for(auto& v : value) {
-                res.insert(to_string<Enum>(v));
-            }
-            return res;
         };
     }
 
@@ -244,8 +230,8 @@ namespace BetfairAPI {
         j["maxResults"] = max_results;
 
         if(locale != detail::default_locale) j["locale"] = locale;
-        if(!market_sort.empty()) j["sort"] = to_string<BettingEnum::MarketSort>(market_sort);
-        if(!market_projection.empty()) j["marketProjection"] = to_string<BettingEnum::MarketProjection>(market_projection);
+        if(!market_sort.empty()) j["sort"] = to_string(market_sort);
+        if(!market_projection.empty()) j["marketProjection"] = to_string(market_projection);
 
         cpr::Body body{j.dump()};
         cpr::Response response = cpr::Post(url,headers,body);

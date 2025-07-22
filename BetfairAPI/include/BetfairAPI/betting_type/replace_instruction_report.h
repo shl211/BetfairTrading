@@ -4,6 +4,7 @@
 #include "cancel_instruction_report.h"
 #include "place_instruction_report.h"
 #include "BetfairAPI/betting_enum/instruction_report_status.hpp"
+#include "BetfairAPI/utils.h"
 #include "BetfairAPI/betting_enum/instruction_report_error_code.hpp"
 
 namespace BetfairAPI::BettingType {
@@ -26,9 +27,9 @@ namespace BetfairAPI::BettingType {
     }
 
     inline std::ostream& operator<<(std::ostream& os, const ReplaceInstructionReport& report) {
-        os << "ReplaceInstructionReport{status=" << static_cast<int>(report.status)
+        os << "ReplaceInstructionReport{status=" << to_string(report.status)
            << ", errorCode=";
-        if (report.errorCode) os << static_cast<int>(*report.errorCode);
+        if (report.errorCode) os << to_string(*report.errorCode);
         else os << "nullopt";
         os << ", cancelInstructionReport=";
         if (report.cancelInstructionReport) os << *report.cancelInstructionReport;

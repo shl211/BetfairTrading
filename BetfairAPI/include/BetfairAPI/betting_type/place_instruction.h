@@ -2,6 +2,7 @@
 
 #include <optional>
 #include <ostream>
+#include "BetfairAPI/utils.h"
 #include "BetfairAPI/betting_enum/order_type.hpp"
 #include "BetfairAPI/betting_enum/side.hpp"
 #include "limit_order.h"
@@ -37,9 +38,9 @@ namespace BetfairAPI::BettingType {
 
     inline std::ostream& operator<<(std::ostream& os, const PlaceInstruction& pi) {
         os << "PlaceInstruction{"
-            << "orderType: " << static_cast<int>(pi.orderType)
+            << "orderType: " << to_string(pi.orderType)
             << ", selectionId: " << pi.selectionId
-            << ", side: " << static_cast<int>(pi.side)
+            << ", side: " << to_string(pi.side)
             << ", handicap: " << (pi.handicap ? std::to_string(*pi.handicap) : "null")
             << ", limitOrder: " << (pi.limitOrder ? "set" : "null")
             << ", limitOnCloseOrder: " << (pi.limitOnCloseOrder ? "set" : "null")

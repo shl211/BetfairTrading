@@ -3,6 +3,7 @@
 #include <string>
 #include <ostream>
 #include "BetfairAPI/betting_enum/persistence_type.hpp"
+#include "BetfairAPI/utils.h"
 
 namespace BetfairAPI::BettingType {
     struct UpdateInstruction {
@@ -21,6 +22,6 @@ namespace BetfairAPI::BettingType {
 
     inline std::ostream& operator<<(std::ostream& os, const UpdateInstruction& ui) {
         return os << "UpdateInstruction{betId=" << ui.betId
-                  << ", newPersistenceType=" << static_cast<int>(ui.newPersistenceType) << "}";
+                  << ", newPersistenceType=" << to_string(ui.newPersistenceType) << "}";
     }
 }
