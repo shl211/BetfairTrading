@@ -526,6 +526,7 @@ namespace BetfairAPI {
     ) {
         const int MAX_INSTRUCTIONS = jurisdiction_ != Jurisdiction::ITALY ? 200 : 50;
 
+        //could automatically split up
         const int instruction_size = std::size(instructions);
         if(instruction_size > MAX_INSTRUCTIONS) {
             if(is_warn_level_) {
@@ -621,6 +622,49 @@ namespace BetfairAPI {
         BettingType::UpdateExecutionReport report;
         if(response.getBody() != nullptr) {
             report = BettingType::fromJson<BettingType::UpdateExecutionReport>(*response.getBody());
+        }
+
+        return report;
+    }
+
+    BettingType::ReplaceExecutionReport BetfairManager::replaceOrders(
+        std::string market_id,
+        const std::vector<BettingType::ReplaceInstruction>& instructions,
+        std::optional<BettingType::MarketVersion> market_version,
+        std::optional<std::string> customer_ref,
+        std::optional<bool> async
+    ) {
+        constexpr int MAX_INSTRUCTIONS = 60;
+
+        //could automatically split up
+        const int instruction_size = std::size(instructions);
+        if(instruction_size > MAX_INSTRUCTIONS) {
+            if(is_warn_level_) {
+                logger_->warn("Attempted to replace " + std::to_string(instruction_size) +
+                    " orders, which exceeds the maximum allowed (" + std::to_string(MAX_INSTRUCTIONS) +
+                    "). No orders were replaced.");
+            }
+            return {};
+        }
+
+        auto response = BetfairAPI::replaceOrders(
+            api_token_,session_token_,market_id,instructions,
+            market_version,customer_ref,async,jurisdiction_
+        );
+
+        if(is_info_level_) {
+            logger_->info(username_ + " replaced " + std::to_string(instruction_size) + " orders. " 
+            + printResponse(response,false,false));
+        }
+        
+        if(is_debug_level_) {
+            logger_->debug(username_ + " replaced " + std::to_string(instruction_size) + " orders. " 
+            + printResponse(response,true,true));
+        }
+
+        BettingType::ReplaceExecutionReport report;
+        if(response.getBody() != nullptr) {
+            report = BettingType::fromJson<BettingType::ReplaceExecutionReport>(*response.getBody());
         }
 
         return report;

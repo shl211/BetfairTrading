@@ -17,3 +17,6 @@ target_link_libraries(example_update_order PRIVATE BetfairAPI cxxopts)
 
 add_executable(example_list_order example_list_order.cpp)
 target_link_libraries(example_list_order PRIVATE BetfairAPI cxxopts)
+
+add_executable(example_replace_order example_replace_order.cpp)
+target_link_libraries(example_replace_order PRIVATE BetfairAPI cxxopts)
