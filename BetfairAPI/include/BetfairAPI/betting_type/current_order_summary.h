@@ -2,6 +2,7 @@
 
 #include <string>
 #include <optional>
+#include <magic_enum.hpp>
 #include "price_size.h"
 #include "current_item_description.h"
 #include "BetfairAPI/betting_enum/side.hpp"
@@ -88,10 +89,10 @@ namespace BetfairAPI::BettingType {
             << "handicap: " << obj.handicap << ", "
             << "priceSize: " << obj.priceSize << ", "
             << "bspLiability: " << obj.bspLiability << ", "
-            << "side: " << static_cast<int>(obj.side) << ", "
-            << "status: " << static_cast<int>(obj.status) << ", "
-            << "persistenceType: " << static_cast<int>(obj.persistenceType) << ", "
-            << "orderType: " << static_cast<int>(obj.orderType) << ", "
+            << "side: " << magic_enum::enum_name(obj.side) << ", "
+            << "status: " << magic_enum::enum_name(obj.status) << ", "
+            << "persistenceType: " << magic_enum::enum_name(obj.persistenceType) << ", "
+            << "orderType: " << magic_enum::enum_name(obj.orderType) << ", "
             << "placedDate: " << (obj.placedDate ? obj.placedDate->getIsoString() : "null") << ", "
             << "matchedDate: " << (obj.matchedDate ? obj.matchedDate->getIsoString() : "null") << ", "
             << "averagePriceMatched: " << (obj.averagePriceMatched ? std::to_string(*obj.averagePriceMatched) : "null") << ", "

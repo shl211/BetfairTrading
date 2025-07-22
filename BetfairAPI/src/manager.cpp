@@ -596,7 +596,34 @@ namespace BetfairAPI {
         }
 
         return report;
+    }
 
+    BettingType::UpdateExecutionReport BetfairManager::updateOrders(
+        std::string market_id,
+        const std::vector<BettingType::UpdateInstruction>& instructions,
+        std::optional<std::string> customer_ref
+    ) {
+        auto response = BetfairAPI::updateOrders(api_token_,session_token_,
+            market_id,instructions,customer_ref,jurisdiction_
+        );
+
+        int instruction_size = std::size(instructions);
+        if(is_info_level_) {
+            logger_->info(username_ + " updated " + std::to_string(instruction_size) + " orders. " 
+            + printResponse(response,false,false));
+        }
+        
+        if(is_debug_level_) {
+            logger_->debug(username_ + " updated " + std::to_string(instruction_size) + " orders. " 
+            + printResponse(response,true,true));
+        }
+
+        BettingType::UpdateExecutionReport report;
+        if(response.getBody() != nullptr) {
+            report = BettingType::fromJson<BettingType::UpdateExecutionReport>(*response.getBody());
+        }
+
+        return report;
     }
 }
 

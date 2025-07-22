@@ -412,4 +412,64 @@ namespace BetfairAPI {
         cpr::Response response = cpr::Post(url,headers,body);
         return toResponse(response,save_request_info,url.str(),j);  
     }
+
+    Response updateOrders(const std::string& api_key,
+        const std::string& session_key,
+        std::string market_id,
+        const std::vector<BettingType::UpdateInstruction>& instructions,
+        std::optional<std::string> customer_ref,
+        const Jurisdiction jurisdiction,
+        bool save_request_info
+    ) {
+        cpr::Url url{std::string(getUrl(jurisdiction)) + "updateOrders/"};
+        cpr::Header headers {
+            {"Content-Type","application/json"},
+            {"X-Application",api_key},
+            {"X-Authentication",session_key}
+        };
+
+        nlohmann::json j {};
+        if(!market_id.empty()) j["marketId"] = market_id;
+        j["instructions"] = nlohmann::json::array();
+        for (const auto& instr : instructions) {
+            j["instructions"].push_back(BettingType::toJson<BettingType::UpdateInstruction>(instr));
+        }
+        if (customer_ref) j["customerRef"] = *customer_ref;
+
+        cpr::Body body{j.dump()};
+        cpr::Response response = cpr::Post(url,headers,body);
+        return toResponse(response,save_request_info,url.str(),j);
+    }
+    
+    Response replaceOrders(const std::string& api_key,
+        const std::string& session_key,
+        std::string market_id,
+        const std::vector<BettingType::ReplaceInstruction>& instructions,
+        std::optional<BettingType::MarketVersion> market_version,
+        std::optional<std::string> customer_ref,
+        std::optional<bool> async,
+        const Jurisdiction jurisdiction,
+        bool save_request_info
+    ) {
+        cpr::Url url{std::string(getUrl(jurisdiction)) + "replaceOrders/"};
+        cpr::Header headers {
+            {"Content-Type","application/json"},
+            {"X-Application",api_key},
+            {"X-Authentication",session_key},
+        };
+
+        nlohmann::json j {};
+        j["marketId"] = market_id;
+        j["instructions"] = nlohmann::json::array();
+        for (const auto& instr : instructions) {
+            j["instructions"].push_back(BettingType::toJson<BettingType::ReplaceInstruction>(instr));
+        }
+        if (market_version) j["marketVersion"] = BettingType::toJson<BettingType::MarketVersion>(*market_version);
+        if (customer_ref) j["customerRef"] = *customer_ref;
+        if (async) j["async"] = *async;
+
+        cpr::Body body{j.dump()};
+        cpr::Response response = cpr::Post(url,headers,body);
+        return toResponse(response,save_request_info,url.str(),j);
+    }
 }
