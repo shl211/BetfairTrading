@@ -35,6 +35,12 @@
 #include "BetfairAPI/betting_type/cancel_instruction.h"
 #include "BetfairAPI/betting_type/cancel_instruction_report.h"
 #include "BetfairAPI/betting_type/cancel_execution_report.h"
+#include "BetfairAPI/betting_type/replace_instruction.h"
+#include "BetfairAPI/betting_type/replace_instruction_report.h"
+#include "BetfairAPI/betting_type/replace_execution_report.h"
+#include "BetfairAPI/betting_type/update_instruction.h"
+#include "BetfairAPI/betting_type/update_instruction_report.h"
+#include "BetfairAPI/betting_type/update_execution_report.h"
 
 TEST(TimeRangeJson, BothDatesPresent) {
     BetfairAPI::BettingType::TimeRange tr{
@@ -590,6 +596,143 @@ TEST(CancelExecutionReportJson,Basic) {
 
     auto json = BetfairAPI::BettingType::toJson(report);
     auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CancelExecutionReport>(json);
+
+    EXPECT_EQ(report, result);
+}
+
+TEST(ReplaceInstructionJson,Basic) {
+    BetfairAPI::BettingType::ReplaceInstruction instr;
+    instr.betId = "323423";
+    instr.newPrice = 1.0;
+
+    auto json = BetfairAPI::BettingType::toJson(instr);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::ReplaceInstruction>(json);
+
+    EXPECT_EQ(instr, result);
+}
+
+TEST(ReplaceInstructionReportJson,Basic) {
+    BetfairAPI::BettingType::ReplaceInstructionReport rir;
+    rir.status = BetfairAPI::BettingEnum::InstructionReportStatus::SUCCESS;
+    rir.errorCode = std::nullopt;
+
+    BetfairAPI::BettingType::CancelInstructionReport cancel_report;
+    cancel_report.status = BetfairAPI::BettingEnum::InstructionReportStatus::SUCCESS;
+    cancel_report.errorCode = std::nullopt;
+    cancel_report.instruction.betId = "bet888";
+    cancel_report.instruction.sizeReduction = 1.5;
+    cancel_report.sizeCancelled = 1.5;
+    cancel_report.cancelledDate = BetfairAPI::Date{"2024-06-12T14:00:00Z"};
+
+    BetfairAPI::BettingType::PlaceInstructionReport place_report;
+    place_report.status = BetfairAPI::BettingEnum::InstructionReportStatus::SUCCESS;
+    place_report.errorCode = std::nullopt;
+    place_report.betId = "bet889";
+    place_report.orderStatus = BetfairAPI::BettingEnum::OrderStatus::EXECUTION_COMPLETE;
+    place_report.instruction.selectionId = 12345;
+    place_report.instruction.handicap = 0.0;
+    place_report.instruction.side = BetfairAPI::BettingEnum::Side::BACK;
+    place_report.instruction.orderType = BetfairAPI::BettingEnum::OrderType::LIMIT;
+    
+    BetfairAPI::BettingType::LimitOrder lo;
+    lo.size = 100.0;
+    lo.price = 2.5;
+    lo.persistenceType = BetfairAPI::BettingEnum::PersistenceType::LAPSE;
+    place_report.instruction.limitOrder = lo;
+    place_report.instruction.customerOrderRef = "orderRef456";
+
+    rir.cancelInstructionReport = std::move(cancel_report);
+    rir.placeInstructionReport = std::move(place_report);
+    auto json = BetfairAPI::BettingType::toJson(rir);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::ReplaceInstructionReport>(json);
+
+    EXPECT_EQ(rir, result);
+}
+
+TEST(ReplaceExecutionReportJson,Basic) {
+    BetfairAPI::BettingType::ReplaceInstructionReport rir;
+    rir.status = BetfairAPI::BettingEnum::InstructionReportStatus::SUCCESS;
+    rir.errorCode = std::nullopt;
+
+    BetfairAPI::BettingType::CancelInstructionReport cancel_report;
+    cancel_report.status = BetfairAPI::BettingEnum::InstructionReportStatus::SUCCESS;
+    cancel_report.errorCode = std::nullopt;
+    cancel_report.instruction.betId = "bet777";
+    cancel_report.instruction.sizeReduction = 2.0;
+    cancel_report.sizeCancelled = 2.0;
+    cancel_report.cancelledDate = BetfairAPI::Date{"2024-06-12T15:00:00Z"};
+
+    BetfairAPI::BettingType::PlaceInstructionReport place_report;
+    place_report.status = BetfairAPI::BettingEnum::InstructionReportStatus::SUCCESS;
+    place_report.errorCode = std::nullopt;
+    place_report.betId = "bet778";
+    place_report.orderStatus = BetfairAPI::BettingEnum::OrderStatus::EXECUTION_COMPLETE;
+    place_report.instruction.selectionId = 54321;
+    place_report.instruction.handicap = 0.0;
+    place_report.instruction.side = BetfairAPI::BettingEnum::Side::LAY;
+    place_report.instruction.orderType = BetfairAPI::BettingEnum::OrderType::LIMIT;
+
+    BetfairAPI::BettingType::LimitOrder lo;
+    lo.size = 200.0;
+    lo.price = 3.5;
+    lo.persistenceType = BetfairAPI::BettingEnum::PersistenceType::LAPSE;
+    place_report.instruction.limitOrder = lo;
+    place_report.instruction.customerOrderRef = "orderRef789";
+
+    rir.cancelInstructionReport = std::move(cancel_report);
+    rir.placeInstructionReport = std::move(place_report);
+
+    BetfairAPI::BettingType::ReplaceExecutionReport report;
+    report.status = BetfairAPI::BettingEnum::ExecutionReportStatus::SUCCESS;
+    report.errorCode = std::nullopt;
+    report.marketId = "market777";
+    report.instructionReports.push_back(rir);
+
+    auto json = BetfairAPI::BettingType::toJson(report);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::ReplaceExecutionReport>(json);
+
+    EXPECT_EQ(report, result);
+}
+
+TEST(UpdateInstructionJson,Basic) {
+    BetfairAPI::BettingType::UpdateInstruction instr;
+    instr.betId = "bet123";
+    instr.newPersistenceType = BetfairAPI::BettingEnum::PersistenceType::PERSIST;
+
+    auto json = BetfairAPI::BettingType::toJson(instr);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::UpdateInstruction>(json);
+
+    EXPECT_EQ(instr, result);
+}
+
+TEST(UpdateInstructionReportJson,Basic) {
+    BetfairAPI::BettingType::UpdateInstructionReport uir;
+    uir.status = BetfairAPI::BettingEnum::InstructionReportStatus::SUCCESS;
+    uir.errorCode = std::nullopt;
+    uir.instruction.betId = "bet123";
+    uir.instruction.newPersistenceType = BetfairAPI::BettingEnum::PersistenceType::PERSIST;
+
+    auto json = BetfairAPI::BettingType::toJson(uir);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::UpdateInstructionReport>(json);
+
+    EXPECT_EQ(uir, result);
+}
+
+TEST(UpdateExecutionReportJson,Basic) {
+    BetfairAPI::BettingType::UpdateInstructionReport uir;
+    uir.status = BetfairAPI::BettingEnum::InstructionReportStatus::SUCCESS;
+    uir.errorCode = std::nullopt;
+    uir.instruction.betId = "bet123";
+    uir.instruction.newPersistenceType = BetfairAPI::BettingEnum::PersistenceType::PERSIST;
+
+    BetfairAPI::BettingType::UpdateExecutionReport report;
+    report.status = BetfairAPI::BettingEnum::ExecutionReportStatus::SUCCESS;
+    report.errorCode = std::nullopt;
+    report.marketId = "market123";
+    report.instructionReports.push_back(uir);
+
+    auto json = BetfairAPI::BettingType::toJson(report);
+    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::UpdateExecutionReport>(json);
 
     EXPECT_EQ(report, result);
 }
