@@ -481,4 +481,47 @@ namespace BetfairAPI {
         cpr::Response response = cpr::Post(url,headers,body);
         return toResponse(response,save_request_info,url.str(),j);
     }
+
+    Response listRunnerBook(const std::string& api_key,
+        const std::string& session_key,
+        const std::string& market_id,
+        long selection_id,
+        std::optional<BettingType::PriceProjection> price_projection,
+        std::optional<BettingEnum::OrderProjection> order_projection,
+        std::optional<BettingEnum::MatchProjection> match_projection,
+        std::optional<bool> include_overall_position,
+        std::optional<bool> partition_matched_by_strategy_ref,
+        std::set<std::string> customer_strategy_refs,
+        std::optional<std::string> currency_code,
+        std::optional<std::string> locale,
+        std::optional<Date> matched_since,
+        std::set<std::string> bet_ids,
+        const Jurisdiction jurisdiction,
+        bool save_request_info
+    ) {
+        cpr::Url url{std::string(getUrl(jurisdiction)) + "listRunnerBook/"};
+        cpr::Header headers {
+            {"Content-Type","application/json"},
+            {"X-Application",api_key},
+            {"X-Authentication",session_key}
+        };
+
+        nlohmann::json j {};
+        j["marketId"] = market_id;
+        j["selectionId"] = selection_id;
+        if(price_projection) j["priceProjection"] = *price_projection;
+        if(order_projection) j["orderProjection"] = *order_projection;
+        if(match_projection) j["matchProjection"] = *match_projection;
+        if(include_overall_position) j["includeOverallPosition"] = *include_overall_position;
+        if(partition_matched_by_strategy_ref) j["partitionMatchedByStrategyRef"] = *partition_matched_by_strategy_ref;
+        if(!customer_strategy_refs.empty()) j["customerStrategyRefs"] = customer_strategy_refs;
+        if(currency_code) j["currencyCode"] = *currency_code;
+        if(locale) j["locale"] = *locale;
+        if(matched_since) j["matchedSince"] = matched_since->getIsoString();
+        if(!bet_ids.empty()) j["betIds"] = bet_ids;
+
+        cpr::Body body{j.dump()};
+        cpr::Response response = cpr::Post(url,headers,body);
+        return toResponse(response,save_request_info,url.str(),j);
+    }
 }

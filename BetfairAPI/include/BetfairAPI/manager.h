@@ -139,6 +139,18 @@ namespace BetfairAPI {
                 std::optional<Date> matched_since = std::nullopt,
                 std::set<std::string> bet_ids = {}
             );
+            std::vector<BettingType::MarketBook> getRunnerBook(
+                const std::string& market_id,
+                long selection_id,
+                std::optional<BettingType::PriceProjection> price_projection = std::nullopt,
+                std::optional<BettingEnum::OrderProjection> order_projection = std::nullopt,
+                std::optional<BettingEnum::MatchProjection> match_projection = std::nullopt,
+                std::optional<bool> include_overall_position = std::nullopt,
+                std::optional<bool> partition_matched_by_strategy_ref = std::nullopt,
+                std::set<std::string> customer_strategy_refs = {},
+                std::optional<Date> matched_since = std::nullopt,
+                std::set<std::string> bet_ids = {}
+            );
 
 
             bool refreshSession();

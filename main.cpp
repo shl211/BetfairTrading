@@ -55,11 +55,26 @@ int main() {
 
     auto r3 = manager.getMarketBook(
         {market_id},
-        std::move(pp),
+        pp,
         BetfairAPI::BettingEnum::OrderProjection::EXECUTABLE,
         BetfairAPI::BettingEnum::MatchProjection::ROLLED_UP_BY_PRICE
     );
 
+    std::cout << "Market Book \n";
     printVector(r3);
+
+    //assuming at least one runner
+    auto selection_id = r3[0].runners[0].selectionId;
+
+    auto r4 = manager.getRunnerBook(
+        market_id,
+        selection_id,
+        pp,
+        BetfairAPI::BettingEnum::OrderProjection::EXECUTABLE,
+        BetfairAPI::BettingEnum::MatchProjection::ROLLED_UP_BY_PRICE
+    );
+
+    std::cout << "Runner Book \n";
+    printVector(r4);
 
 }
