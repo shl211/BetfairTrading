@@ -721,3 +721,174 @@ TEST(PriceProjectionJson,Basic) {
 
     EXPECT_EQ(pp, result);
 }
+
+TEST(KeyLineSelectionJson,Basic) {
+    BetfairAPI::BettingType::KeyLineSelection kls;
+    kls.selectionId = 123456;
+    kls.handicap = 0.0;
+
+    nlohmann::json json = kls;
+    BetfairAPI::BettingType::KeyLineSelection result = json;
+
+    EXPECT_EQ(kls, result);
+}
+
+TEST(KeyLineDescriptionJson,Basic) {
+    BetfairAPI::BettingType::KeyLineDescription kld;
+    BetfairAPI::BettingType::KeyLineSelection kls1;
+    kls1.selectionId = 111;
+    kls1.handicap = 0.0;
+    BetfairAPI::BettingType::KeyLineSelection kls2;
+    kls2.selectionId = 222;
+    kls2.handicap = 1.5;
+    kld.keyLine = {kls1, kls2};
+
+    nlohmann::json json = kld;
+    BetfairAPI::BettingType::KeyLineDescription result = json;
+
+    EXPECT_EQ(kld, result);
+}
+
+TEST(StartingPricesJson,Basic) {
+    BetfairAPI::BettingType::StartingPrices sp;
+    sp.nearPrice = 1.95;
+    sp.farPrice = 2.05;
+    sp.actualSP = 2.00;
+
+    nlohmann::json json = sp;
+    BetfairAPI::BettingType::StartingPrices result = json;
+
+    EXPECT_EQ(sp, result);
+}
+
+TEST(ExchangePricesJson,Basic) {
+    BetfairAPI::BettingType::ExchangePrices ep;
+    ep.availableToBack = {
+        BetfairAPI::BettingType::PriceSize{2.0, 100.0},
+        BetfairAPI::BettingType::PriceSize{1.9, 50.0}
+    };
+    ep.availableToLay = {
+        BetfairAPI::BettingType::PriceSize{2.2, 80.0},
+        BetfairAPI::BettingType::PriceSize{2.3, 40.0}
+    };
+    ep.tradedVolume = {
+        BetfairAPI::BettingType::PriceSize{2.0, 200.0},
+        BetfairAPI::BettingType::PriceSize{2.2, 150.0}
+    };
+
+    nlohmann::json json = ep;
+    BetfairAPI::BettingType::ExchangePrices result = json;
+
+    EXPECT_EQ(ep, result);
+}
+
+TEST(OrderJson,Basic) {
+    BetfairAPI::BettingType::Order order;
+    order.betId = "bet001";
+    order.orderType = BetfairAPI::BettingEnum::OrderType::LIMIT;
+    order.status = BetfairAPI::BettingEnum::OrderStatus::EXECUTABLE;
+    order.persistenceType = BetfairAPI::BettingEnum::PersistenceType::LAPSE;
+    order.side = BetfairAPI::BettingEnum::Side::BACK;
+    order.price = 3.0;
+    order.size = 50.0;
+    order.bspLiability = 0.0;
+    order.placedDate = BetfairAPI::Date{"2024-06-12T10:00:00Z"};
+    order.avgPriceMatched = 2.8;
+    order.sizeMatched = 10.0;
+    order.sizeRemaining = 40.0;
+    order.sizeLapsed = 0.0;
+    order.sizeCancelled = 0.0;
+    order.sizeVoided = 0.0;
+
+    nlohmann::json json = order;
+    BetfairAPI::BettingType::Order result = json;
+
+    EXPECT_EQ(order, result);
+}
+
+TEST(MatchJson,Basic) {
+    BetfairAPI::BettingType::Match match;
+    match.betId = "bet002";
+    match.matchId = "match001";
+    match.side = BetfairAPI::BettingEnum::Side::LAY;
+    match.price = 2.5;
+    match.size = 20.0;
+    match.matchDate = BetfairAPI::Date{"2024-06-12T11:00:00Z"};
+
+    nlohmann::json json = match;
+    BetfairAPI::BettingType::Match result = json;
+
+    EXPECT_EQ(match, result);
+}
+
+TEST(RunnerJson,Basic) {
+    BetfairAPI::BettingType::Runner runner;
+    runner.selectionId = 123456;
+    runner.handicap = 0.0;
+    runner.status = BetfairAPI::BettingEnum::RunnerStatus::ACTIVE;
+    runner.lastPriceTraded = 2.5;
+    runner.totalMatched = 100.0;
+    runner.matches = {
+        BetfairAPI::BettingType::Match{
+            "bet003", "match002", BetfairAPI::BettingEnum::Side::BACK, 2.6, 10.0, BetfairAPI::Date{"2024-06-12T12:00:00Z"}
+        },
+        BetfairAPI::BettingType::Match{
+            "bet004", "match003", BetfairAPI::BettingEnum::Side::LAY, 2.7, 5.0, BetfairAPI::Date{"2024-06-12T13:00:00Z"}
+        }
+    };
+    runner.matchesByStrategy = {
+        {"strategyA", {
+            BetfairAPI::BettingType::Match{
+                "bet005", "match004", BetfairAPI::BettingEnum::Side::BACK, 2.8, 15.0, BetfairAPI::Date{"2024-06-12T14:00:00Z"}
+            }
+        }},
+        {"strategyB", {
+            BetfairAPI::BettingType::Match{
+                "bet006", "match005", BetfairAPI::BettingEnum::Side::LAY, 2.9, 20.0, BetfairAPI::Date{"2024-06-12T15:00:00Z"}
+            }
+        }}
+    };
+    nlohmann::json json = runner;
+    BetfairAPI::BettingType::Runner result = json;
+
+    EXPECT_EQ(runner, result);
+}
+
+TEST(MarketBook,Basic) {
+    BetfairAPI::BettingType::MarketBook mb;
+    mb.marketId = "market123";
+    mb.isMarketDataDelayed = false;
+    mb.status = BetfairAPI::BettingEnum::MarketStatus::OPEN;
+    mb.betDelay = 0;
+    mb.bspReconciled = true;
+    mb.complete = true;
+    mb.inplay = false;
+    mb.numberOfWinners = 1;
+    mb.numberOfRunners = 2;
+    mb.numberOfActiveRunners = 2;
+    mb.lastMatchTime = BetfairAPI::Date{"2024-06-12T16:00:00Z"};
+    mb.totalMatched = 1000.0;
+    mb.totalAvailable = 500.0;
+    mb.crossMatching = true;
+    mb.runnersVoidable = false;
+    mb.version = 123456789;
+    BetfairAPI::BettingType::Runner runner1;
+    runner1.selectionId = 1;
+    runner1.handicap = 0.0;
+    runner1.status = BetfairAPI::BettingEnum::RunnerStatus::ACTIVE;
+    runner1.lastPriceTraded = 2.0;
+    runner1.totalMatched = 500.0;
+    BetfairAPI::BettingType::Runner runner2;
+    runner2.selectionId = 2;
+    runner2.handicap = 0.0;
+    runner2.status = BetfairAPI::BettingEnum::RunnerStatus::ACTIVE;
+    runner2.lastPriceTraded = 3.0;
+    runner2.totalMatched = 500.0;
+    mb.runners = {runner1, runner2};
+
+    nlohmann::json json = mb;
+    BetfairAPI::BettingType::MarketBook result = json;
+
+    EXPECT_EQ(mb, result);
+}
+
