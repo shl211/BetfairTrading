@@ -44,6 +44,8 @@
 #include "BetfairAPI/betting_type/update_instruction.h"
 #include "BetfairAPI/betting_type/update_instruction_report.h"
 #include "BetfairAPI/betting_type/update_execution_report.h"
+#include "BetfairAPI/betting_type/offers_overrides.h"
+#include "BetfairAPI/betting_type/price_projection.h"
 
 namespace BetfairAPI::BettingType {
     template<typename T>
@@ -877,5 +879,41 @@ namespace BetfairAPI::BettingType {
         if (j.contains("errorCode")) obj.errorCode = from_string<BettingEnum::ExecutionReportErrorCode>(j.at("errorCode").get<std::string>());
         if (j.contains("marketId")) obj.marketId = j.at("marketId").get<std::string>();
         if (j.contains("instructionReports")) obj.instructionReports = j.at("instructionReports").get<std::vector<UpdateInstructionReport>>();
+    }
+
+    /**************************************************************************
+    * OffersOverrides
+    **************************************************************************/
+    inline void to_json(nlohmann::json& j, const ExBestOffersOverrides& obj) {
+        if(obj.bestPricesDepth) j["bestPricesDepth"] = *obj.bestPricesDepth;
+        if(obj.rollupModel) j["rollupModel"] = *obj.rollupModel;
+        if(obj.rollupLimit) j["rollupLimit"] = *obj.rollupLimit;
+        if(obj.rollupLiabilityThreshold) j["rollupLiabilityThreshold"] = *obj.rollupLiabilityThreshold;
+        if(obj.rollupLiabilityFactor) j["rollupLiabilityFactor"] = *obj.rollupLiabilityFactor;    
+    }
+
+    inline void from_json(const nlohmann::json& j, ExBestOffersOverrides& obj) {
+        if(j.contains("bestPricesDepth")) obj.bestPricesDepth = j.at("bestPricesDepth").get<int>();
+        if(j.contains("rollupModel")) obj.rollupModel = j.at("rollupModel").get<BettingEnum::RollupModel>();
+        if(j.contains("rollupLimit")) obj.rollupLimit = j.at("rollupLimit").get<int>();
+        if(j.contains("rollupLiabilityThreshold")) obj.rollupLiabilityThreshold = j.at("rollupLiabilityThreshold").get<double>();
+        if(j.contains("rollupLiabilityFactor")) obj.rollupLiabilityFactor = j.at("rollupLiabilityFactor").get<int>();
+    }
+
+    /**************************************************************************
+    * PriceProjection
+    **************************************************************************/
+    inline void to_json(nlohmann::json& j, const PriceProjection& obj) {
+        if (!obj.priceData.empty()) j["priceData"] = obj.priceData;
+        if (obj.exBestOffersOverrides) j["exBestOffersOverrides"] = *obj.exBestOffersOverrides;
+        if (obj.virtualise) j["virtualise"] = *obj.virtualise;
+        if (obj.rolloverStakes) j["rolloverStakes"] = *obj.rolloverStakes;
+    }
+
+    inline void from_json(const nlohmann::json& j, PriceProjection& obj) {
+        if (j.contains("priceData")) obj.priceData = j.at("priceData").get<std::set<BettingEnum::PriceData>>();
+        if (j.contains("exBestOffersOverrides")) obj.exBestOffersOverrides = j.at("exBestOffersOverrides").get<ExBestOffersOverrides>();
+        if (j.contains("virtualise")) obj.virtualise = j.at("virtualise").get<bool>();
+        if (j.contains("rolloverStakes")) obj.rolloverStakes = j.at("rolloverStakes").get<bool>();
     }
 }

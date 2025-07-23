@@ -10,6 +10,7 @@
 #include "betting_enum/market_projection.hpp"
 #include "betting_enum/market_sort.hpp"
 #include "betting_enum/order_projection.hpp"
+#include "betting_enum/match_projection.hpp"
 #include "betting_enum/order_by.hpp"
 #include "betting_enum/sort_dir.hpp"
 #include "betting_enum/bet_status.hpp"
@@ -20,6 +21,7 @@
 #include "betting_type/cancel_instruction.h"
 #include "betting_type/replace_instruction.h"
 #include "betting_type/update_instruction.h"
+#include "betting_type/price_projection.h"
 namespace BetfairAPI {
     //note that if api requests fail, the request body is automatically stored inside Response
 
@@ -172,5 +174,21 @@ namespace BetfairAPI {
         const Jurisdiction j = Jurisdiction::GLOBAL,
         bool save_request_info = false
     );
-
+    
+    Response listMarketBook(const std::string& api_key,
+        const std::string& session_key,
+        const std::vector<std::string>& market_ids,
+        std::optional<BettingType::PriceProjection> price_projection = std::nullopt,
+        std::optional<BettingEnum::OrderProjection> order_projection = std::nullopt,
+        std::optional<BettingEnum::MatchProjection> match_projection = std::nullopt,
+        std::optional<bool> include_overall_position = std::nullopt,
+        std::optional<bool> partition_matched_by_strategy_ref = std::nullopt,
+        std::set<std::string> customer_strategy_refs = {},
+        std::optional<std::string> currency_code = std::nullopt,
+        std::optional<std::string> locale = std::nullopt,
+        std::optional<Date> matched_since = std::nullopt,
+        std::set<std::string> bet_ids = {},
+        const Jurisdiction j = Jurisdiction::GLOBAL,
+        bool save_request_info = false
+    );
 }

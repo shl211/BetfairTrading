@@ -266,12 +266,12 @@ namespace BetfairAPI {
 
         if(!bet_ids.empty()) j["betIds"] = bet_ids;
         if(!market_ids.empty()) j["marketIds"] = market_ids;
-        if(order_projection) j["orderProjection"] = to_string<BettingEnum::OrderProjection>(*order_projection);
+        if(order_projection) j["orderProjection"] = *order_projection;
         if(!customer_order_refs.empty()) j["customerOrderRefs"] = customer_order_refs;
         if(!customter_strategy_refs.empty()) j["customerStrategyRefs"] = customter_strategy_refs;
         if(dateRange) j["dateRange"] = *dateRange;
-        if(order_by) j["orderBy"] = to_string<BettingEnum::OrderBy>(*order_by);
-        if(sort_dir) j["sortDir"] = to_string<BettingEnum::SortDir>(*sort_dir);
+        if(order_by) j["orderBy"] = *order_by;
+        if(sort_dir) j["sortDir"] = *sort_dir;
         if(from_record >= 0) j["fromRecord"] = from_record;
         if(to_record >= 0 && to_record <= 1000) j["toRecord"] = to_record;
         if(include_item_description) j["includeItemDescription"] = *include_item_description;
@@ -313,18 +313,11 @@ namespace BetfairAPI {
         if(!event_type_ids.empty()) j["eventTypeIds"] = event_type_ids;
         if(!event_ids.empty()) j["eventIds"] = event_ids;
         if(!market_ids.empty()) j["marketIds"] = market_ids;
-        if(!runner_ids.empty()) {
-            std::vector<nlohmann::json> runner_ids_json;
-            runner_ids_json.reserve(std::size(runner_ids));
-            for (const auto& runner_id : runner_ids) {
-                runner_ids_json.push_back(runner_id);
-            }
-            j["runnerIds"] = runner_ids_json;
-        }
+        if(!runner_ids.empty()) j["runnerIds"] = runner_ids;
         if(!bet_ids.empty()) j["betIds"] = bet_ids;
-        if(side) j["side"] = to_string<BettingEnum::Side>(*side);
+        if(side) j["side"] = *side;
         if(settled_date_range) j["settledDateRange"] = (*settled_date_range);
-        if(group_by) j["groupBy"] = to_string<BettingEnum::GroupBy>(*group_by);
+        if(group_by) j["groupBy"] = *group_by;
         if(include_item_description) j["includeItemDescription"] = *include_item_description;
         if(include_source_id) j["includeSourceId"] = *include_source_id;
         if(locale != detail::default_locale) j["locale"] = locale;
@@ -388,12 +381,7 @@ namespace BetfairAPI {
 
         nlohmann::json j {};
         if(!market_id.empty()) j["marketId"] = market_id;
-        j["instructions"] = nlohmann::json::array();
-        for (const auto& instr : instructions) {
-            j["instructions"].push_back(instr);
-        }
-        if (customer_ref) j["customerRef"] = *customer_ref;
-
+        j["instructions"] = instructions;
         cpr::Body body{j.dump()};
         cpr::Response response = cpr::Post(url,headers,body);
         return toResponse(response,save_request_info,url.str(),j);  
@@ -416,10 +404,7 @@ namespace BetfairAPI {
 
         nlohmann::json j {};
         if(!market_id.empty()) j["marketId"] = market_id;
-        j["instructions"] = nlohmann::json::array();
-        for (const auto& instr : instructions) {
-            j["instructions"].push_back(instr);
-        }
+        j["instructions"] = instructions;
         if (customer_ref) j["customerRef"] = *customer_ref;
 
         cpr::Body body{j.dump()};
@@ -446,13 +431,51 @@ namespace BetfairAPI {
 
         nlohmann::json j {};
         j["marketId"] = market_id;
-        j["instructions"] = nlohmann::json::array();
-        for (const auto& instr : instructions) {
-            j["instructions"].push_back(instr);
-        }
+        j["instructions"] = instructions;
         if (market_version) j["marketVersion"] = *market_version;
         if (customer_ref) j["customerRef"] = *customer_ref;
         if (async) j["async"] = *async;
+
+        cpr::Body body{j.dump()};
+        cpr::Response response = cpr::Post(url,headers,body);
+        return toResponse(response,save_request_info,url.str(),j);
+    }
+
+    Response listMarketBook(const std::string& api_key,
+        const std::string& session_key,
+        const std::vector<std::string>& market_ids,
+        std::optional<BettingType::PriceProjection> price_projection,
+        std::optional<BettingEnum::OrderProjection> order_projection,
+        std::optional<BettingEnum::MatchProjection> match_projection,
+        std::optional<bool> include_overall_position,
+        std::optional<bool> partition_matched_by_strategy_ref,
+        std::set<std::string> customer_strategy_refs,
+        std::optional<std::string> currency_code,
+        std::optional<std::string> locale,
+        std::optional<Date> matched_since,
+        std::set<std::string> bet_ids,
+        const Jurisdiction jurisdiction,
+        bool save_request_info 
+    ) {
+        cpr::Url url{std::string(getUrl(jurisdiction)) + "listMarketBook/"};
+        cpr::Header headers {
+            {"Content-Type","application/json"},
+            {"X-Application",api_key},
+            {"X-Authentication",session_key}
+        };
+
+        nlohmann::json j {};
+        j["marketIds"] = market_ids;
+        if(price_projection) j["priceProjection"] = *price_projection;
+        if(order_projection) j["orderProjection"] = *order_projection;
+        if(match_projection) j["matchProjection"] = *match_projection;
+        if(include_overall_position) j["includeOverallPosition"] = *include_overall_position;
+        if(partition_matched_by_strategy_ref) j["partitionMatchedByStrategyRef"] = *partition_matched_by_strategy_ref;
+        if(!customer_strategy_refs.empty()) j["customerStrategyRefs"] = customer_strategy_refs;
+        if(currency_code) j["currencyCode"] = *currency_code;
+        if(locale) j["locale"] = *locale;
+        if(matched_since) j["matchedSince"] = matched_since->getIsoString();
+        if(!bet_ids.empty()) j["betIds"] = bet_ids;
 
         cpr::Body body{j.dump()};
         cpr::Response response = cpr::Post(url,headers,body);

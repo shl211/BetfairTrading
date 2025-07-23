@@ -1,46 +1,6 @@
 #include <gtest/gtest.h>
 
 #include "BetfairAPI/betting_type/json_serialiser.hpp"
-#include "BetfairAPI/betting_type/time_range.h"
-#include "BetfairAPI/betting_type/market_filter.h"
-#include "BetfairAPI/betting_type/event_type_result.h"
-#include "BetfairAPI/betting_type/event_type.h"
-#include "BetfairAPI/betting_type/time_range_result.h"
-#include "BetfairAPI/betting_type/competition.h"
-#include "BetfairAPI/betting_type/competition_result.h"
-#include "BetfairAPI/betting_type/event.h"
-#include "BetfairAPI/betting_type/event_result.h"
-#include "BetfairAPI/betting_type/market_type_result.h"
-#include "BetfairAPI/betting_type/country_code_result.h"
-#include "BetfairAPI/betting_type/venue_result.h"
-#include "BetfairAPI/betting_type/market_line_range_info.h"
-#include "BetfairAPI/betting_type/price_ladder_description.h"
-#include "BetfairAPI/betting_type/market_description.h"
-#include "BetfairAPI/betting_type/runner_catalog.h"
-#include "BetfairAPI/betting_type/market_version.h"
-#include "BetfairAPI/betting_type/current_item_description.h"
-#include "BetfairAPI/betting_type/price_size.h"
-#include "BetfairAPI/betting_type/current_order_summary.h"
-#include "BetfairAPI/betting_type/current_order_summary_report.h"
-#include "BetfairAPI/betting_type/runner_id.h"
-#include "BetfairAPI/betting_type/item_description.h"
-#include "BetfairAPI/betting_type/cleared_order_summary.h"
-#include "BetfairAPI/betting_type/cleared_order_summary_report.h"
-#include "BetfairAPI/betting_type/limit_order.h"
-#include "BetfairAPI/betting_type/limit_on_close_order.h"
-#include "BetfairAPI/betting_type/market_on_close_order.h"
-#include "BetfairAPI/betting_type/place_instruction.h"
-#include "BetfairAPI/betting_type/place_instruction_report.h"
-#include "BetfairAPI/betting_type/place_execution_report.h"
-#include "BetfairAPI/betting_type/cancel_instruction.h"
-#include "BetfairAPI/betting_type/cancel_instruction_report.h"
-#include "BetfairAPI/betting_type/cancel_execution_report.h"
-#include "BetfairAPI/betting_type/replace_instruction.h"
-#include "BetfairAPI/betting_type/replace_instruction_report.h"
-#include "BetfairAPI/betting_type/replace_execution_report.h"
-#include "BetfairAPI/betting_type/update_instruction.h"
-#include "BetfairAPI/betting_type/update_instruction_report.h"
-#include "BetfairAPI/betting_type/update_execution_report.h"
 
 TEST(TimeRangeJson, BothDatesPresent) {
     BetfairAPI::BettingType::TimeRange tr{
@@ -734,4 +694,30 @@ TEST(UpdateExecutionReportJson,Basic) {
     BetfairAPI::BettingType::UpdateExecutionReport result = json;
 
     EXPECT_EQ(report, result);
+}
+
+TEST(ExBestOffersOverridesJson,Basic) {
+    BetfairAPI::BettingType::ExBestOffersOverrides exbo;
+    exbo.bestPricesDepth = 3;
+    exbo.rollupModel = BetfairAPI::BettingEnum::RollupModel::STAKE;
+    exbo.rollupLimit = 10;
+    exbo.rollupLiabilityThreshold = 100.0;
+    exbo.rollupLiabilityFactor = 2.0;
+
+    nlohmann::json json = exbo;
+    BetfairAPI::BettingType::ExBestOffersOverrides result = json;
+
+    EXPECT_EQ(exbo, result);
+}
+
+TEST(PriceProjectionJson,Basic) {
+    BetfairAPI::BettingType::PriceProjection pp;
+    pp.priceData = {BetfairAPI::BettingEnum::PriceData::EX_BEST_OFFERS, BetfairAPI::BettingEnum::PriceData::EX_TRADED};
+    pp.virtualise = true;
+    pp.rolloverStakes = false;
+
+    nlohmann::json json = pp;
+    BetfairAPI::BettingType::PriceProjection result = json;
+
+    EXPECT_EQ(pp, result);
 }
