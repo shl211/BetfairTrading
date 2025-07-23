@@ -47,7 +47,7 @@ namespace BetfairAPI {
         };
 
         nlohmann::json j;
-        j["filter"] = BetfairAPI::BettingType::toJson(mf);
+        j["filter"] = mf;
         if(locale != detail::default_locale) {
             j["locale"] = locale;
         }
@@ -72,7 +72,7 @@ namespace BetfairAPI {
         };
 
         nlohmann::json j;
-        j["filter"] = BetfairAPI::BettingType::toJson(mf);
+        j["filter"] = mf;
         if(locale != detail::default_locale) {
             j["locale"] = locale;
         }
@@ -98,7 +98,7 @@ namespace BetfairAPI {
         };
 
         nlohmann::json j;
-        j["filter"] = BetfairAPI::BettingType::toJson(mf);
+        j["filter"] = mf;
         j["granularity"] = to_string<BetfairAPI::BettingEnum::TimeGranularity>(granularity);
 
         cpr::Body body{j.dump()};
@@ -123,7 +123,7 @@ namespace BetfairAPI {
         };
 
         nlohmann::json j;
-        j["filter"] = BetfairAPI::BettingType::toJson(mf);
+        j["filter"] = mf;
         if(locale != detail::default_locale) {
             j["locale"] = locale;
         }
@@ -148,7 +148,7 @@ namespace BetfairAPI {
         };
 
         nlohmann::json j;
-        j["filter"] = BetfairAPI::BettingType::toJson(mf);
+        j["filter"] = mf;
         if(locale != detail::default_locale) {
             j["locale"] = locale;
         }
@@ -173,7 +173,7 @@ namespace BetfairAPI {
         };
 
         nlohmann::json j;
-        j["filter"] = BetfairAPI::BettingType::toJson(mf);
+        j["filter"] = mf;
         if(locale != detail::default_locale) {
             j["locale"] = locale;
         }
@@ -198,7 +198,7 @@ namespace BetfairAPI {
         };
 
         nlohmann::json j;
-        j["filter"] = BetfairAPI::BettingType::toJson(mf);
+        j["filter"] = mf;
         if(locale != detail::default_locale) {
             j["locale"] = locale;
         }
@@ -226,7 +226,7 @@ namespace BetfairAPI {
         };
 
         nlohmann::json j;
-        j["filter"] = BetfairAPI::BettingType::toJson(mf);
+        j["filter"] = mf;
         j["maxResults"] = max_results;
 
         if(locale != detail::default_locale) j["locale"] = locale;
@@ -269,7 +269,7 @@ namespace BetfairAPI {
         if(order_projection) j["orderProjection"] = to_string<BettingEnum::OrderProjection>(*order_projection);
         if(!customer_order_refs.empty()) j["customerOrderRefs"] = customer_order_refs;
         if(!customter_strategy_refs.empty()) j["customerStrategyRefs"] = customter_strategy_refs;
-        if(dateRange) j["dateRange"] = BettingType::toJson<BettingType::TimeRange>(*dateRange);
+        if(dateRange) j["dateRange"] = *dateRange;
         if(order_by) j["orderBy"] = to_string<BettingEnum::OrderBy>(*order_by);
         if(sort_dir) j["sortDir"] = to_string<BettingEnum::SortDir>(*sort_dir);
         if(from_record >= 0) j["fromRecord"] = from_record;
@@ -317,13 +317,13 @@ namespace BetfairAPI {
             std::vector<nlohmann::json> runner_ids_json;
             runner_ids_json.reserve(std::size(runner_ids));
             for (const auto& runner_id : runner_ids) {
-                runner_ids_json.push_back(BettingType::toJson<BettingType::RunnerId>(runner_id));
+                runner_ids_json.push_back(runner_id);
             }
             j["runnerIds"] = runner_ids_json;
         }
         if(!bet_ids.empty()) j["betIds"] = bet_ids;
         if(side) j["side"] = to_string<BettingEnum::Side>(*side);
-        if(settled_date_range) j["settledDateRange"] = BettingType::toJson<BettingType::TimeRange>(*settled_date_range);
+        if(settled_date_range) j["settledDateRange"] = (*settled_date_range);
         if(group_by) j["groupBy"] = to_string<BettingEnum::GroupBy>(*group_by);
         if(include_item_description) j["includeItemDescription"] = *include_item_description;
         if(include_source_id) j["includeSourceId"] = *include_source_id;
@@ -359,9 +359,9 @@ namespace BetfairAPI {
         j["marketId"] = market_id;
         j["instructions"] = nlohmann::json::array();
         for (const auto& instr : instructions) {
-            j["instructions"].push_back(BettingType::toJson<BettingType::PlaceInstruction>(instr));
+            j["instructions"].push_back(instr);
         }
-        if (market_version) j["marketVersion"] = BettingType::toJson<BettingType::MarketVersion>(*market_version);
+        if (market_version) j["marketVersion"] = *market_version;
         if (customer_ref) j["customerRef"] = *customer_ref;
         if (customer_strategy_ref) j["customerStrategyRef"] = *customer_strategy_ref;
         if (async) j["async"] = *async;
@@ -390,7 +390,7 @@ namespace BetfairAPI {
         if(!market_id.empty()) j["marketId"] = market_id;
         j["instructions"] = nlohmann::json::array();
         for (const auto& instr : instructions) {
-            j["instructions"].push_back(BettingType::toJson<BettingType::CancelInstruction>(instr));
+            j["instructions"].push_back(instr);
         }
         if (customer_ref) j["customerRef"] = *customer_ref;
 
@@ -418,7 +418,7 @@ namespace BetfairAPI {
         if(!market_id.empty()) j["marketId"] = market_id;
         j["instructions"] = nlohmann::json::array();
         for (const auto& instr : instructions) {
-            j["instructions"].push_back(BettingType::toJson<BettingType::UpdateInstruction>(instr));
+            j["instructions"].push_back(instr);
         }
         if (customer_ref) j["customerRef"] = *customer_ref;
 
@@ -448,9 +448,9 @@ namespace BetfairAPI {
         j["marketId"] = market_id;
         j["instructions"] = nlohmann::json::array();
         for (const auto& instr : instructions) {
-            j["instructions"].push_back(BettingType::toJson<BettingType::ReplaceInstruction>(instr));
+            j["instructions"].push_back(instr);
         }
-        if (market_version) j["marketVersion"] = BettingType::toJson<BettingType::MarketVersion>(*market_version);
+        if (market_version) j["marketVersion"] = *market_version;
         if (customer_ref) j["customerRef"] = *customer_ref;
         if (async) j["async"] = *async;
 

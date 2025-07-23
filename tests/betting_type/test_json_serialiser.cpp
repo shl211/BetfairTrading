@@ -48,19 +48,19 @@ TEST(TimeRangeJson, BothDatesPresent) {
         BetfairAPI::Date{"2024-06-13T12:34:56Z"}
     };
     
-    auto json = BetfairAPI::BettingType::toJson(tr);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::TimeRange>(json);
+    nlohmann::json json = tr;
+    BetfairAPI::BettingType::TimeRange result = json;
     EXPECT_EQ(result, tr);
 }
 
-TEST(TimeRangeJson, OneDatePresnet) {
+TEST(TimeRangeJson, OneDatePresent) {
     BetfairAPI::BettingType::TimeRange tr{
         std::nullopt, 
         BetfairAPI::Date{"2024-06-13T12:34:56Z"}
     };
     
-    auto json = BetfairAPI::BettingType::toJson(tr);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::TimeRange>(json);
+    nlohmann::json json = tr;
+    BetfairAPI::BettingType::TimeRange result = json;
     EXPECT_EQ(result, tr);
 }
 
@@ -70,16 +70,16 @@ TEST(TimeRangeJson, OneDatePresnet2) {
         std::nullopt
     };
     
-    auto json = BetfairAPI::BettingType::toJson(tr);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::TimeRange>(json);
+    nlohmann::json json = tr;
+    BetfairAPI::BettingType::TimeRange result = json;
     EXPECT_EQ(result, tr);
 }
 
 TEST(TimeRangeJson, NonePresent) {
     BetfairAPI::BettingType::TimeRange tr{std::nullopt,std::nullopt};
     
-    auto json = BetfairAPI::BettingType::toJson(tr);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::TimeRange>(json);
+    nlohmann::json json = tr;
+    BetfairAPI::BettingType::TimeRange result = json;
     EXPECT_EQ(result, tr);
 }
 
@@ -88,8 +88,8 @@ TEST(MarketFilterJson, Basic) {
     mf.eventIds = {"1234","34566"};
     mf.bspOnly = true;
 
-    auto json = BetfairAPI::BettingType::toJson(mf);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::MarketFilter>(json);
+    nlohmann::json json = mf;
+    BetfairAPI::BettingType::MarketFilter result = json;
 
     // These are necessary to ensure no unexpected fields and correct performance
     ASSERT_EQ(json.size(), 2);
@@ -105,8 +105,8 @@ TEST(EventTypeJson, Basic) {
     et.name = "12erwef";
     et.id = "sdf";
 
-    auto json = BetfairAPI::BettingType::toJson(et);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::EventType>(json);
+    nlohmann::json json = et;
+    BetfairAPI::BettingType::EventType result =json;
 
     EXPECT_EQ(et, result);
 }
@@ -116,8 +116,8 @@ TEST(EventTypeResultJson, Basic) {
     et.eventType = BetfairAPI::BettingType::EventType{"name","12312"};
     et.marketCount = 100;
 
-    auto json = BetfairAPI::BettingType::toJson(et);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::EventTypeResult>(json);
+    nlohmann::json json = et;
+    BetfairAPI::BettingType::EventTypeResult result = json;
 
     // Check that values round-trip correctly
     EXPECT_EQ(et, result);
@@ -131,8 +131,8 @@ TEST(TimeRangeResultJson, Basic) {
     };
     trr.marketCount = 42;
 
-    auto json = BetfairAPI::BettingType::toJson(trr);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::TimeRangeResult>(json);
+    nlohmann::json json = trr;
+    BetfairAPI::BettingType::TimeRangeResult result = json;
 
     EXPECT_EQ(trr, result);
 }
@@ -143,8 +143,8 @@ TEST(CompetitionJson, Basic) {
     comp.id = "comp123";
     comp.name = "Premier League";
 
-    auto json = BetfairAPI::BettingType::toJson(comp);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::Competition>(json);
+    nlohmann::json json = comp;
+    BetfairAPI::BettingType::Competition result = json;
 
     EXPECT_EQ(comp, result);
 }
@@ -156,8 +156,8 @@ TEST(CompetitionResultJson, Basic) {
     comp_res.marketCount = 77;
     comp_res.competitionRegion = "EU";
 
-    auto json = BetfairAPI::BettingType::toJson(comp_res);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CompetitionResult>(json);
+    nlohmann::json json = comp_res;
+    BetfairAPI::BettingType::CompetitionResult result = json;
 
     EXPECT_EQ(comp_res, result);
 }
@@ -171,8 +171,8 @@ TEST(EventJson,Basic) {
     event.openDate = BetfairAPI::Date{"2024-06-15T17:00:00Z"};
     event.venue = "Wembley Stadium";
 
-    auto json = BetfairAPI::BettingType::toJson(event);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::Event>(json);
+    nlohmann::json json = event;
+    BetfairAPI::BettingType::Event result = json;
 
     EXPECT_EQ(event, result);
 }
@@ -187,8 +187,8 @@ TEST(EventResultJson,Basic) {
     event_res.event.venue = "Stade de France";
     event_res.marketCount = 99;
 
-    auto json = BetfairAPI::BettingType::toJson(event_res);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::EventResult>(json);
+    nlohmann::json json = event_res;
+    BetfairAPI::BettingType::EventResult result = json;
 
     EXPECT_EQ(event_res, result);
 }
@@ -198,8 +198,8 @@ TEST(MarketTypeResultJson,Basic) {
     mtr.marketType = "MATCH_ODDS";
     mtr.marketCount = 123;
 
-    auto json = BetfairAPI::BettingType::toJson(mtr);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::MarketTypeResult>(json);
+    nlohmann::json json = mtr;
+    BetfairAPI::BettingType::MarketTypeResult result = json;
 
     EXPECT_EQ(mtr, result);
 }
@@ -209,8 +209,8 @@ TEST(CountryCodeResultJson,Basic) {
     ccr.countryCode = "GB";
     ccr.marketCount = 123;
 
-    auto json = BetfairAPI::BettingType::toJson(ccr);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CountryCodeResult>(json);
+    nlohmann::json json = ccr;
+    BetfairAPI::BettingType::CountryCodeResult result = json;
 
     EXPECT_EQ(ccr, result);
 }
@@ -220,8 +220,8 @@ TEST(VenueResultJson,Basic) {
     vr.venue = "Cheltenham";
     vr.marketCount = 456;
 
-    auto json = BetfairAPI::BettingType::toJson(vr);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::VenueResult>(json);
+    nlohmann::json json = vr;
+    BetfairAPI::BettingType::VenueResult result = json;
 
     EXPECT_EQ(vr, result);
 }
@@ -233,8 +233,8 @@ TEST(MarketLineRangeInfoJson,Basic) {
     mlri.maxUnitValue = 5.5;
     mlri.interval = 0.5;
 
-    auto json = BetfairAPI::BettingType::toJson(mlri);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::MarketLineRangeInfo>(json);
+    nlohmann::json json = mlri;
+    BetfairAPI::BettingType::MarketLineRangeInfo result = json;
 
     EXPECT_EQ(mlri, result);
 }
@@ -243,8 +243,8 @@ TEST(PriceLadderDescriptionJson,Basic) {
     BetfairAPI::BettingType::PriceLadderDescription pld;
     pld.type = BetfairAPI::BettingEnum::PriceLadderType::CLASSIC;
 
-    auto json = BetfairAPI::BettingType::toJson(pld);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::PriceLadderDescription>(json);
+    nlohmann::json json = pld;
+    BetfairAPI::BettingType::PriceLadderDescription result = json;
 
     EXPECT_EQ(pld, result);
 }
@@ -265,8 +265,8 @@ TEST(MarketDescriptionJson,Basic) {
     md.marketBaseRate = 5.0;
     md.discountAllowed = true;
         
-    auto json = BetfairAPI::BettingType::toJson(md);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::MarketDescription>(json);
+    nlohmann::json json = md;
+    BetfairAPI::BettingType::MarketDescription result = json;
 
     EXPECT_EQ(md, result);
 }
@@ -279,8 +279,8 @@ TEST(RunnerCatalogJson,Basic) {
     rc.sortPriority = 1;
     rc.metadata = {{"JOCKEY", "John Doe"}, {"TRAINER", "Jane Smith"}};
 
-    auto json = BetfairAPI::BettingType::toJson(rc);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::RunnerCatalog>(json);
+    nlohmann::json json = rc;
+    BetfairAPI::BettingType::RunnerCatalog result = json;
 
     EXPECT_EQ(rc, result);
 }
@@ -289,8 +289,8 @@ TEST(MarketVersionJson,Basic) {
     BetfairAPI::BettingType::MarketVersion mv;
     mv.version = 987654321;
 
-    auto json = BetfairAPI::BettingType::toJson(mv);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::MarketVersion>(json);
+    nlohmann::json json = mv;
+    BetfairAPI::BettingType::MarketVersion result = json;
 
     EXPECT_EQ(mv, result);
 }
@@ -299,8 +299,8 @@ TEST(CurrentItemDescriptionJson,Basic) {
     BetfairAPI::BettingType::CurrentItemDescription cid;
     cid.marketVersion = BetfairAPI::BettingType::MarketVersion{1234};
 
-    auto json = BetfairAPI::BettingType::toJson(cid);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CurrentItemDescription>(json);
+    nlohmann::json json = cid;
+    BetfairAPI::BettingType::CurrentItemDescription result = json;
 
     EXPECT_EQ(cid, result);
 }
@@ -310,8 +310,8 @@ TEST(PriceSizeJson,Basic) {
     ps.price = 2.5;
     ps.size = 100.0;
 
-    auto json = BetfairAPI::BettingType::toJson(ps);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::PriceSize>(json);
+    nlohmann::json json = ps;
+    BetfairAPI::BettingType::PriceSize result = json;
 
     EXPECT_EQ(ps, result);
 }
@@ -337,8 +337,8 @@ TEST(CurrentOrderSummaryJson,Basic) {
     cos.regulatorAuthCode = "authcode";
     cos.regulatorCode = "UKGC";
 
-    auto json = BetfairAPI::BettingType::toJson(cos);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CurrentOrderSummary>(json);
+    nlohmann::json json = cos;
+    BetfairAPI::BettingType::CurrentOrderSummary result = json;
 
     EXPECT_EQ(cos, result);
 }
@@ -357,11 +357,10 @@ TEST(CurrentOrderSummaryReportJson,Basic) {
     cos.placedDate = BetfairAPI::Date{"2024-06-10T12:00:00Z"};
     cos.averagePriceMatched = 2.0;
     
-
     BetfairAPI::BettingType::CurrentOrderSummaryReport report;
     report.currentOrders.push_back(std::move(cos));
-    auto json = BetfairAPI::BettingType::toJson(report);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CurrentOrderSummaryReport>(json);
+    nlohmann::json json = report;
+    BetfairAPI::BettingType::CurrentOrderSummaryReport result = json;
 
     EXPECT_EQ(report, result);
 }
@@ -371,8 +370,8 @@ TEST(RunnerIdJson,Basic) {
     rid.selectionId = 12345;
     rid.handicap = 0.0;
 
-    auto json = BetfairAPI::BettingType::toJson(rid);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::RunnerId>(json);
+    nlohmann::json json = rid;
+    BetfairAPI::BettingType::RunnerId result = json;
 
     EXPECT_EQ(rid, result);
 }
@@ -384,8 +383,8 @@ TEST(ItemDescriptionJson,Basic) {
     idesc.marketDesc = "OPEN";
     idesc.runnerDesc = "Team A";
 
-    auto json = BetfairAPI::BettingType::toJson(idesc);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::ItemDescription>(json);
+    nlohmann::json json = idesc;
+    BetfairAPI::BettingType::ItemDescription result = json;
 
     EXPECT_EQ(idesc, result);
 }
@@ -424,8 +423,8 @@ TEST(ClearedOrderSummaryJson,Basic) {
     cos.sourceIdKey = "srcKey";
     cos.sourceIdDescription = "srcDesc";
 
-    auto json = BetfairAPI::BettingType::toJson(cos);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::ClearedOrderSummary>(json);
+    nlohmann::json json = cos;
+    BetfairAPI::BettingType::ClearedOrderSummary result = json;
 
     EXPECT_EQ(cos, result);
 }
@@ -441,8 +440,8 @@ TEST(ClearedOrderSummaryReportJson,Basic) {
     BetfairAPI::BettingType::ClearedOrderSummaryReport report;
     report.clearedOrders = {cos1,cos2};
 
-    auto json = BetfairAPI::BettingType::toJson(report);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::ClearedOrderSummaryReport>(json);
+    nlohmann::json json = report;
+    BetfairAPI::BettingType::ClearedOrderSummaryReport result = json;
 
     EXPECT_EQ(report, result);
 }
@@ -455,8 +454,8 @@ TEST(LimitOrderJson,Basic) {
     lo.minFillSize = 10.0;
     lo.timeInForce = BetfairAPI::BettingEnum::TimeInForce::FILL_OR_KILL;
 
-    auto json = BetfairAPI::BettingType::toJson(lo);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::LimitOrder>(json);
+    nlohmann::json json = lo;
+    BetfairAPI::BettingType::LimitOrder result = json;
 
     EXPECT_EQ(lo, result);
 }
@@ -466,8 +465,8 @@ TEST(LimitOnCloseOrderJson,Basic) {
     loco.liability = 50.0;
     loco.price = 1.8;
 
-    auto json = BetfairAPI::BettingType::toJson(loco);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::LimitOnCloseOrder>(json);
+    nlohmann::json json = loco;
+    BetfairAPI::BettingType::LimitOnCloseOrder result = json;
 
     EXPECT_EQ(loco, result);
 }
@@ -476,8 +475,8 @@ TEST(MarketOnCloseOrderJson,Basic) {
     BetfairAPI::BettingType::MarketOnCloseOrder loco;
     loco.liability = 50.0;
 
-    auto json = BetfairAPI::BettingType::toJson(loco);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::MarketOnCloseOrder>(json);
+    nlohmann::json json = loco;
+    BetfairAPI::BettingType::MarketOnCloseOrder result = json;
 
     EXPECT_EQ(loco, result);
 }
@@ -495,8 +494,8 @@ TEST(PlaceInstructionJson,Basic) {
     pi.limitOrder = lo;
     pi.customerOrderRef = "orderRef123";
 
-    auto json = BetfairAPI::BettingType::toJson(pi);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::PlaceInstruction>(json);
+    nlohmann::json json = pi;
+    BetfairAPI::BettingType::PlaceInstruction result = json;
 
     EXPECT_EQ(pi, result);
 }
@@ -518,8 +517,8 @@ TEST(PlaceInstructionReportJson,Basic) {
     pir.instruction.limitOrder = lo;
     pir.instruction.customerOrderRef = "orderRef123";
 
-    auto json = BetfairAPI::BettingType::toJson(pir);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::PlaceInstructionReport>(json);
+    nlohmann::json json = pir;
+    BetfairAPI::BettingType::PlaceInstructionReport result = json;
 
     EXPECT_EQ(pir, result);
 }
@@ -547,8 +546,8 @@ TEST(PlaceExecutionReportJson,Basic) {
     report.marketId = "market123";
     report.instructionReports.push_back(pir);
 
-    auto json = BetfairAPI::BettingType::toJson(report);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::PlaceExecutionReport>(json);
+    nlohmann::json json = report;
+    BetfairAPI::BettingType::PlaceExecutionReport result = json;
 
     EXPECT_EQ(report, result);
 }
@@ -558,8 +557,8 @@ TEST(CancelInstructionJson,Basic) {
     instr.betId = "323423";
     instr.sizeReduction = 1.0;
 
-    auto json = BetfairAPI::BettingType::toJson(instr);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CancelInstruction>(json);
+    nlohmann::json json = instr;
+    BetfairAPI::BettingType::CancelInstruction result = json;
 
     EXPECT_EQ(instr, result);
 }
@@ -573,8 +572,8 @@ TEST(CancelInstructionReportJson,Basic) {
     cir.sizeCancelled = 1.0;
     cir.cancelledDate = BetfairAPI::Date{"2024-06-12T12:00:00Z"};
 
-    auto json = BetfairAPI::BettingType::toJson(cir);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CancelInstructionReport>(json);
+    nlohmann::json json = cir;
+    BetfairAPI::BettingType::CancelInstructionReport result = json;
 
     EXPECT_EQ(cir, result);
 }
@@ -594,8 +593,8 @@ TEST(CancelExecutionReportJson,Basic) {
     report.marketId = "market999";
     report.instructionReports.push_back(cir);
 
-    auto json = BetfairAPI::BettingType::toJson(report);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::CancelExecutionReport>(json);
+    nlohmann::json json = report;
+    BetfairAPI::BettingType::CancelExecutionReport result = json;
 
     EXPECT_EQ(report, result);
 }
@@ -605,8 +604,8 @@ TEST(ReplaceInstructionJson,Basic) {
     instr.betId = "323423";
     instr.newPrice = 1.0;
 
-    auto json = BetfairAPI::BettingType::toJson(instr);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::ReplaceInstruction>(json);
+    nlohmann::json json = instr;
+    BetfairAPI::BettingType::ReplaceInstruction result = json;
 
     EXPECT_EQ(instr, result);
 }
@@ -643,8 +642,8 @@ TEST(ReplaceInstructionReportJson,Basic) {
 
     rir.cancelInstructionReport = std::move(cancel_report);
     rir.placeInstructionReport = std::move(place_report);
-    auto json = BetfairAPI::BettingType::toJson(rir);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::ReplaceInstructionReport>(json);
+    nlohmann::json json = rir;
+    BetfairAPI::BettingType::ReplaceInstructionReport result = json;
 
     EXPECT_EQ(rir, result);
 }
@@ -688,8 +687,8 @@ TEST(ReplaceExecutionReportJson,Basic) {
     report.marketId = "market777";
     report.instructionReports.push_back(rir);
 
-    auto json = BetfairAPI::BettingType::toJson(report);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::ReplaceExecutionReport>(json);
+    nlohmann::json json = report;
+    BetfairAPI::BettingType::ReplaceExecutionReport result = json;
 
     EXPECT_EQ(report, result);
 }
@@ -699,8 +698,8 @@ TEST(UpdateInstructionJson,Basic) {
     instr.betId = "bet123";
     instr.newPersistenceType = BetfairAPI::BettingEnum::PersistenceType::PERSIST;
 
-    auto json = BetfairAPI::BettingType::toJson(instr);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::UpdateInstruction>(json);
+    nlohmann::json json = instr;
+    BetfairAPI::BettingType::UpdateInstruction result = json;
 
     EXPECT_EQ(instr, result);
 }
@@ -712,8 +711,8 @@ TEST(UpdateInstructionReportJson,Basic) {
     uir.instruction.betId = "bet123";
     uir.instruction.newPersistenceType = BetfairAPI::BettingEnum::PersistenceType::PERSIST;
 
-    auto json = BetfairAPI::BettingType::toJson(uir);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::UpdateInstructionReport>(json);
+    nlohmann::json json = uir;
+    BetfairAPI::BettingType::UpdateInstructionReport result = json;
 
     EXPECT_EQ(uir, result);
 }
@@ -731,8 +730,8 @@ TEST(UpdateExecutionReportJson,Basic) {
     report.marketId = "market123";
     report.instructionReports.push_back(uir);
 
-    auto json = BetfairAPI::BettingType::toJson(report);
-    auto result = BetfairAPI::BettingType::fromJson<BetfairAPI::BettingType::UpdateExecutionReport>(json);
+    nlohmann::json json = report;
+    BetfairAPI::BettingType::UpdateExecutionReport result = json;
 
     EXPECT_EQ(report, result);
 }

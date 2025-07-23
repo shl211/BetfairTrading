@@ -182,7 +182,7 @@ namespace BetfairAPI {
             const auto& body = *r.getBody();
             result.reserve(body.size());
             auto json_conversion = [](const auto& event_type_result) -> BettingType::EventTypeResult {
-                return BettingType::fromJson<BettingType::EventTypeResult>(event_type_result);
+                return event_type_result.template get<BettingType::EventTypeResult>();
             };
     
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
@@ -207,7 +207,7 @@ namespace BetfairAPI {
             const auto& body = *r.getBody();
             result.reserve(body.size());
             auto json_conversion = [](const auto& competition_result) -> BettingType::CompetitionResult {
-                return BettingType::fromJson<BettingType::CompetitionResult>(competition_result);
+                return competition_result.template get<BettingType::CompetitionResult>();
             };
     
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
@@ -234,7 +234,7 @@ namespace BetfairAPI {
             const auto& body = *r.getBody();
             result.reserve(body.size());
             auto json_conversion = [](const auto& time_range_result) -> BettingType::TimeRangeResult {
-                return BettingType::fromJson<BettingType::TimeRangeResult>(time_range_result);
+                return time_range_result.template get<BettingType::TimeRangeResult>();
             };
     
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
@@ -259,7 +259,7 @@ namespace BetfairAPI {
             const auto& body = *r.getBody();
             result.reserve(body.size());
             auto json_conversion = [](const auto& event_result) -> BettingType::EventResult {
-                return BettingType::fromJson<BettingType::EventResult>(event_result);
+                return event_result.template get<BettingType::EventResult>();
             };
     
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
@@ -286,7 +286,7 @@ namespace BetfairAPI {
             const auto& body = *r.getBody();
             result.reserve(body.size());
             auto json_conversion = [](const auto& event_result) -> BettingType::MarketTypeResult {
-                return BettingType::fromJson<BettingType::MarketTypeResult>(event_result);
+                return event_result.template get<BettingType::MarketTypeResult>();
             };
     
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
@@ -311,7 +311,7 @@ namespace BetfairAPI {
             const auto& body = *r.getBody();
             result.reserve(body.size());
             auto json_conversion = [](const auto& event_result) -> BettingType::CountryCodeResult {
-                return BettingType::fromJson<BettingType::CountryCodeResult>(event_result);
+                return event_result.template get<BettingType::CountryCodeResult>();
             };
     
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
@@ -336,7 +336,7 @@ namespace BetfairAPI {
             const auto& body = *r.getBody();
             result.reserve(body.size());
             auto json_conversion = [](const auto& event_result) -> BettingType::VenueResult {
-                return BettingType::fromJson<BettingType::VenueResult>(event_result);
+                return event_result.template get<BettingType::VenueResult>();
             };
     
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
@@ -382,7 +382,7 @@ namespace BetfairAPI {
             const auto& body = *r.getBody();
             result.reserve(body.size());
             auto json_conversion = [](const auto& m_cat) -> BettingType::MarketCatalogue {
-                return BettingType::fromJson<BettingType::MarketCatalogue>(m_cat);
+                return m_cat.template get<BettingType::MarketCatalogue>();
             };
     
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
@@ -437,7 +437,7 @@ namespace BetfairAPI {
             }
 
             if(auto body = response.getBody()) {
-                report = BettingType::fromJson<BettingType::CurrentOrderSummaryReport>(*body);
+                report = (*body).get<BettingType::CurrentOrderSummaryReport>();
                 results.insert(results.end(),
                     std::make_move_iterator(report.currentOrders.begin()),
                     std::make_move_iterator(report.currentOrders.end())
@@ -500,7 +500,7 @@ namespace BetfairAPI {
             }
 
             if(auto body = response.getBody()) {
-                report = BettingType::fromJson<BettingType::ClearedOrderSummaryReport>(*body);
+                report = (*body).get<BettingType::ClearedOrderSummaryReport>();
                 results.insert(results.end(),
                     std::make_move_iterator(report.clearedOrders.begin()),
                     std::make_move_iterator(report.clearedOrders.end())
@@ -555,7 +555,7 @@ namespace BetfairAPI {
 
         BettingType::PlaceExecutionReport report;
         if(response.getBody() != nullptr) {
-            report = BettingType::fromJson<BettingType::PlaceExecutionReport>(*response.getBody());
+            report = (*response.getBody()).get<BettingType::PlaceExecutionReport>();
         }
 
         return report;
@@ -594,7 +594,7 @@ namespace BetfairAPI {
 
         BettingType::CancelExecutionReport report;
         if(response.getBody() != nullptr) {
-            report = BettingType::fromJson<BettingType::CancelExecutionReport>(*response.getBody());
+            report = (*response.getBody()).get<BettingType::CancelExecutionReport>();
         }
 
         return report;
@@ -622,7 +622,7 @@ namespace BetfairAPI {
 
         BettingType::UpdateExecutionReport report;
         if(response.getBody() != nullptr) {
-            report = BettingType::fromJson<BettingType::UpdateExecutionReport>(*response.getBody());
+            report = (*response.getBody()).get<BettingType::UpdateExecutionReport>();
         }
 
         return report;
@@ -665,7 +665,7 @@ namespace BetfairAPI {
 
         BettingType::ReplaceExecutionReport report;
         if(response.getBody() != nullptr) {
-            report = BettingType::fromJson<BettingType::ReplaceExecutionReport>(*response.getBody());
+            report = (*response.getBody()).get<BettingType::ReplaceExecutionReport>();
         }
 
         return report;
