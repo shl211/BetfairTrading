@@ -30,6 +30,8 @@
 #include "betting_enum/persistence_type.hpp"
 #include "betting_enum/order_by.hpp"
 #include "betting_enum/order_type.hpp"
+#include "betting_enum/order_projection.hpp"
+#include "betting_enum/match_projection.hpp"
 #include "betting_enum/bet_status.hpp"
 #include "betting_enum/group_by.hpp"
 #include "betting_type/current_order_summary_report.h"
@@ -40,6 +42,8 @@
 #include "betting_type/replace_execution_report.h"
 #include "betting_type/replace_instruction.h"
 #include "betting_type/update_execution_report.h"
+#include "betting_type/market_book.h"
+#include "betting_type/price_projection.h"
 
 #include "response.h"
 
@@ -124,6 +128,18 @@ namespace BetfairAPI {
                 std::optional<std::string> customer_ref = std::nullopt,
                 std::optional<bool> async = std::nullopt
             );
+            std::vector<BettingType::MarketBook> getMarketBook(
+                const std::vector<std::string>& market_ids,
+                std::optional<BettingType::PriceProjection> price_projection = std::nullopt,
+                std::optional<BettingEnum::OrderProjection> order_projection = std::nullopt,
+                std::optional<BettingEnum::MatchProjection> match_projection = std::nullopt,
+                std::optional<bool> include_overall_position = std::nullopt,
+                std::optional<bool> partition_matched_by_strategy_ref = std::nullopt,
+                std::set<std::string> customer_strategy_refs = {},
+                std::optional<Date> matched_since = std::nullopt,
+                std::set<std::string> bet_ids = {}
+            );
+
 
             bool refreshSession();
             

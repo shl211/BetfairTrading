@@ -1107,7 +1107,6 @@ namespace BetfairAPI::BettingType {
         if (obj.version) j["version"] = *obj.version;
         if (!obj.runners.empty()) j["runners"] = obj.runners;
         if (obj.keyLineDescription) j["keyLineDescription"] = *obj.keyLineDescription;
-
     }
 
     inline void from_json(const nlohmann::json& j, MarketBook& obj) {

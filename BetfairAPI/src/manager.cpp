@@ -670,5 +670,45 @@ namespace BetfairAPI {
 
         return report;
     }
+
+    std::vector<BettingType::MarketBook> BetfairManager::getMarketBook(
+        const std::vector<std::string>& market_ids,
+        std::optional<BettingType::PriceProjection> price_projection,
+        std::optional<BettingEnum::OrderProjection> order_projection,
+        std::optional<BettingEnum::MatchProjection> match_projection,
+        std::optional<bool> include_overall_position,
+        std::optional<bool> partition_matched_by_strategy_ref,
+        std::set<std::string> customer_strategy_refs,
+        std::optional<Date> matched_since,
+        std::set<std::string> bet_ids
+    ) {
+        //need to account for request weigthing
+        //max 5 requests to a market per second 
+        //and lots of other little things
+
+        auto response = listMarketBook(
+            api_token_,session_token_,market_ids,price_projection,
+            order_projection,match_projection,include_overall_position,
+            partition_matched_by_strategy_ref, customer_strategy_refs,
+            std::nullopt,locale_,matched_since,bet_ids,jurisdiction_
+        );
+
+        if(is_info_level_) {
+            logger_->info(username_ + " listed market book "
+            + printResponse(response,false,false));
+        }
+        
+        if(is_debug_level_) {
+            logger_->debug(username_ + " listed market book " 
+            + printResponse(response,true,true));
+        }
+
+        std::vector<BettingType::MarketBook> mb_list;
+        if(response.getBody() != nullptr) {
+            mb_list = (*response.getBody()).get<std::vector<BettingType::MarketBook>>();
+        }
+
+        return mb_list;
+    }
 }
 

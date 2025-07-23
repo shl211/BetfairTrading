@@ -33,67 +33,33 @@ int main() {
         "en",
         std::unique_ptr<Logging::ILogger>(std::move(logger)));
     
-    std::string BACK_TEAM_MATCH = "Brondby";
+    std::string BACK_TEAM_MATCH = "Brann";
 
     BetfairAPI::BettingType::MarketFilter mf;
     mf.textQuery = BACK_TEAM_MATCH;
     
     auto r = manager.getEvents(mf);
     auto r2 = manager.getMarketCatalogues(mf,
-        {BetfairAPI::BettingEnum::MarketProjection::RUNNER_DESCRIPTION});
+        {BetfairAPI::BettingEnum::MarketProjection::RUNNER_DESCRIPTION}
+    );
 
-    //printVector(r);
     //printVector(r2);
 
-    BetfairAPI::BettingType::MarketCatalogue desired_market;
-    std::string targetMarketName = "Match Odds";
-    auto it = std::find_if(r2.begin(), r2.end(), [&](const BetfairAPI::BettingType::MarketCatalogue& mc) {
-        return mc.marketName == targetMarketName;
-    });
+    //grab the first market book
+    auto market_id = r2[0].marketId;
+    std::cout << "Querying " << market_id << "\n";
 
-    if (it != r2.end()) {
-        desired_market = *it;
-        std::cout << "Found market: " << desired_market.marketName << std::endl;
-    } else {
-        std::cout << "Market not found." << std::endl;
-    }
+    BetfairAPI::BettingType::PriceProjection pp;
+    //pp.priceData.insert(BetfairAPI::BettingEnum::PriceData::EX_TRADED);
+    pp.priceData.insert(BetfairAPI::BettingEnum::PriceData::EX_ALL_OFFERS);
 
-    std::cout << "Selections: ";
-    printVector(desired_market.runners);
-    
-    BetfairAPI::BettingType::RunnerCatalog runner;
-    std::string targetRunner = BACK_TEAM_MATCH;
-    auto it2 = std::find_if(desired_market.runners.begin(), desired_market.runners.end(), [&](const BetfairAPI::BettingType::RunnerCatalog& mc) {
-        return mc.runnerName == targetRunner;
-    });
+    auto r3 = manager.getMarketBook(
+        {market_id},
+        std::move(pp),
+        BetfairAPI::BettingEnum::OrderProjection::EXECUTABLE,
+        BetfairAPI::BettingEnum::MatchProjection::ROLLED_UP_BY_PRICE
+    );
 
-    if(it2 != desired_market.runners.end()) {
-        runner = *it2;
-        std::cout << "Found runner: " << runner.runnerName << " (ID: " << runner.selectionId << ")" << std::endl;
-    } else {
-        std::cout <<"Invalid runners\n";
-    }
-
-    //place order
-    BetfairAPI::BettingType::LimitOrder order;
-    order.price = 1.03;
-    order.size = 1;
-    order.persistenceType = BetfairAPI::BettingEnum::PersistenceType::PERSIST;
-
-    BetfairAPI::BettingType::PlaceInstruction instruction;
-    instruction.orderType = BetfairAPI::BettingEnum::OrderType::LIMIT;
-    instruction.side = BetfairAPI::BettingEnum::Side::BACK;
-    instruction.limitOrder = std::move(order);
-    instruction.selectionId = runner.selectionId;
-
-    auto order_report = manager.placeOrders(desired_market.marketId,{instruction});
-
-    std::cout << order_report << "\n";
-
-
-
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-
-    auto r3 = manager.getCurrentOrders();
     printVector(r3);
+
 }

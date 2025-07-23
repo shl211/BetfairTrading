@@ -22,6 +22,7 @@
 #include "betting_type/replace_instruction.h"
 #include "betting_type/update_instruction.h"
 #include "betting_type/price_projection.h"
+
 namespace BetfairAPI {
     //note that if api requests fail, the request body is automatically stored inside Response
 
