@@ -8,6 +8,7 @@ namespace Logging {
         logger_ = spdlog::stdout_color_mt("console");
         logger_->set_pattern("[%Y-%m-%d %H:%M:%S] [%^%l%$] %v");
         logger_->set_level(toSpdLevel(currentLevel_));
+        logger_->flush_on(spdlog::level::err);  // <-- Add this line
     }
 
     void ColouredConsoleLogger::log(LogLevel level, const std::string& message) {

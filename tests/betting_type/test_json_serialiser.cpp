@@ -892,3 +892,37 @@ TEST(MarketBook,Basic) {
     EXPECT_EQ(mb, result);
 }
 
+TEST(RunnerProfitAndLossJson,Basic) {
+    BetfairAPI::BettingType::RunnerProfitAndLoss rpl;
+    rpl.selectionId = 123456;
+    rpl.ifWin = 50.0;
+    rpl.ifLose = -10.0;
+    rpl.ifPlace = 20.0;
+
+    nlohmann::json json = rpl;
+    BetfairAPI::BettingType::RunnerProfitAndLoss result = json;
+
+    EXPECT_EQ(rpl, result);
+}
+
+TEST(MarketProfitAndLossJson,Basic) {
+    BetfairAPI::BettingType::MarketProfitAndLoss mpl;
+    mpl.marketId = "market123";
+    BetfairAPI::BettingType::RunnerProfitAndLoss rpl1;
+    rpl1.selectionId = 123456;
+    rpl1.ifWin = 50.0;
+    rpl1.ifLose = -10.0;
+    rpl1.ifPlace = 20.0;
+    BetfairAPI::BettingType::RunnerProfitAndLoss rpl2;
+    rpl2.selectionId = 654321;
+    rpl2.ifWin = 30.0;
+    rpl2.ifLose = -5.0;
+    rpl2.ifPlace = 10.0;
+    mpl.profitAndLoss = {rpl1, rpl2};
+
+    nlohmann::json json = mpl;
+    BetfairAPI::BettingType::MarketProfitAndLoss result = json;
+
+    EXPECT_EQ(mpl, result);
+}
+

@@ -54,6 +54,8 @@
 #include "BetfairAPI/betting_type/match.h"
 #include "BetfairAPI/betting_type/runner.h"
 #include "BetfairAPI/betting_type/market_book.h"
+#include "BetfairAPI/betting_type/runner_profit_loss.h"
+#include "BetfairAPI/betting_type/market_profit_loss.h"
 
 namespace BetfairAPI::BettingType {
     template<typename T>
@@ -1128,5 +1130,37 @@ namespace BetfairAPI::BettingType {
         if (j.contains("version")) obj.version = j.at("version").get<long>();
         if (j.contains("runners")) obj.runners = j.at("runners").get<std::vector<Runner>>();
         if (j.contains("keyLineDescription")) obj.keyLineDescription = j.at("keyLineDescription").get<KeyLineDescription>();
+    }
+
+    /**************************************************************************
+    * RunnerProfitAndLoss
+    **************************************************************************/
+    inline void to_json(nlohmann::json& j, const RunnerProfitAndLoss& obj) {
+        if (obj.selectionId) j["selectionId"] = *obj.selectionId;
+        if (obj.ifWin) j["ifWin"] = *obj.ifWin;
+        if (obj.ifLose) j["ifLose"] = *obj.ifLose;
+        if (obj.ifPlace) j["ifPlace"] = *obj.ifPlace;
+    }
+
+    inline void from_json(const nlohmann::json& j, RunnerProfitAndLoss& obj) {
+        if (j.contains("selectionId")) obj.selectionId = j.at("selectionId").get<long>();
+        if (j.contains("ifWin")) obj.ifWin = j.at("ifWin").get<double>();
+        if (j.contains("ifLose")) obj.ifLose = j.at("ifLose").get<double>();
+        if (j.contains("ifPlace")) obj.ifPlace = j.at("ifPlace").get<double>();
+    }
+
+    /**************************************************************************
+    * MarketProfitAndLoss
+    **************************************************************************/
+    inline void to_json(nlohmann::json& j, const MarketProfitAndLoss& obj) {
+        if (!obj.marketId.empty()) j["marketId"] = obj.marketId;
+        if(obj.commissionApplied) j["commissionApplied"] = *obj.commissionApplied;
+        if (!obj.profitAndLoss.empty()) j["profitAndLoss"] = obj.profitAndLoss;
+    }
+
+    inline void from_json(const nlohmann::json& j, MarketProfitAndLoss& obj) {
+        if (j.contains("marketId")) obj.marketId = j.at("marketId").get<std::string>();
+        if (j.contains("commissionApplied")) obj.commissionApplied = j.at("commissionApplied").get<bool>();
+        if (j.contains("profitAndLoss")) obj.profitAndLoss = j.at("profitAndLoss").get<std::vector<RunnerProfitAndLoss>>();
     }
 }

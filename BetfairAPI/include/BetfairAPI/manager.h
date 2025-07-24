@@ -44,6 +44,7 @@
 #include "betting_type/update_execution_report.h"
 #include "betting_type/market_book.h"
 #include "betting_type/price_projection.h"
+#include "betting_type/market_profit_loss.h"
 
 #include "response.h"
 
@@ -150,6 +151,12 @@ namespace BetfairAPI {
                 std::set<std::string> customer_strategy_refs = {},
                 std::optional<Date> matched_since = std::nullopt,
                 std::set<std::string> bet_ids = {}
+            );
+            std::vector<BettingType::MarketProfitAndLoss> getMarketProfitLoss(
+                const std::set<std::string>& market_ids,
+                std::optional<bool> include_settled_bets = std::nullopt,
+                std::optional<bool> include_bsp_bets = std::nullopt,
+                std::optional<bool> net_of_commission = std::nullopt
             );
 
 

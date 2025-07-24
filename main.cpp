@@ -24,7 +24,7 @@ int main() {
     }
 
     auto logger = std::make_unique<Logging::ColouredConsoleLogger>();
-    logger->setLevel(Logging::LogLevel::Info);
+    logger->setLevel(Logging::LogLevel::Debug);
 
     auto manager = BetfairAPI::BetfairManager(USERNAME,
         PASSWORD,
@@ -33,7 +33,7 @@ int main() {
         "en",
         std::unique_ptr<Logging::ILogger>(std::move(logger)));
     
-    std::string BACK_TEAM_MATCH = "Brann";
+    std::string BACK_TEAM_MATCH = "England (W)";
 
     BetfairAPI::BettingType::MarketFilter mf;
     mf.textQuery = BACK_TEAM_MATCH;
@@ -77,4 +77,7 @@ int main() {
     std::cout << "Runner Book \n";
     printVector(r4);
 
+    auto r5 = manager.getMarketProfitLoss({market_id},true,true,true);
+    std::cout << "Market P&L\n";
+    printVector(r5);
 }

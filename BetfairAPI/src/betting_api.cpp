@@ -524,4 +524,31 @@ namespace BetfairAPI {
         cpr::Response response = cpr::Post(url,headers,body);
         return toResponse(response,save_request_info,url.str(),j);
     }
+
+    Response listMarketProfitAndLoss(const std::string& api_key,
+        const std::string& session_key,
+        const std::set<std::string>& market_ids,
+        std::optional<bool> include_settled_bets,
+        std::optional<bool> include_bsp_bets,
+        std::optional<bool> net_of_commission,
+        const Jurisdiction jurisdiction,
+        bool save_request_info
+    ) {        
+        cpr::Url url{std::string(getUrl(jurisdiction)) + "listMarketProfitAndLoss/"};
+        cpr::Header headers {
+            {"Content-Type","application/json"},
+            {"X-Application",api_key},
+            {"X-Authentication",session_key}
+        };
+
+        nlohmann::json j {};
+        j["marketIds"] = market_ids;
+        if(include_settled_bets) j["includeSettledBets"] = *include_settled_bets;
+        if(include_bsp_bets) j["includeBspBets"] = *include_bsp_bets;
+        if(net_of_commission) j["netOfCommission"] = *net_of_commission;
+        
+        cpr::Body body{j.dump()};
+        cpr::Response response = cpr::Post(url,headers,body);
+        return toResponse(response,save_request_info,url.str(),j);
+    }
 }

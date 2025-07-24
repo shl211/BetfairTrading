@@ -210,4 +210,14 @@ namespace BetfairAPI {
         const Jurisdiction j = Jurisdiction::GLOBAL,
         bool save_request_info = false
     );
+
+    Response listMarketProfitAndLoss(const std::string& api_key,
+        const std::string& session_key,
+        const std::set<std::string>& market_ids,
+        std::optional<bool> include_settled_bets = std::nullopt,
+        std::optional<bool> include_bsp_bets = std::nullopt,
+        std::optional<bool> net_of_commission = std::nullopt,
+        const Jurisdiction j = Jurisdiction::GLOBAL,
+        bool save_request_info = false
+    );
 }
