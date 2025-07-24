@@ -2,8 +2,8 @@
 
 #include <string>
 #include <set>
-#include "response.h"
-#include "jurisdiction.hpp"
+#include "BetfairAPI/response.h"
+#include "BetfairAPI/jurisdiction.hpp"
 #include "betting_type/market_filter.h"
 #include "betting_type/runner_id.h"
 #include "betting_enum/time_granularity.hpp"

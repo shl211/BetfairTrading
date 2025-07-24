@@ -5,9 +5,9 @@
 #include "BetfairAPI/utils.h"
 #include "BetfairAPI/betting_enum/order_type.hpp"
 #include "BetfairAPI/betting_enum/side.hpp"
-#include "limit_order.h"
-#include "limit_on_close_order.h"
-#include "market_on_close_order.h"
+#include "BetfairAPI/betting_type/limit_order.h"
+#include "BetfairAPI/betting_type/limit_on_close_order.h"
+#include "BetfairAPI/betting_type/market_on_close_order.h"
 
 namespace BetfairAPI::BettingType {
     struct PlaceInstruction {

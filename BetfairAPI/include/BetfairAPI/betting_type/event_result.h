@@ -1,6 +1,6 @@
 #pragma once
 
-#include "event.h"
+#include "BetfairAPI/betting_type/event.h"
 
 namespace BetfairAPI::BettingType {
     struct EventResult {

@@ -3,7 +3,7 @@
 #include <optional>
 #include <ostream>
 #include "BetfairAPI/utils.h"
-#include "update_instruction.h"
+#include "BetfairAPI/betting_type/update_instruction.h"
 #include "BetfairAPI/betting_enum/instruction_report_status.hpp"
 #include "BetfairAPI/betting_enum/instruction_report_error_code.hpp"
 

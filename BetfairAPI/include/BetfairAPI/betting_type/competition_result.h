@@ -2,7 +2,7 @@
 
 #include <string>
 #include <ostream>
-#include "competition.h"
+#include "BetfairAPI/betting_type/competition.h"
 
 namespace BetfairAPI::BettingType {
     struct CompetitionResult {

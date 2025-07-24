@@ -4,11 +4,11 @@
 #include <ostream>
 #include <optional>
 #include "BetfairAPI/date.h"
-#include "event_type.h"
-#include "event.h"
-#include "competition.h"
-#include "market_description.h"
-#include "runner_catalog.h"
+#include "BetfairAPI/betting_type/event_type.h"
+#include "BetfairAPI/betting_type/event.h"
+#include "BetfairAPI/betting_type/competition.h"
+#include "BetfairAPI/betting_type/market_description.h"
+#include "BetfairAPI/betting_type/runner_catalog.h"
 
 namespace BetfairAPI::BettingType {
     struct MarketCatalogue {

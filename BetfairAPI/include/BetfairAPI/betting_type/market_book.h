@@ -5,8 +5,8 @@
 #include <optional>
 #include "BetfairAPI/betting_enum/market_status.hpp"
 #include "BetfairAPI/date.h"
-#include "runner.h"
-#include "key_line_description.h"
+#include "BetfairAPI/betting_type/runner.h"
+#include "BetfairAPI/betting_type/key_line_description.h"
 
 namespace BetfairAPI::BettingType {
     struct MarketBook {

@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <ostream>
-#include "key_line_selection.h"
+#include "BetfairAPI/betting_type/key_line_selection.h"
 
 namespace BetfairAPI::BettingType {
     struct KeyLineDescription {

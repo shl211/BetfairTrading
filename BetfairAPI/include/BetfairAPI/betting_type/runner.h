@@ -6,10 +6,10 @@
 #include <map>
 #include "BetfairAPI/betting_enum/runner_status.hpp"
 #include "BetfairAPI/date.h"
-#include "starting_prices.h"
-#include "exchange_prices.h"
-#include "order.h"
-#include "match.h"
+#include "BetfairAPI/betting_type/starting_prices.h"
+#include "BetfairAPI/betting_type/exchange_prices.h"
+#include "BetfairAPI/betting_type/order.h"
+#include "BetfairAPI/betting_type/match.h"
 
 namespace BetfairAPI::BettingType {
     struct Runner {

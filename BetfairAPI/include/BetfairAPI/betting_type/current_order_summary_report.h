@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "current_order_summary.h"
+#include "BetfairAPI/betting_type/current_order_summary.h"
 
 namespace BetfairAPI::BettingType {
     struct CurrentOrderSummaryReport {

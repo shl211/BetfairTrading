@@ -4,7 +4,7 @@
 #include <optional>
 #include <ostream>
 #include "BetfairAPI/utils.h"
-#include "cancel_instruction.h"
+#include "BetfairAPI/betting_type/cancel_instruction.h"
 #include "BetfairAPI/date.h"
 #include "BetfairAPI/betting_enum/instruction_report_error_code.hpp"
 #include "BetfairAPI/betting_enum/instruction_report_status.hpp"

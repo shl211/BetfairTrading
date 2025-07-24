@@ -1,8 +1,8 @@
 #pragma once
 
 #include <optional>
-#include "cancel_instruction_report.h"
-#include "place_instruction_report.h"
+#include "BetfairAPI/betting_type/cancel_instruction_report.h"
+#include "BetfairAPI/betting_type/place_instruction_report.h"
 #include "BetfairAPI/betting_enum/instruction_report_status.hpp"
 #include "BetfairAPI/utils.h"
 #include "BetfairAPI/betting_enum/instruction_report_error_code.hpp"

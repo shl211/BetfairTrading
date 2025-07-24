@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include "response.h"
-#include "jurisdiction.hpp"
+#include "BetfairAPI/response.h"
+#include "BetfairAPI/jurisdiction.hpp"
 
 namespace BetfairAPI {
 

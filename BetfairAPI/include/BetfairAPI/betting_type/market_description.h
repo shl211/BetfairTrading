@@ -5,8 +5,8 @@
 #include "BetfairAPI/date.h"
 #include "BetfairAPI/utils.h"
 #include "BetfairAPI/betting_enum/market_betting_type.hpp"
-#include "market_line_range_info.h"
-#include "price_ladder_description.h"
+#include "BetfairAPI/betting_type/market_line_range_info.h"
+#include "BetfairAPI/betting_type/price_ladder_description.h"
 
 namespace BetfairAPI::BettingType {
     struct MarketDescription {

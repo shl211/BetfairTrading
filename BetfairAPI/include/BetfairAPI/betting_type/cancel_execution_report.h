@@ -6,7 +6,7 @@
 #include "BetfairAPI/utils.h"
 #include "BetfairAPI/betting_enum/execution_report_status.hpp"
 #include "BetfairAPI/betting_enum/execution_report_error_code.hpp"
-#include "cancel_instruction_report.h"
+#include "BetfairAPI/betting_type/cancel_instruction_report.h"
 
 namespace BetfairAPI::BettingType {
     struct CancelExecutionReport {

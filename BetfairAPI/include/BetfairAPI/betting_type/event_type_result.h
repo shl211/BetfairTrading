@@ -1,6 +1,6 @@
 #pragma once
 
-#include "event_type.h"
+#include "BetfairAPI/betting_type/event_type.h"
 #include <ostream>
 
 namespace BetfairAPI::BettingType {

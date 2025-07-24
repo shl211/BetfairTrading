@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ostream>
-#include "market_version.h"
+#include "BetfairAPI/betting_type/market_version.h"
 
 namespace BetfairAPI::BettingType {
     struct CurrentItemDescription {

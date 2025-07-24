@@ -8,7 +8,7 @@
 #include "BetfairAPI/betting_enum/persistence_type.hpp"
 #include "BetfairAPI/betting_enum/order_type.hpp"
 #include "BetfairAPI/betting_enum/side.hpp"
-#include "item_description.h"
+#include "BetfairAPI/betting_type/item_description.h"
 
 namespace BetfairAPI::BettingType {
     struct ClearedOrderSummary {

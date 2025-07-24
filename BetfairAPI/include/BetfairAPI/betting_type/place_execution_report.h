@@ -6,7 +6,7 @@
 #include "BetfairAPI/utils.h"
 #include "BetfairAPI/betting_enum/execution_report_status.hpp"
 #include "BetfairAPI/betting_enum/execution_report_error_code.hpp"
-#include "place_instruction_report.h"
+#include "BetfairAPI/betting_type/place_instruction_report.h"
 
 namespace BetfairAPI::BettingType {
     struct PlaceExecutionReport {

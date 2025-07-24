@@ -3,7 +3,7 @@
 #include <optional>
 #include <ostream>
 #include <vector>
-#include "price_size.h"
+#include "BetfairAPI/betting_type/price_size.h"
 
 namespace BetfairAPI::BettingType {
     struct StartingPrices {

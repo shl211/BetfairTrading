@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <ostream>
-#include "price_size.h"
+#include "BetfairAPI/betting_type/price_size.h"
 
 namespace BetfairAPI::BettingType {
     struct ExchangePrices {

@@ -6,7 +6,7 @@
 
 #include "BetfairAPI/betting_enum/market_betting_type.hpp"
 #include "BetfairAPI/betting_enum/order_status.hpp"
-#include "time_range.h"
+#include "BetfairAPI/betting_type/time_range.h"
 
 namespace BetfairAPI::BettingType {
     struct MarketFilter {

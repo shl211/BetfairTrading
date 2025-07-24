@@ -7,7 +7,7 @@
 #include "BetfairAPI/betting_enum/instruction_report_status.hpp"
 #include "BetfairAPI/betting_enum/instruction_report_error_code.hpp"
 #include "BetfairAPI/betting_enum/order_status.hpp"
-#include "place_instruction.h"
+#include "BetfairAPI/betting_type/place_instruction.h"
 #include "BetfairAPI/date.h"
 
 

@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <ostream>
-#include "cleared_order_summary.h"
+#include "BetfairAPI/betting_type/cleared_order_summary.h"
 
 namespace BetfairAPI::BettingType {
     struct ClearedOrderSummaryReport {

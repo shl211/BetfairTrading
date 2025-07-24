@@ -3,8 +3,8 @@
 #include <string>
 #include <optional>
 #include "BetfairAPI/utils.h"
-#include "price_size.h"
-#include "current_item_description.h"
+#include "BetfairAPI/betting_type/price_size.h"
+#include "BetfairAPI/betting_type/current_item_description.h"
 #include "BetfairAPI/betting_enum/side.hpp"
 #include "BetfairAPI/betting_enum/order_status.hpp"
 #include "BetfairAPI/betting_enum/persistence_type.hpp"
