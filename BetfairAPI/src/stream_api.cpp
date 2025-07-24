@@ -2,8 +2,9 @@
 #include <iostream>
 
 namespace BetfairAPI {
-    BetfairStreaming::BetfairStreaming()
-        : ssl_context_(asio::ssl::context::tlsv12_client)
+    BetfairStreaming::BetfairStreaming(std::shared_ptr<Logging::ILogger> logger)
+        : ssl_context_(asio::ssl::context::tlsv12_client),
+        logger_(logger)
     {
         ssl_context_.set_default_verify_paths();
         ssl_context_.set_verify_mode(asio::ssl::verify_peer);
@@ -15,9 +16,13 @@ namespace BetfairAPI {
                 disconnect();
             } catch (const std::exception& e) {
                 // Log the exception, but don't let it escape
-                std::cerr << "[Destructor] Exception during disconnect: " << e.what() << std::endl;
+                if(logger_) {
+                    logger_->warn(std::string("[Destructor] Exception during disconnect: ") + e.what());
+                }
             } catch (...) {
-                std::cerr << "[Destructor] Unknown exception during disconnect." << std::endl;
+                if(logger_) {
+                    logger_->error("[Destructor] Unknown exception during disconnect.");
+                }
             }
         }
     }
@@ -33,15 +38,17 @@ namespace BetfairAPI {
             tcp::resolver resolver(io_context_);
             auto endpoints = resolver.resolve(host_, port_);
 
-            // Connect TCP
+            // Connect TCP and SSL handshake
             asio::connect(ssl_stream_->lowest_layer(), endpoints);
-
-            // Perform SSL handshake
             ssl_stream_->handshake(asio::ssl::stream_base::client);
 
-            std::cout << "Connected to Betfair Streaming API over SSL!" << std::endl;
+            if(logger_) {
+                logger_->info("Connected to Betfair Streaming API over SSL!");
+            }
         } catch (const std::exception& e) {
-            std::cerr << "Connection failed: " << e.what() << std::endl;
+            if(logger_) {
+                logger_->error("Connection failed: " + std::string(e.what()));
+            }
         }
 
         //send initialisation message
@@ -57,15 +64,17 @@ namespace BetfairAPI {
     void BetfairStreaming::disconnect() {
         if (ssl_stream_ && ssl_stream_->lowest_layer().is_open()) {
             try {
-                // Attempt SSL shutdown
+                // Attempt SSL shutdown and close TCP socket
                 ssl_stream_->shutdown();
-
-                // Close the TCP socket
                 ssl_stream_->lowest_layer().close();
 
-                std::cout << "Disconnected cleanly from Betfair Streaming API." << std::endl;
+                if(logger_) {
+                    logger_->info("Disconnected cleanly from Betfair Streaming API.");
+                }
             } catch (const std::exception& e) {
-                std::cerr << "Error during disconnect: " << e.what() << std::endl;
+                if(logger_) {
+                    logger_->warn("Error during disconnect " + std::string(e.what()));
+                }
             }
         }
     }

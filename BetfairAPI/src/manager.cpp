@@ -42,11 +42,11 @@ namespace BetfairAPI {
         std::string api_key,
         Jurisdiction j,
         std::string locale,
-        std::unique_ptr<Logging::ILogger> logger
+        std::shared_ptr<Logging::ILogger> logger
     ) : jurisdiction_(j),
         api_token_(std::move(api_key)),
         refresh_time_(getTimeoutMinutes(j) - MINUTE_OFFSET),
-        logger_(std::move(logger)),
+        logger_(logger),
         username_(username),
         locale_(std::move(locale))
     {
@@ -784,7 +784,7 @@ namespace BetfairAPI {
 
     void BetfairManager::connectToStreamingService() {
         if(!streamer_) {
-            streamer_ = std::make_unique<BetfairStreaming>();
+            streamer_ = std::make_unique<BetfairStreaming>(logger_);
         }
 
         streamer_->connect(api_token_,session_token_);

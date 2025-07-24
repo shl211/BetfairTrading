@@ -50,7 +50,7 @@ namespace BetfairAPI {
                 std::string api_key,
                 Jurisdiction j = Jurisdiction::GLOBAL,
                 std::string locale = "en",
-                std::unique_ptr<Logging::ILogger> logger = nullptr
+                std::shared_ptr<Logging::ILogger> logger = nullptr
             );
             ~BetfairManager();
             BetfairManager(const BetfairManager&) = delete;
@@ -168,7 +168,7 @@ namespace BetfairAPI {
             Jurisdiction jurisdiction_;
             std::string locale_;
             int refresh_time_;
-            std::unique_ptr<Logging::ILogger> logger_;
+            std::shared_ptr<Logging::ILogger> logger_;
 
             std::thread keep_alive_thread_;
             std::mutex mutex_;
