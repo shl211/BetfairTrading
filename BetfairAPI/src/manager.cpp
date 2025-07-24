@@ -781,5 +781,17 @@ namespace BetfairAPI {
 
         return mpl_list;
     }
+
+    void BetfairManager::connectToStreamingService() {
+        if(!streamer_) {
+            streamer_ = std::make_unique<BetfairStreaming>();
+        }
+
+        streamer_->connect(api_token_,session_token_);
+    }
+
+    std::string BetfairManager::readFromStreamingService() {
+        return streamer_ ? streamer_->readMessage() : "";
+    }
 }
 

@@ -50,8 +50,15 @@ FetchContent_Declare(
   GIT_TAG v1.13.0  # Or latest stable tag
 )
 
+# Fetch Boost.asio but asio standalone
+FetchContent_Declare(
+  asio
+  GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
+  GIT_TAG asio-1-28-0  # Or latest
+)
+
 # Download and make available
-FetchContent_MakeAvailable(cpr json googletest magic_enum date spdlog)
+FetchContent_MakeAvailable(cpr json googletest magic_enum date spdlog asio)
 
 ###################################
 # Project Targets

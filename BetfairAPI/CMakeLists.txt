@@ -18,13 +18,22 @@ target_include_directories(BetfairAPI
 )
 
 target_compile_definitions(BetfairAPI PRIVATE HAS_REMOTE_API=1)
+find_package(OpenSSL REQUIRED)
 
 target_link_libraries(BetfairAPI 
     PRIVATE 
         cpr::cpr
-    PUBLIC
+        PUBLIC
         nlohmann_json::nlohmann_json
         magic_enum
         date::date
         Logging
+        OpenSSL::SSL
+        OpenSSL::Crypto
+)
+
+
+target_include_directories(BetfairAPI 
+    PUBLIC 
+        ${asio_SOURCE_DIR}/asio/include
 )

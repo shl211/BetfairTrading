@@ -10,6 +10,7 @@
 
 #include "Logging/ILogger.h"
 #include "BetfairAPI/jurisdiction.hpp"
+#include "BetfairAPI/stream_api.h"
 #include "BetfairAPI/betting_type/market_filter.h"
 #include "BetfairAPI/betting_type/event_type_result.h"
 #include "BetfairAPI/betting_type/time_range_result.h"
@@ -153,7 +154,10 @@ namespace BetfairAPI {
 
 
             bool refreshSession();
-            
+
+            //for streaming data
+            void connectToStreamingService();
+            std::string readFromStreamingService();
             
         private:
             bool endSession();
@@ -180,5 +184,8 @@ namespace BetfairAPI {
             bool is_warn_level_;
             bool is_error_level_;
             bool is_critical_level_;
+
+            //streaming service
+            std::unique_ptr<BetfairStreaming> streamer_;
     };
 }

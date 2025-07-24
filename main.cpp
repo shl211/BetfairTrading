@@ -2,6 +2,7 @@
 #include <thread>
 #include <chrono>
 #include "BetfairAPI/manager.h"
+#include "BetfairAPI/stream_api.h"
 #include "Logging/console_logger.h"
 #include "Logging/coloured_console_logger.h"
 #include "Logging/file_logger.h"
@@ -32,7 +33,7 @@ int main() {
         BetfairAPI::Jurisdiction::UK,
         "en",
         std::unique_ptr<Logging::ILogger>(std::move(logger)));
-    
+    /*
     std::string BACK_TEAM_MATCH = "England (W)";
 
     BetfairAPI::BettingType::MarketFilter mf;
@@ -79,5 +80,9 @@ int main() {
 
     auto r5 = manager.getMarketProfitLoss({market_id},true,true,true);
     std::cout << "Market P&L\n";
-    printVector(r5);
+    printVector(r5);*/
+
+    manager.connectToStreamingService();
+    std::cout << manager.readFromStreamingService() << "\n";
+    std::this_thread::sleep_for(std::chrono::seconds(5));
 }
