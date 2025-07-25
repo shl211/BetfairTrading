@@ -806,6 +806,26 @@ namespace BetfairAPI {
         return funds;
     }
 
+    AccountType::AccountDetailsResponse BetfairManager::getAccountDetails() {
+        auto response = BetfairAPI::getAccountDetails(api_token_,session_token_,jurisdiction_);
+
+        if(is_info_level_) {
+            logger_->info(username_ + " listed account details "
+            + printResponse(response,false,false));
+        }
+        
+        if(is_debug_level_) {
+            logger_->debug(username_ + " listed account details " 
+            + printResponse(response,true,true));
+        }
+
+        AccountType::AccountDetailsResponse details;
+        if(auto json = response.getBody(); json) {
+            details = json->get<AccountType::AccountDetailsResponse>();
+        }
+        return details;
+    }
+
 
     void BetfairManager::connectToStreamingService() {
         if(!streamer_) {

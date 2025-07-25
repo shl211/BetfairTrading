@@ -41,6 +41,7 @@
 #include "BetfairAPI/betting_enum/bet_status.hpp"
 #include "BetfairAPI/betting_enum/group_by.hpp"
 #include "BetfairAPI/account_type/account_funds_response.h"
+#include "BetfairAPI/account_type/account_details_response.h"
 #include "BetfairAPI/account_enum/wallet.hpp"
 
 //might want a locale str as member var
@@ -156,6 +157,7 @@ namespace BetfairAPI {
             AccountType::AccountFundsResponse getAccountFunds (
                 std::optional<AccountEnum::Wallet> wallet = std::nullopt
             );
+            AccountType::AccountDetailsResponse getAccountDetails();
 
 
             bool refreshSession();

@@ -14,4 +14,11 @@ namespace BetfairAPI {
         const Jurisdiction jurisdiction = Jurisdiction::GLOBAL,
         bool save_request_info = false
     );
+
+    Response getAccountDetails(
+        const std::string& api_key,
+        const std::string& session_key,
+        const Jurisdiction jurisdiction = Jurisdiction::GLOBAL,
+        bool save_request_info = false
+    );
 }

@@ -53,4 +53,21 @@ namespace BetfairAPI {
         cpr::Response response = cpr::Post(url,headers,body);
         return toResponse(response,save_request_info,url.str(),j);
     }
+
+    Response getAccountDetails(
+        const std::string& api_key,
+        const std::string& session_key,
+        const Jurisdiction jurisdiction,
+        bool save_request_info
+    ) {
+        cpr::Url url{std::string(getUrl(jurisdiction)) + "getAccountDetails/"};
+        cpr::Header headers {
+            {"Content-Type","application/json"},
+            {"X-Application",api_key},
+            {"X-Authentication",session_key},
+        };
+
+        cpr::Response response = cpr::Post(url,headers);
+        return toResponse(response,save_request_info,url.str());
+    }
 }
