@@ -826,6 +826,50 @@ namespace BetfairAPI {
         return details;
     }
 
+    std::vector<AccountType::StatementItem> BetfairManager::getAccountStatement(
+        std::optional<std::string> locale,
+        std::optional<AccountType::TimeRange> item_date_range,
+        std::optional<AccountEnum::IncludeItem> include_item
+    ) {
+        int search_start = 0;
+        constexpr int MAX_RESULTS_PER_QUERY = 100;
+
+        std::vector<AccountType::StatementItem> results;
+        AccountType::AccountStatementReport report;
+        report.moreAvailable = true; //dummy variable for loop
+
+        while(report.moreAvailable) {
+            auto response = BetfairAPI::getAccountStatement(
+                api_token_,session_token_,locale,search_start,
+                MAX_RESULTS_PER_QUERY,
+                item_date_range,
+                include_item,
+                jurisdiction_
+            );
+
+            if(is_info_level_) {
+                logger_->info(username_ + " queried account statement. " + printResponse(response,false,false));
+            }
+
+            if(is_debug_level_) {
+                logger_->debug(username_ + " queried account statement. " + printResponse(response,true,true));
+            }
+
+            if(auto body = response.getBody()) {
+                report = (*body).get<AccountType::AccountStatementReport>();
+                results.insert(results.end(),
+                    std::make_move_iterator(report.accountStatement.begin()),
+                    std::make_move_iterator(report.accountStatement.end())
+                );
+                search_start += MAX_RESULTS_PER_QUERY;
+            } 
+            else {
+                report.moreAvailable = false; //terminating condition if no valid response
+            }
+        }
+
+        return results;
+    }
 
     void BetfairManager::connectToStreamingService() {
         if(!streamer_) {

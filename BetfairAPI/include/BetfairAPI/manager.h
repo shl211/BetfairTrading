@@ -42,7 +42,10 @@
 #include "BetfairAPI/betting_enum/group_by.hpp"
 #include "BetfairAPI/account_type/account_funds_response.h"
 #include "BetfairAPI/account_type/account_details_response.h"
+#include "BetfairAPI/account_type/account_statement_report.h"
+#include "BetfairAPI/account_type/time_range.h"
 #include "BetfairAPI/account_enum/wallet.hpp"
+#include "BetfairAPI/account_enum/include_item.hpp"
 
 //might want a locale str as member var
 namespace BetfairAPI {
@@ -158,6 +161,11 @@ namespace BetfairAPI {
                 std::optional<AccountEnum::Wallet> wallet = std::nullopt
             );
             AccountType::AccountDetailsResponse getAccountDetails();
+            std::vector<AccountType::StatementItem> getAccountStatement(
+                std::optional<std::string> locale = std::nullopt,
+                std::optional<AccountType::TimeRange> item_date_range = std::nullopt,
+                std::optional<AccountEnum::IncludeItem> include_item = std::nullopt
+            );
 
 
             bool refreshSession();

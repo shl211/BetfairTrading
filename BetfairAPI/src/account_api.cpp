@@ -2,6 +2,7 @@
 #include <cpr/cpr.h>
 #include <nlohmann/json.hpp>
 #include "BetfairAPI/account_api.h"
+#include "BetfairAPI/account_type/json_serialiser.hpp"
 #include "BetfairAPI/utils.h"
 
 namespace BetfairAPI {
@@ -69,5 +70,36 @@ namespace BetfairAPI {
 
         cpr::Response response = cpr::Post(url,headers);
         return toResponse(response,save_request_info,url.str());
+    }
+
+    Response getAccountStatement(
+        const std::string& api_key,
+        const std::string& session_key,
+        std::optional<std::string> locale,
+        std::optional<int> from_record,
+        std::optional<int> record_count,
+        std::optional<AccountType::TimeRange> item_date_range,
+        std::optional<AccountEnum::IncludeItem> include_item,
+        const Jurisdiction jurisdiction,
+        bool save_request_info
+    ) {
+        cpr::Url url{std::string(getUrl(jurisdiction)) + "getAccountStatement/"};
+        cpr::Header headers {
+            {"Content-Type","application/json"},
+            {"X-Application",api_key},
+            {"X-Authentication",session_key},
+        };
+
+        nlohmann::json j;
+        if(locale) j["locale"] = *locale;
+        if(from_record) j["fromRecord"] = *from_record;
+        if(record_count) j["recordCount"] = *record_count;
+        if(item_date_range) j["itemDateRange"] = *item_date_range;
+        if(include_item) j["includeItem"] = to_string(*include_item);
+
+        cpr::Body body{j.dump()};
+
+        cpr::Response response = cpr::Post(url,headers,body);
+        return toResponse(response,save_request_info,url.str(),j);
     }
 }
