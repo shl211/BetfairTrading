@@ -5,6 +5,8 @@
 #include "BetfairAPI/session_api.h"
 #include "BetfairAPI/betting_api.h"
 #include "BetfairAPI/betting_type/json_serialiser.hpp"
+#include "BetfairAPI/account_api.h"
+#include "BetfairAPI/account_type/json_serialiser.hpp"
 
 namespace BetfairAPI {
 
@@ -782,6 +784,29 @@ namespace BetfairAPI {
         return mpl_list;
     }
 
+    AccountType::AccountFundsResponse BetfairManager::getAccountFunds (
+        std::optional<AccountEnum::Wallet> wallet
+    ) {
+        auto response = BetfairAPI::getAccountFunds(api_token_,session_token_,wallet,jurisdiction_);
+
+        if(is_info_level_) {
+            logger_->info(username_ + " listed account funds "
+            + printResponse(response,false,false));
+        }
+        
+        if(is_debug_level_) {
+            logger_->debug(username_ + " listed account funds " 
+            + printResponse(response,true,true));
+        }
+
+        AccountType::AccountFundsResponse funds;
+        if(auto json = response.getBody(); json) {
+            funds = json->get<AccountType::AccountFundsResponse>();
+        }
+        return funds;
+    }
+
+
     void BetfairManager::connectToStreamingService() {
         if(!streamer_) {
             streamer_ = std::make_unique<BetfairStreaming>(logger_);
@@ -793,5 +818,7 @@ namespace BetfairAPI {
     std::string BetfairManager::readFromStreamingService() {
         return streamer_ ? streamer_->readMessage() : "";
     }
+
+
 }
 

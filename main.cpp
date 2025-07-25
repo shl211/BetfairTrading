@@ -85,4 +85,5 @@ int main() {
     manager.connectToStreamingService();
     std::cout << manager.readFromStreamingService() << "\n";
     std::this_thread::sleep_for(std::chrono::seconds(5));
+    std::cout << manager.getAccountFunds() << "\n"; 
 }

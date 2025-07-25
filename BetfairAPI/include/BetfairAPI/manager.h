@@ -16,19 +16,10 @@
 #include "BetfairAPI/betting_type/time_range_result.h"
 #include "BetfairAPI/betting_type/competition_result.h"
 #include "BetfairAPI/betting_type/event_result.h"
-#include "BetfairAPI/betting_enum/time_granularity.hpp"
 #include "BetfairAPI/betting_type/market_type_result.h"
 #include "BetfairAPI/betting_type/country_code_result.h"
 #include "BetfairAPI/betting_type/venue_result.h"
 #include "BetfairAPI/betting_type/market_catalogue.h"
-#include "BetfairAPI/betting_enum/market_projection.hpp"
-#include "BetfairAPI/betting_enum/market_sort.hpp"
-#include "BetfairAPI/betting_enum/sort_dir.hpp"
-#include "BetfairAPI/betting_enum/order_by.hpp"
-#include "BetfairAPI/betting_enum/order_projection.hpp"
-#include "BetfairAPI/betting_enum/match_projection.hpp"
-#include "BetfairAPI/betting_enum/bet_status.hpp"
-#include "BetfairAPI/betting_enum/group_by.hpp"
 #include "BetfairAPI/betting_type/current_order_summary_report.h"
 #include "BetfairAPI/betting_type/cleared_order_summary_report.h"
 #include "BetfairAPI/betting_type/runner_id.h"
@@ -40,6 +31,17 @@
 #include "BetfairAPI/betting_type/market_book.h"
 #include "BetfairAPI/betting_type/price_projection.h"
 #include "BetfairAPI/betting_type/market_profit_loss.h"
+#include "BetfairAPI/betting_enum/time_granularity.hpp"
+#include "BetfairAPI/betting_enum/market_projection.hpp"
+#include "BetfairAPI/betting_enum/market_sort.hpp"
+#include "BetfairAPI/betting_enum/sort_dir.hpp"
+#include "BetfairAPI/betting_enum/order_by.hpp"
+#include "BetfairAPI/betting_enum/order_projection.hpp"
+#include "BetfairAPI/betting_enum/match_projection.hpp"
+#include "BetfairAPI/betting_enum/bet_status.hpp"
+#include "BetfairAPI/betting_enum/group_by.hpp"
+#include "BetfairAPI/account_type/account_funds_response.h"
+#include "BetfairAPI/account_enum/wallet.hpp"
 
 //might want a locale str as member var
 namespace BetfairAPI {
@@ -150,6 +152,9 @@ namespace BetfairAPI {
                 std::optional<bool> include_settled_bets = std::nullopt,
                 std::optional<bool> include_bsp_bets = std::nullopt,
                 std::optional<bool> net_of_commission = std::nullopt
+            );
+            AccountType::AccountFundsResponse getAccountFunds (
+                std::optional<AccountEnum::Wallet> wallet = std::nullopt
             );
 
 

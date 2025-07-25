@@ -3,6 +3,7 @@ enable_testing()
 file(GLOB TEST_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "betting_type/*.cpp" 
+    "account_type/*.cpp" 
 )
 
 add_executable(test_suite
