@@ -3,21 +3,21 @@
 #include <string>
 #include "nlohmann/json.hpp"
 
-namespace BetfairAPI {
+namespace BetfairAPI::HTTP {
     class Response {
     
         public:
-            Response(int status,const std::string& raw_body,const std::string& target_url);
+            Response(int status,std::string raw_body,std::string target_url);
             ~Response() = default;
 
-            void setRequestInfo(nlohmann::json body);
+            void saveRequestInfo(nlohmann::json body);
 
             int getStatusCode() const;
             [[nodiscard]] const nlohmann::json* getBody() const;
             const std::string& getRequestTarget() const;
             [[nodiscard]] const nlohmann::json* getRequestBody() const;
 
-            bool isReponseOk() const; 
+            bool isResponseOk() const; 
 
         private:
             int status_code_;

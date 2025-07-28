@@ -1,7 +1,8 @@
 file(GLOB SOURCES CONFIGURE_DEPENDS
-    "src/*.cpp"
-    "src/betting_type/*.cpp"
-    "src/account_type/*.cpp"
+    "src/BetfairAPI/*.cpp"
+    "src/BetfairAPI/betting_type/*.cpp"
+    "src/BetfairAPI/account_type/*.cpp"
+    "src/http/*.cpp"
 )
 
 # Add Howard Hinnant date tz.cpp source explicitly

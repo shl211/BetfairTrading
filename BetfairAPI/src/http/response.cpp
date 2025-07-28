@@ -1,14 +1,14 @@
-#include "BetfairAPI/response.h"
+#include "http/response.h"
 
-namespace BetfairAPI {
+namespace BetfairAPI::HTTP {
 
     namespace {
         constexpr std::nullptr_t disable_error_callback = nullptr;
         constexpr bool allow_exceptions = false;
     }
 
-    Response::Response(int status,const std::string& raw_body,const std::string& target_url)
-        : status_code_(status), body_(raw_body), target_url_(target_url) {}
+    Response::Response(int status,std::string raw_body,std::string target_url)
+        : status_code_(status), body_(std::move(raw_body)), target_url_(std::move(target_url)) {}
 
     int Response::getStatusCode() const {
         return status_code_;
@@ -25,7 +25,7 @@ namespace BetfairAPI {
         return valid_json_ ? &body_cached_ : nullptr;
     }
 
-    void Response::setRequestInfo(nlohmann::json body) {
+    void Response::saveRequestInfo(nlohmann::json body) {
         request_body_ = std::move(body);
     }
 
@@ -37,7 +37,7 @@ namespace BetfairAPI {
         return request_body_.is_null() ? nullptr : &request_body_;
     }
 
-    bool Response::isReponseOk() const {
+    bool Response::isResponseOk() const {
         return status_code_ < 300 && status_code_ >= 200;
     } 
 

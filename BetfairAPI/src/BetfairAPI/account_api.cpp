@@ -14,17 +14,17 @@ namespace BetfairAPI {
             return j == Jurisdiction::NEWZEALAND ? nz_url : global_url;
         }
 
-        Response toResponse(cpr::Response& r,
+        HTTP::Response toResponse(cpr::Response& r,
             bool saveRequestBody=false, 
             const std::string& url = "", 
             const nlohmann::json& requestBody = {}
         ) {
             
-            //cpr Response will be made unsafe, but that is ok, as it should be discarded anyway
-            Response response(r.status_code,std::move(r.text),url);
+            //cpr HTTP::Response will be made unsafe, but that is ok, as it should be discarded anyway
+            HTTP::Response response(r.status_code,std::move(r.text),url);
 
-            if(saveRequestBody || !response.isReponseOk()) {
-                response.setRequestInfo(requestBody);
+            if(saveRequestBody || !response.isResponseOk()) {
+                response.saveRequestInfo(requestBody);
             }
             
             return response;
@@ -32,7 +32,7 @@ namespace BetfairAPI {
     }
 
 
-    Response getAccountFunds(
+    HTTP::Response getAccountFunds(
         const std::string& api_key,
         const std::string& session_key,
         std::optional<AccountEnum::Wallet> wallet,
@@ -55,7 +55,7 @@ namespace BetfairAPI {
         return toResponse(response,save_request_info,url.str(),j);
     }
 
-    Response getAccountDetails(
+    HTTP::Response getAccountDetails(
         const std::string& api_key,
         const std::string& session_key,
         const Jurisdiction jurisdiction,
@@ -72,7 +72,7 @@ namespace BetfairAPI {
         return toResponse(response,save_request_info,url.str());
     }
 
-    Response getAccountStatement(
+    HTTP::Response getAccountStatement(
         const std::string& api_key,
         const std::string& session_key,
         std::optional<std::string> locale,

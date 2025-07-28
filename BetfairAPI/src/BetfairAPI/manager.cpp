@@ -14,7 +14,7 @@ namespace BetfairAPI {
         constexpr int MINUTE_OFFSET = 2;
         constexpr int MAX_API_DATA = 1000;
 
-        std::string printResponse(const Response& r,bool printResponseBody,bool printRequestBody) {
+        std::string printResponse(const HTTP::Response& r,bool printResponseBody,bool printRequestBody) {
             std::string s {"Queried " + r.getRequestTarget() + " (Status " + std::to_string(r.getStatusCode()) +  ")"};
 
             if(printRequestBody) {
@@ -54,7 +54,7 @@ namespace BetfairAPI {
     {
         setLoggingFlags();
         
-        BetfairAPI::Response r = interactiveLogin(api_token_,username,password,j);
+        BetfairAPI::HTTP::Response r = interactiveLogin(api_token_,username,password,j);
         auto json = r.getBody();
         bool status_code_good = r.getStatusCode() == 200;
         bool well_formed_json = json != nullptr;
@@ -119,7 +119,7 @@ namespace BetfairAPI {
     }
 
     bool BetfairManager::refreshSession() {
-        Response r = keepAlive(api_token_,session_token_,jurisdiction_);
+        auto r = keepAlive(api_token_,session_token_,jurisdiction_);
         
         auto json = r.getBody();
         bool well_formed_json = json != nullptr;
@@ -135,7 +135,7 @@ namespace BetfairAPI {
     }
 
     bool BetfairManager::endSession() {
-        Response r = logout(api_token_,session_token_,jurisdiction_);
+        auto r = logout(api_token_,session_token_,jurisdiction_);
 
         auto json = r.getBody();
         bool well_formed_json = json != nullptr;

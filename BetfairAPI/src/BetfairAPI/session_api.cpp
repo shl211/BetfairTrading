@@ -8,24 +8,24 @@ namespace BetfairAPI {
         constexpr std::string_view keep_alive_path{"keepAlive/"};
         constexpr std::string_view logout_path{"logout/"};
 
-        Response toResponse(cpr::Response& r,
+        HTTP::Response toResponse(cpr::Response& r,
             bool saveRequestBody=false, 
             const std::string& url = "", 
             const nlohmann::json& requestBody = {}
         ) {
             
             //cpr Response will be made unsafe, but that is ok, as it should be discarded anyway
-            Response response(r.status_code,std::move(r.text),url);
+            HTTP::Response response(r.status_code,std::move(r.text),url);
 
-            if(saveRequestBody || !response.isReponseOk()) {
-                response.setRequestInfo(requestBody);
+            if(saveRequestBody || !response.isResponseOk()) {
+                response.saveRequestInfo(requestBody);
             }
             
             return response;
         }
     }
 
-    Response interactiveLogin(const std::string& api_key,
+    HTTP::Response interactiveLogin(const std::string& api_key,
         const std::string& username,
         const std::string& password,
         Jurisdiction j,
@@ -49,7 +49,7 @@ namespace BetfairAPI {
         return toResponse(response,save_request_info,url,{"username=***&password=***"});
     }
 
-    Response keepAlive(const std::string& api_key,
+    HTTP::Response keepAlive(const std::string& api_key,
         const std::string& session_token,
         Jurisdiction j,
         bool save_request_info
@@ -67,7 +67,7 @@ namespace BetfairAPI {
         return toResponse(response,save_request_info,url);
     }
 
-    Response logout(const std::string& api_key,
+    HTTP::Response logout(const std::string& api_key,
         const std::string& session_token,
         Jurisdiction j,
         bool save_request_info

@@ -8,9 +8,9 @@
 #include <forward_list>
 #include <set>
 #include <unordered_set>
-#include <magic_enum.hpp>
 #include <stdexcept>
 #include <type_traits>
+#include <magic_enum.hpp>
 
 namespace BetfairAPI {
 

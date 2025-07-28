@@ -2,7 +2,7 @@
 
 #include <string>
 #include <set>
-#include "BetfairAPI/response.h"
+#include "http/response.h"
 #include "BetfairAPI/jurisdiction.hpp"
 #include "betting_type/market_filter.h"
 #include "betting_type/runner_id.h"
@@ -24,13 +24,13 @@
 #include "betting_type/price_projection.h"
 
 namespace BetfairAPI {
-    //note that if api requests fail, the request body is automatically stored inside Response
+    //note that if api requests fail, the request body is automatically stored inside HTTP::Response
 
     namespace detail {
         inline std::string default_locale = "en";
     }
 
-    Response listEventTypes(const std::string& api_key,
+    HTTP::Response listEventTypes(const std::string& api_key,
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
         const std::string& locale = detail::default_locale,
@@ -38,7 +38,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     );
 
-    Response listCompetitions(const std::string& api_key,
+    HTTP::Response listCompetitions(const std::string& api_key,
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
         const std::string& locale = detail::default_locale,
@@ -46,7 +46,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     );
 
-    Response listTimeRanges(const std::string& api_key,
+    HTTP::Response listTimeRanges(const std::string& api_key,
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
         const BettingEnum::TimeGranularity granularity,
@@ -54,7 +54,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     );
 
-    Response listEvents(const std::string& api_key,
+    HTTP::Response listEvents(const std::string& api_key,
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
         const std::string& locale = detail::default_locale,
@@ -62,7 +62,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     );
 
-    Response listMarketTypes(const std::string& api_key,
+    HTTP::Response listMarketTypes(const std::string& api_key,
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
         const std::string& locale = detail::default_locale,
@@ -70,7 +70,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     );
 
-    Response listCountries(const std::string& api_key,
+    HTTP::Response listCountries(const std::string& api_key,
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
         const std::string& locale = detail::default_locale,
@@ -78,7 +78,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     );
     
-    Response listVenues(const std::string& api_key,
+    HTTP::Response listVenues(const std::string& api_key,
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
         const std::string& locale = detail::default_locale,
@@ -86,7 +86,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     );
 
-    Response listMarketCatalogue(const std::string& api_key,
+    HTTP::Response listMarketCatalogue(const std::string& api_key,
         const std::string& session_key,
         const BettingType::MarketFilter& mf,
         const std::set<BettingEnum::MarketProjection>& market_projection = {},
@@ -97,7 +97,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     );
 
-    Response listCurrentOrders(const std::string& api_key,
+    HTTP::Response listCurrentOrders(const std::string& api_key,
         const std::string& session_key,
         const std::set<std::string>& bet_ids = {},
         const std::set<std::string>& market_ids = {},
@@ -115,7 +115,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     );
 
-    Response listClearedOrders(const std::string& api_key,
+    HTTP::Response listClearedOrders(const std::string& api_key,
         const std::string& session_key,
         BettingEnum::BetStatus bet_status,
         const std::set<std::string>& event_type_ids = {},
@@ -135,7 +135,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     ); 
 
-    Response placeOrders(const std::string& api_key,
+    HTTP::Response placeOrders(const std::string& api_key,
         const std::string& session_key,
         std::string market_id,
         const std::vector<BettingType::PlaceInstruction>& instructions,
@@ -147,7 +147,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     );
 
-    Response cancelOrders(const std::string& api_key,
+    HTTP::Response cancelOrders(const std::string& api_key,
         const std::string& session_key,
         std::string market_id,
         const std::vector<BettingType::CancelInstruction>& instructions,
@@ -156,7 +156,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     );
 
-    Response updateOrders(const std::string& api_key,
+    HTTP::Response updateOrders(const std::string& api_key,
         const std::string& session_key,
         std::string market_id,
         const std::vector<BettingType::UpdateInstruction>& instructions,
@@ -165,7 +165,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     );
     
-    Response replaceOrders(const std::string& api_key,
+    HTTP::Response replaceOrders(const std::string& api_key,
         const std::string& session_key,
         std::string market_id,
         const std::vector<BettingType::ReplaceInstruction>& instructions,
@@ -176,7 +176,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     );
     
-    Response listMarketBook(const std::string& api_key,
+    HTTP::Response listMarketBook(const std::string& api_key,
         const std::string& session_key,
         const std::vector<std::string>& market_ids,
         std::optional<BettingType::PriceProjection> price_projection = std::nullopt,
@@ -193,7 +193,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     );
 
-    Response listRunnerBook(const std::string& api_key,
+    HTTP::Response listRunnerBook(const std::string& api_key,
         const std::string& session_key,
         const std::string& market_id,
         long selection_id,
@@ -211,7 +211,7 @@ namespace BetfairAPI {
         bool save_request_info = false
     );
 
-    Response listMarketProfitAndLoss(const std::string& api_key,
+    HTTP::Response listMarketProfitAndLoss(const std::string& api_key,
         const std::string& session_key,
         const std::set<std::string>& market_ids,
         std::optional<bool> include_settled_bets = std::nullopt,
