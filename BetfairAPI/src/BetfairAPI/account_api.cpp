@@ -1,6 +1,7 @@
 #include <string>
 #include <cpr/cpr.h>
 #include <nlohmann/json.hpp>
+#include "http/client.h"
 #include "BetfairAPI/account_api.h"
 #include "BetfairAPI/account_type/json_serialiser.hpp"
 #include "BetfairAPI/utils.h"
@@ -13,59 +14,47 @@ namespace BetfairAPI {
         constexpr std::string_view getUrl(Jurisdiction j) {
             return j == Jurisdiction::NEWZEALAND ? nz_url : global_url;
         }
-
-        HTTP::Response toResponse(cpr::Response& r,
-            bool saveRequestBody=false, 
-            const std::string& url = "", 
-            const nlohmann::json& requestBody = {}
-        ) {
-            
-            //cpr HTTP::Response will be made unsafe, but that is ok, as it should be discarded anyway
-            HTTP::Response response(r.status_code,std::move(r.text));
-            
-            return response;
-        };
     }
-
 
     HTTP::Response getAccountFunds(
         const std::string& api_key,
         const std::string& session_key,
         std::optional<AccountEnum::Wallet> wallet,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "getAccountFunds/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "getAccountFunds/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key},
         };
-
         nlohmann::json j;
         if(wallet) j["wallet"] = to_string(*wallet);
 
-        cpr::Body body{j.dump()};
+        HTTP::Request request{HTTP::Request::POST,std::move(url),std::move(headers),j.dump()};
+        HTTP::HTTPClient client(logger);
 
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        return client.makeRequest(std::move(request));
     }
 
     HTTP::Response getAccountDetails(
         const std::string& api_key,
         const std::string& session_key,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "getAccountDetails/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "getAccountDetails/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key},
         };
 
-        cpr::Response response = cpr::Post(url,headers);
-        return toResponse(response,save_request_info,url.str());
+        HTTP::Request request{HTTP::Request::POST,std::move(url),std::move(headers),""};
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(std::move(request));
     }
 
     HTTP::Response getAccountStatement(
@@ -77,10 +66,10 @@ namespace BetfairAPI {
         std::optional<AccountType::TimeRange> item_date_range,
         std::optional<AccountEnum::IncludeItem> include_item,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "getAccountStatement/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "getAccountStatement/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key},
@@ -93,9 +82,9 @@ namespace BetfairAPI {
         if(item_date_range) j["itemDateRange"] = *item_date_range;
         if(include_item) j["includeItem"] = to_string(*include_item);
 
-        cpr::Body body{j.dump()};
+        HTTP::Request request{HTTP::Request::POST,std::move(url),std::move(headers),j.dump()};
+        HTTP::HTTPClient client(logger);
 
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        return client.makeRequest(std::move(request));
     }
 }

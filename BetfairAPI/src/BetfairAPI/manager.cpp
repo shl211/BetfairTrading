@@ -45,7 +45,7 @@ namespace BetfairAPI {
     {
         setLoggingFlags();
         
-        BetfairAPI::HTTP::Response r = interactiveLogin(api_token_,username,password,j);
+        BetfairAPI::HTTP::Response r = interactiveLogin(api_token_,username_,password,j,logger_);
         auto json = r.getBody();
         bool status_code_good = r.getStatusCode() == 200;
         bool well_formed_json = json != nullptr;
@@ -55,17 +55,13 @@ namespace BetfairAPI {
         if(status_code_good && successful_login) {
             session_token_ = json->at("token").get<std::string>();
             if(is_info_level_) {
-                logger_->info(username + " logged in successfully.");
-            }
-
-            if(is_debug_level_) {
-                logger_->debug(printResponse(r,true,true));
+                logger_->info(username_ + " logged in successfully.");
             }
         }
         else {
             std::string error = (well_formed_json && json->contains("error")) ?
                                 json->at("error").get<std::string>() : "MALFORMED JSON";
-            std::string msg = username + " failed to log in. Status code: " + std::to_string(r.getStatusCode()) +
+            std::string msg = username_ + " failed to log in. Status code: " + std::to_string(r.getStatusCode()) +
                                     " Error: " + error;
             if(is_critical_level_) {
                 logger_->critical(msg);
@@ -110,7 +106,7 @@ namespace BetfairAPI {
     }
 
     bool BetfairManager::refreshSession() {
-        auto r = keepAlive(api_token_,session_token_,jurisdiction_);
+        auto r = keepAlive(api_token_,session_token_,jurisdiction_,logger_);
         
         auto json = r.getBody();
         bool well_formed_json = json != nullptr;
@@ -126,7 +122,7 @@ namespace BetfairAPI {
     }
 
     bool BetfairManager::endSession() {
-        auto r = logout(api_token_,session_token_,jurisdiction_);
+        auto r = logout(api_token_,session_token_,jurisdiction_,logger_);
 
         auto json = r.getBody();
         bool well_formed_json = json != nullptr;
@@ -160,15 +156,7 @@ namespace BetfairAPI {
     }
 
     std::vector<BettingType::EventTypeResult> BetfairManager::getEventTypes(const BettingType::MarketFilter& mf) {
-        auto r = listEventTypes(api_token_,session_token_,mf,locale_,jurisdiction_);
-
-        if(is_info_level_) {
-            logger_->info(username_ + " queried event types." + printResponse(r,false,false));
-        }
-
-        if(is_debug_level_) {
-            logger_->debug(username_ + " queried event types." + printResponse(r,true,true));
-        }
+        auto r = listEventTypes(api_token_,session_token_,mf,locale_,jurisdiction_,logger_);
 
         std::vector<BettingType::EventTypeResult> result;
         if(r.getBody() != nullptr) {
@@ -181,19 +169,15 @@ namespace BetfairAPI {
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
         }
 
+        if(is_info_level_) {
+            logger_->info(username_ + " acquired " + std::to_string(std::size(result)) + " event types");
+        }
+
         return result;
     }
     
     std::vector<BettingType::CompetitionResult> BetfairManager::getCompetitions(const BettingType::MarketFilter& mf) {
-        auto r = listCompetitions(api_token_,session_token_,mf,locale_,jurisdiction_);
-
-        if(is_info_level_) {
-            logger_->info(username_ + " queried competitions. " + printResponse(r,false,false));
-        }
-        
-        if(is_debug_level_) {
-            logger_->debug(username_ + " queried competitions. " + printResponse(r,true,true));
-        }
+        auto r = listCompetitions(api_token_,session_token_,mf,locale_,jurisdiction_,logger_);
 
         std::vector<BettingType::CompetitionResult> result;
         if(r.getBody() != nullptr) {
@@ -206,21 +190,17 @@ namespace BetfairAPI {
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
         }
 
+        if(is_info_level_) {
+            logger_->info(username_ + " acquired " + std::to_string(std::size(result)) + " competitions");
+        }
+
         return result;
     }
 
     std::vector<BettingType::TimeRangeResult> BetfairManager::getTimeRanges(const BettingType::MarketFilter& mf,
         BettingEnum::TimeGranularity granularity
     ) {
-        auto r = listTimeRanges(api_token_,session_token_,mf,granularity,jurisdiction_);
-        
-        if(is_info_level_) {
-            logger_->info(username_ + " queried time ranges. " + printResponse(r,false,false));
-        }
-        
-        if(is_debug_level_) {
-            logger_->debug(username_ + " queried time ranges. " + printResponse(r,true,true));
-        }
+        auto r = listTimeRanges(api_token_,session_token_,mf,granularity,jurisdiction_,logger_);
 
         std::vector<BettingType::TimeRangeResult> result;
         if(r.getBody() != nullptr) {
@@ -233,19 +213,15 @@ namespace BetfairAPI {
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
         }
 
+        if(is_info_level_) {
+            logger_->info(username_ + " acquired " + std::to_string(std::size(result)) + " time ranges");
+        }
+
         return result;
     }
 
     std::vector<BettingType::EventResult> BetfairManager::getEvents(const BettingType::MarketFilter& mf) {
-        auto r = listEvents(api_token_,session_token_,mf,locale_,jurisdiction_);
-
-        if(is_info_level_) {
-            logger_->info(username_ + " queried events. " + printResponse(r,false,false));
-        }
-
-        if(is_debug_level_) {
-            logger_->debug(username_ + " queried events. " + printResponse(r,true,true));
-        }
+        auto r = listEvents(api_token_,session_token_,mf,locale_,jurisdiction_,logger_);
 
         std::vector<BettingType::EventResult> result;
         if(r.getBody() != nullptr) {
@@ -258,21 +234,16 @@ namespace BetfairAPI {
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
         }
 
+        if(is_info_level_) {
+            logger_->info(username_ + " acquired " + std::to_string(std::size(result)) + " events");
+        }
+
         return result;
     }
 
     std::vector<BettingType::MarketTypeResult> BetfairManager::getMarketTypeResults(const BettingType::MarketFilter& mf) {
 
-        auto r = listMarketTypes(api_token_,session_token_,mf,locale_,jurisdiction_);
-
-        if(is_info_level_) {
-            logger_->info(username_ + " queried market types. " + printResponse(r,false,false));
-        }
-
-        if(is_debug_level_) {
-            logger_->debug(username_ + " queried market types. " + printResponse(r,true,true));
-        }
-
+        auto r = listMarketTypes(api_token_,session_token_,mf,locale_,jurisdiction_,logger_);
 
         std::vector<BettingType::MarketTypeResult> result;
         if(r.getBody() != nullptr) {
@@ -285,19 +256,15 @@ namespace BetfairAPI {
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
         }
 
+        if(is_info_level_) {
+            logger_->info(username_ + " acquired " + std::to_string(std::size(result)) + " market types");
+        }
+
         return result;
     }
 
     std::vector<BettingType::CountryCodeResult> BetfairManager::getCountries(const BettingType::MarketFilter& mf) {
-        auto r = listCountries(api_token_,session_token_,mf,locale_,jurisdiction_);
-
-        if(is_info_level_) {
-            logger_->info(username_ + " queried countries. " + printResponse(r,false,false));
-        }
-
-        if(is_debug_level_) {
-            logger_->debug(username_ + " queried countries. " + printResponse(r,true,true));
-        }
+        auto r = listCountries(api_token_,session_token_,mf,locale_,jurisdiction_,logger_);
 
         std::vector<BettingType::CountryCodeResult> result;
         if(r.getBody() != nullptr) {
@@ -310,19 +277,15 @@ namespace BetfairAPI {
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
         }
 
+        if(is_info_level_) {
+            logger_->info(username_ + " acquired " + std::to_string(std::size(result)) + " country code results");
+        }
+
         return result;
     }
 
     std::vector<BettingType::VenueResult> BetfairManager::getVenues(const BettingType::MarketFilter& mf) {
-        auto r = listVenues(api_token_,session_token_,mf,locale_,jurisdiction_);
-
-        if(is_info_level_) {
-            logger_->info(username_ + " queried venues. " + printResponse(r,false,false));
-        }
-
-        if(is_debug_level_) {
-            logger_->debug(username_ + " queried venues. " + printResponse(r,true,true));
-        }
+        auto r = listVenues(api_token_,session_token_,mf,locale_,jurisdiction_,logger_);
 
         std::vector<BettingType::VenueResult> result;
         if(r.getBody() != nullptr) {
@@ -333,6 +296,10 @@ namespace BetfairAPI {
             };
     
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
+        }
+
+        if(is_info_level_) {
+            logger_->info(username_ + " acquired " + std::to_string(std::size(result)) + " venues");
         }
 
         return result;
@@ -360,15 +327,8 @@ namespace BetfairAPI {
             max_results = MAX_API_DATA;
         }
 
-        auto r = listMarketCatalogue(api_token_,session_token_,mf,market_projection,market_sort,max_results);
-
-        if(is_info_level_) {
-            logger_->info(username_ + " queried market catalogue. " + printResponse(r,false,false));
-        }
-
-        if(is_debug_level_) {
-            logger_->debug(username_ + " queried market catalogue. " + printResponse(r,true,true));
-        }
+        auto r = listMarketCatalogue(api_token_,session_token_,mf,market_projection,market_sort,max_results,
+            locale_,jurisdiction_,logger_);
 
         std::vector<BettingType::MarketCatalogue> result;
         if(r.getBody() != nullptr) {
@@ -379,6 +339,10 @@ namespace BetfairAPI {
             };
     
             std::transform(body.begin(), body.end(), std::back_inserter(result),json_conversion);
+        }
+
+        if(is_info_level_) {
+            logger_->info(username_ + " acquired " + std::to_string(std::size(result)) + " market catalogues");
         }
 
         return result;
@@ -418,16 +382,8 @@ namespace BetfairAPI {
             auto response = listCurrentOrders(api_token_,session_token_,bet_ids,market_ids,
                 order_projection,customer_order_refs,customer_strategy_refs,
                 date_range,order_by,sort_dir,search_start,MAX_RESULTS_PER_QUERY,
-                include_item_description,include_source_id,jurisdiction_
+                include_item_description,include_source_id,jurisdiction_,logger_
             );
-
-            if(is_info_level_) {
-                logger_->info(username_ + " queried current orders. " + printResponse(response,false,false));
-            }
-    
-            if(is_debug_level_) {
-                logger_->debug(username_ + " queried current orders. " + printResponse(response,true,true));
-            }
 
             if(auto body = response.getBody()) {
                 report = (*body).get<BettingType::CurrentOrderSummaryReport>();
@@ -440,6 +396,10 @@ namespace BetfairAPI {
             else {
                 report.moreAvailable = false; //terminating condition if no valid response
             }
+        }
+
+        if(is_info_level_) {
+            logger_->info(username_ + " acquired " + std::to_string(std::size(results)) + " current orders");
         }
 
         return results;
@@ -474,23 +434,14 @@ namespace BetfairAPI {
             return results;
         }
 
-
         report.moreAvailable = true;//dummy variable for auto-pagination purposes
 
         while (report.moreAvailable) {
             auto response = listClearedOrders(api_token_,session_token_,
                 bet_status,event_type_ids,event_ids,market_ids,runner_ids,
                 bet_ids,side,settled_date_range,group_by,include_item_description,
-                include_source_id,locale_,search_start,MAX_RESULTS_PER_QUERY,jurisdiction_
+                include_source_id,locale_,search_start,MAX_RESULTS_PER_QUERY,jurisdiction_,logger_
             );
-
-            if(is_info_level_) {
-                logger_->info(username_ + " queried cleared orders. " + printResponse(response,false,false));
-            }
-
-            if(is_debug_level_) {
-                logger_->debug(username_ + " queried cleared orders. " + printResponse(response,true,true));
-            }
 
             if(auto body = response.getBody()) {
                 report = (*body).get<BettingType::ClearedOrderSummaryReport>();
@@ -503,6 +454,10 @@ namespace BetfairAPI {
             else {
                 report.moreAvailable = false; //terminating condition if no valid response
             }
+        }
+
+        if(is_info_level_) {
+            logger_->info(username_ + " acquired " + std::to_string(std::size(results)) + " cleared orders");
         }
 
         return results;
@@ -533,7 +488,7 @@ namespace BetfairAPI {
 
         auto response = BetfairAPI::placeOrders(
             api_token_,session_token_,market_id,instructions,
-            market_version,customer_ref,customer_strategy_ref,async
+            market_version,customer_ref,customer_strategy_ref,async,jurisdiction_,logger_
         );
 
         if(is_info_level_) {
@@ -561,7 +516,7 @@ namespace BetfairAPI {
     ) {
         auto response = BetfairAPI::cancelOrders(
             api_token_,session_token_,market_id,instructions,
-            customer_ref,jurisdiction_
+            customer_ref,jurisdiction_,logger_
         );
 
         std::string msg;
@@ -599,7 +554,7 @@ namespace BetfairAPI {
         std::optional<std::string> customer_ref
     ) {
         auto response = BetfairAPI::updateOrders(api_token_,session_token_,
-            market_id,instructions,customer_ref,jurisdiction_
+            market_id,instructions,customer_ref,jurisdiction_,logger_
         );
 
         int instruction_size = std::size(instructions);
@@ -643,7 +598,7 @@ namespace BetfairAPI {
 
         auto response = BetfairAPI::replaceOrders(
             api_token_,session_token_,market_id,instructions,
-            market_version,customer_ref,async,jurisdiction_
+            market_version,customer_ref,async,jurisdiction_,logger_
         );
 
         if(is_info_level_) {
@@ -683,22 +638,16 @@ namespace BetfairAPI {
             api_token_,session_token_,market_ids,price_projection,
             order_projection,match_projection,include_overall_position,
             partition_matched_by_strategy_ref, customer_strategy_refs,
-            std::nullopt,locale_,matched_since,bet_ids,jurisdiction_
+            std::nullopt,locale_,matched_since,bet_ids,jurisdiction_,logger_
         );
-
-        if(is_info_level_) {
-            logger_->info(username_ + " listed market book "
-            + printResponse(response,false,false));
-        }
-        
-        if(is_debug_level_) {
-            logger_->debug(username_ + " listed market book " 
-            + printResponse(response,true,true));
-        }
 
         std::vector<BettingType::MarketBook> mb_list;
         if(response.getBody() != nullptr) {
             mb_list = (*response.getBody()).get<std::vector<BettingType::MarketBook>>();
+        }
+
+        if(is_info_level_) {
+            logger_->info(username_ + " acquired " + std::to_string(std::size(mb_list)) + " market books");
         }
 
         return mb_list;
@@ -724,22 +673,16 @@ namespace BetfairAPI {
             api_token_,session_token_,market_id,selection_id,price_projection,
             order_projection,match_projection,include_overall_position,
             partition_matched_by_strategy_ref, customer_strategy_refs,
-            std::nullopt,locale_,matched_since,bet_ids,jurisdiction_
+            std::nullopt,locale_,matched_since,bet_ids,jurisdiction_,logger_
         );
-
-        if(is_info_level_) {
-            logger_->info(username_ + " listed market book "
-            + printResponse(response,false,false));
-        }
-        
-        if(is_debug_level_) {
-            logger_->debug(username_ + " listed market book " 
-            + printResponse(response,true,true));
-        }
 
         std::vector<BettingType::MarketBook> mb_list;
         if(response.getBody() != nullptr) {
             mb_list = (*response.getBody()).get<std::vector<BettingType::MarketBook>>();
+        }
+
+        if(is_info_level_) {
+            logger_->info(username_ + " acquired " + std::to_string(std::size(mb_list)) + " market books");
         }
 
         return mb_list;
@@ -754,22 +697,16 @@ namespace BetfairAPI {
         //need to account for request weigthing
         auto response = listMarketProfitAndLoss(
             api_token_,session_token_,market_ids,include_settled_bets,
-            include_bsp_bets,net_of_commission,jurisdiction_
+            include_bsp_bets,net_of_commission,jurisdiction_,logger_
         );
-
-        if(is_info_level_) {
-            logger_->info(username_ + " listed market P&L "
-            + printResponse(response,false,false));
-        }
-        
-        if(is_debug_level_) {
-            logger_->debug(username_ + " listed market P&L " 
-            + printResponse(response,true,true));
-        }
 
         std::vector<BettingType::MarketProfitAndLoss> mpl_list;
         if(response.getBody() != nullptr) {
             mpl_list = (*response.getBody()).get<std::vector<BettingType::MarketProfitAndLoss>>();
+        }
+
+        if(is_info_level_) {
+            logger_->info(username_ + " acquired " + std::to_string(std::size(mpl_list)) + " market P&L records");
         }
 
         return mpl_list;
@@ -778,17 +715,7 @@ namespace BetfairAPI {
     AccountType::AccountFundsResponse BetfairManager::getAccountFunds (
         std::optional<AccountEnum::Wallet> wallet
     ) {
-        auto response = BetfairAPI::getAccountFunds(api_token_,session_token_,wallet,jurisdiction_);
-
-        if(is_info_level_) {
-            logger_->info(username_ + " listed account funds "
-            + printResponse(response,false,false));
-        }
-        
-        if(is_debug_level_) {
-            logger_->debug(username_ + " listed account funds " 
-            + printResponse(response,true,true));
-        }
+        auto response = BetfairAPI::getAccountFunds(api_token_,session_token_,wallet,jurisdiction_,logger_);
 
         AccountType::AccountFundsResponse funds;
         if(auto json = response.getBody(); json) {
@@ -798,17 +725,7 @@ namespace BetfairAPI {
     }
 
     AccountType::AccountDetailsResponse BetfairManager::getAccountDetails() {
-        auto response = BetfairAPI::getAccountDetails(api_token_,session_token_,jurisdiction_);
-
-        if(is_info_level_) {
-            logger_->info(username_ + " listed account details "
-            + printResponse(response,false,false));
-        }
-        
-        if(is_debug_level_) {
-            logger_->debug(username_ + " listed account details " 
-            + printResponse(response,true,true));
-        }
+        auto response = BetfairAPI::getAccountDetails(api_token_,session_token_,jurisdiction_,logger_);
 
         AccountType::AccountDetailsResponse details;
         if(auto json = response.getBody(); json) {
@@ -835,16 +752,9 @@ namespace BetfairAPI {
                 MAX_RESULTS_PER_QUERY,
                 item_date_range,
                 include_item,
-                jurisdiction_
+                jurisdiction_,
+                logger_
             );
-
-            if(is_info_level_) {
-                logger_->info(username_ + " queried account statement. " + printResponse(response,false,false));
-            }
-
-            if(is_debug_level_) {
-                logger_->debug(username_ + " queried account statement. " + printResponse(response,true,true));
-            }
 
             if(auto body = response.getBody()) {
                 report = (*body).get<AccountType::AccountStatementReport>();
@@ -857,6 +767,10 @@ namespace BetfairAPI {
             else {
                 report.moreAvailable = false; //terminating condition if no valid response
             }
+        }
+
+        if(is_info_level_) {
+            logger_->info(username_ + " acquired " + std::to_string(std::size(results)) + " account statements");
         }
 
         return results;

@@ -2,8 +2,10 @@
 
 #include <optional>
 #include <string>
+#include <memory>
 #include "BetfairAPI/jurisdiction.hpp"
 #include "http/response.h"
+#include "Logging/ILogger.h"
 #include "BetfairAPI/account_enum/wallet.hpp"
 #include "BetfairAPI/account_enum/include_item.hpp"
 #include "BetfairAPI/account_type/time_range.h"
@@ -14,14 +16,14 @@ namespace BetfairAPI {
         const std::string& session_key,
         std::optional<AccountEnum::Wallet> wallet = std::nullopt,
         const Jurisdiction jurisdiction = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 
     HTTP::Response getAccountDetails(
         const std::string& api_key,
         const std::string& session_key,
         const Jurisdiction jurisdiction = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 
     HTTP::Response getAccountStatement(
@@ -33,6 +35,6 @@ namespace BetfairAPI {
         std::optional<AccountType::TimeRange> item_date_range,
         std::optional<AccountEnum::IncludeItem>,
         const Jurisdiction jurisdiction = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 }

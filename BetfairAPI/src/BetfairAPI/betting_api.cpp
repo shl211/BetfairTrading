@@ -1,5 +1,6 @@
 #include <optional>
 #include <cpr/cpr.h>
+#include "http/client.h"
 #include "BetfairAPI/utils.h"
 #include "BetfairAPI/betting_api.h"
 #include "BetfairAPI/betting_type/json_serialiser.hpp"
@@ -13,18 +14,6 @@ namespace BetfairAPI {
         constexpr std::string_view getUrl(Jurisdiction j) {
             return j == Jurisdiction::NEWZEALAND ? nz_url : global_url;
         }
-
-        HTTP::Response toResponse(cpr::Response& r,
-            bool saveRequestBody=false, 
-            const std::string& url = "", 
-            const nlohmann::json& requestBody = {}
-        ) {
-            
-            //cpr HTTP::Response will be made unsafe, but that is ok, as it should be discarded anyway
-            HTTP::Response response(r.status_code,std::move(r.text));
-
-            return response;
-        };
     }
 
     HTTP::Response listEventTypes(const std::string& api_key,
@@ -32,11 +21,10 @@ namespace BetfairAPI {
         const BettingType::MarketFilter& mf,
         const std::string& locale,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
-
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "listEventTypes/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "listEventTypes/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key},
@@ -47,10 +35,11 @@ namespace BetfairAPI {
         if(locale != detail::default_locale) {
             j["locale"] = locale;
         }
-        cpr::Body body{j.dump()};
 
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(request);
     }
 
     HTTP::Response listCompetitions(const std::string& api_key,
@@ -58,10 +47,10 @@ namespace BetfairAPI {
         const BettingType::MarketFilter& mf,
         const std::string& locale,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "listCompetitions/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "listCompetitions/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key},
@@ -72,10 +61,10 @@ namespace BetfairAPI {
         if(locale != detail::default_locale) {
             j["locale"] = locale;
         }
-        cpr::Body body{j.dump()};
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
 
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        return client.makeRequest(request);
     }
     
     HTTP::Response listTimeRanges(const std::string& api_key,
@@ -83,11 +72,11 @@ namespace BetfairAPI {
         const BettingType::MarketFilter& mf,
         const BettingEnum::TimeGranularity granularity,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
         
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "listTimeRanges/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "listTimeRanges/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key},
@@ -97,10 +86,10 @@ namespace BetfairAPI {
         j["filter"] = mf;
         j["granularity"] = to_string<BetfairAPI::BettingEnum::TimeGranularity>(granularity);
 
-        cpr::Body body{j.dump()};
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
 
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        return client.makeRequest(request);
     }
 
     HTTP::Response listEvents(const std::string& api_key,
@@ -108,11 +97,11 @@ namespace BetfairAPI {
         const BettingType::MarketFilter& mf,
         const std::string& locale,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
 
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "listEvents/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "listEvents/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key},
@@ -123,10 +112,11 @@ namespace BetfairAPI {
         if(locale != detail::default_locale) {
             j["locale"] = locale;
         }
-        cpr::Body body{j.dump()};
 
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(request);
     }
 
     HTTP::Response listMarketTypes(const std::string& api_key,
@@ -134,10 +124,10 @@ namespace BetfairAPI {
         const BettingType::MarketFilter& mf,
         const std::string& locale,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "listMarketTypes/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "listMarketTypes/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key},
@@ -148,10 +138,11 @@ namespace BetfairAPI {
         if(locale != detail::default_locale) {
             j["locale"] = locale;
         }
-        cpr::Body body{j.dump()};
 
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(request);
     }
 
     HTTP::Response listCountries(const std::string& api_key,
@@ -159,10 +150,10 @@ namespace BetfairAPI {
         const BettingType::MarketFilter& mf,
         const std::string& locale,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "listCountries/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "listCountries/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key},
@@ -173,10 +164,11 @@ namespace BetfairAPI {
         if(locale != detail::default_locale) {
             j["locale"] = locale;
         }
-        cpr::Body body{j.dump()};
 
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(request);
     }
 
     HTTP::Response listVenues(const std::string& api_key,
@@ -184,10 +176,10 @@ namespace BetfairAPI {
         const BettingType::MarketFilter& mf,
         const std::string& locale,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "listVenues/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "listVenues/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key},
@@ -198,10 +190,11 @@ namespace BetfairAPI {
         if(locale != detail::default_locale) {
             j["locale"] = locale;
         }
-        cpr::Body body{j.dump()};
 
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(request);
     }
 
     HTTP::Response listMarketCatalogue(const std::string& api_key,
@@ -212,10 +205,10 @@ namespace BetfairAPI {
         int max_results, 
         const std::string& locale,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "listMarketCatalogue/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "listMarketCatalogue/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key},
@@ -229,9 +222,10 @@ namespace BetfairAPI {
         if(!market_sort.empty()) j["sort"] = to_string(market_sort);
         if(!market_projection.empty()) j["marketProjection"] = to_string(market_projection);
 
-        cpr::Body body{j.dump()};
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(request);
     }
 
     HTTP::Response listCurrentOrders(const std::string& api_key,
@@ -249,10 +243,10 @@ namespace BetfairAPI {
         std::optional<bool> include_item_description,
         std::optional<bool> include_source_id,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "listCurrentOrders/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "listCurrentOrders/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key},
@@ -273,9 +267,10 @@ namespace BetfairAPI {
         if(include_item_description) j["includeItemDescription"] = *include_item_description;
         if(include_source_id) j["includeSourceId"] = *include_source_id;
 
-        cpr::Body body{j.dump()};
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(request);
     }
 
     HTTP::Response listClearedOrders(const std::string& api_key,
@@ -295,10 +290,10 @@ namespace BetfairAPI {
         int from_record,
         int record_count,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "listClearedOrders/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "listClearedOrders/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key},
@@ -320,9 +315,10 @@ namespace BetfairAPI {
         if(from_record != 0) j["fromRecord"] = 0;
         if(record_count != 0) j["recordCount"] = 1000;
 
-        cpr::Body body{j.dump()};
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(request);
     };
 
     HTTP::Response placeOrders(const std::string& api_key,
@@ -334,11 +330,11 @@ namespace BetfairAPI {
         std::optional<std::string> customer_strategy_ref,
         std::optional<bool> async,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
 
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "placeOrders/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "placeOrders/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key},
@@ -355,9 +351,10 @@ namespace BetfairAPI {
         if (customer_strategy_ref) j["customerStrategyRef"] = *customer_strategy_ref;
         if (async) j["async"] = *async;
 
-        cpr::Body body{j.dump()};
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(request);
     }
 
     HTTP::Response cancelOrders(const std::string& api_key,
@@ -366,10 +363,10 @@ namespace BetfairAPI {
         const std::vector<BettingType::CancelInstruction>& instructions,
         std::optional<std::string> customer_ref,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "cancelOrders/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "cancelOrders/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key}
@@ -378,9 +375,11 @@ namespace BetfairAPI {
         nlohmann::json j {};
         if(!market_id.empty()) j["marketId"] = market_id;
         j["instructions"] = instructions;
-        cpr::Body body{j.dump()};
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);  
+
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(request);
     }
 
     HTTP::Response updateOrders(const std::string& api_key,
@@ -389,10 +388,10 @@ namespace BetfairAPI {
         const std::vector<BettingType::UpdateInstruction>& instructions,
         std::optional<std::string> customer_ref,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "updateOrders/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "updateOrders/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key}
@@ -403,9 +402,10 @@ namespace BetfairAPI {
         j["instructions"] = instructions;
         if (customer_ref) j["customerRef"] = *customer_ref;
 
-        cpr::Body body{j.dump()};
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(request);
     }
     
     HTTP::Response replaceOrders(const std::string& api_key,
@@ -416,10 +416,10 @@ namespace BetfairAPI {
         std::optional<std::string> customer_ref,
         std::optional<bool> async,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "replaceOrders/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "replaceOrders/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key},
@@ -432,9 +432,10 @@ namespace BetfairAPI {
         if (customer_ref) j["customerRef"] = *customer_ref;
         if (async) j["async"] = *async;
 
-        cpr::Body body{j.dump()};
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(request);
     }
 
     HTTP::Response listMarketBook(const std::string& api_key,
@@ -451,10 +452,10 @@ namespace BetfairAPI {
         std::optional<Date> matched_since,
         std::set<std::string> bet_ids,
         const Jurisdiction jurisdiction,
-        bool save_request_info 
+        std::shared_ptr<Logging::ILogger> logger 
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "listMarketBook/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "listMarketBook/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key}
@@ -473,9 +474,10 @@ namespace BetfairAPI {
         if(matched_since) j["matchedSince"] = matched_since->getIsoString();
         if(!bet_ids.empty()) j["betIds"] = bet_ids;
 
-        cpr::Body body{j.dump()};
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(request);
     }
 
     HTTP::Response listRunnerBook(const std::string& api_key,
@@ -493,10 +495,10 @@ namespace BetfairAPI {
         std::optional<Date> matched_since,
         std::set<std::string> bet_ids,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "listRunnerBook/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "listRunnerBook/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key}
@@ -516,9 +518,10 @@ namespace BetfairAPI {
         if(matched_since) j["matchedSince"] = matched_since->getIsoString();
         if(!bet_ids.empty()) j["betIds"] = bet_ids;
 
-        cpr::Body body{j.dump()};
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(request);
     }
 
     HTTP::Response listMarketProfitAndLoss(const std::string& api_key,
@@ -528,10 +531,10 @@ namespace BetfairAPI {
         std::optional<bool> include_bsp_bets,
         std::optional<bool> net_of_commission,
         const Jurisdiction jurisdiction,
-        bool save_request_info
+        std::shared_ptr<Logging::ILogger> logger
     ) {        
-        cpr::Url url{std::string(getUrl(jurisdiction)) + "listMarketProfitAndLoss/"};
-        cpr::Header headers {
+        std::string url{std::string(getUrl(jurisdiction)) + "listMarketProfitAndLoss/"};
+        std::map<std::string,std::string> headers {
             {"Content-Type","application/json"},
             {"X-Application",api_key},
             {"X-Authentication",session_key}
@@ -543,8 +546,9 @@ namespace BetfairAPI {
         if(include_bsp_bets) j["includeBspBets"] = *include_bsp_bets;
         if(net_of_commission) j["netOfCommission"] = *net_of_commission;
         
-        cpr::Body body{j.dump()};
-        cpr::Response response = cpr::Post(url,headers,body);
-        return toResponse(response,save_request_info,url.str(),j);
+        HTTP::Request request(HTTP::Request::POST,std::move(url),std::move(headers),j.dump());
+        HTTP::HTTPClient client(logger);
+
+        return client.makeRequest(request);
     }
 }

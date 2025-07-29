@@ -1,7 +1,9 @@
 #pragma once
 
 #include <string>
+#include <memory>
 #include <set>
+#include "Logging/ILogger.h"
 #include "http/response.h"
 #include "BetfairAPI/jurisdiction.hpp"
 #include "betting_type/market_filter.h"
@@ -24,8 +26,6 @@
 #include "betting_type/price_projection.h"
 
 namespace BetfairAPI {
-    //note that if api requests fail, the request body is automatically stored inside HTTP::Response
-
     namespace detail {
         inline std::string default_locale = "en";
     }
@@ -35,7 +35,7 @@ namespace BetfairAPI {
         const BettingType::MarketFilter& mf,
         const std::string& locale = detail::default_locale,
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 
     HTTP::Response listCompetitions(const std::string& api_key,
@@ -43,7 +43,7 @@ namespace BetfairAPI {
         const BettingType::MarketFilter& mf,
         const std::string& locale = detail::default_locale,
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 
     HTTP::Response listTimeRanges(const std::string& api_key,
@@ -51,7 +51,7 @@ namespace BetfairAPI {
         const BettingType::MarketFilter& mf,
         const BettingEnum::TimeGranularity granularity,
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 
     HTTP::Response listEvents(const std::string& api_key,
@@ -59,7 +59,7 @@ namespace BetfairAPI {
         const BettingType::MarketFilter& mf,
         const std::string& locale = detail::default_locale,
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 
     HTTP::Response listMarketTypes(const std::string& api_key,
@@ -67,7 +67,7 @@ namespace BetfairAPI {
         const BettingType::MarketFilter& mf,
         const std::string& locale = detail::default_locale,
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 
     HTTP::Response listCountries(const std::string& api_key,
@@ -75,7 +75,7 @@ namespace BetfairAPI {
         const BettingType::MarketFilter& mf,
         const std::string& locale = detail::default_locale,
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
     
     HTTP::Response listVenues(const std::string& api_key,
@@ -83,7 +83,7 @@ namespace BetfairAPI {
         const BettingType::MarketFilter& mf,
         const std::string& locale = detail::default_locale,
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 
     HTTP::Response listMarketCatalogue(const std::string& api_key,
@@ -94,7 +94,7 @@ namespace BetfairAPI {
         int max_results = 1000, 
         const std::string& locale = detail::default_locale,
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 
     HTTP::Response listCurrentOrders(const std::string& api_key,
@@ -112,7 +112,7 @@ namespace BetfairAPI {
         std::optional<bool> include_item_description = std::nullopt,
         std::optional<bool> include_source_id = std::nullopt,
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 
     HTTP::Response listClearedOrders(const std::string& api_key,
@@ -132,7 +132,7 @@ namespace BetfairAPI {
         int from_record = 0,
         int record_count = 1000,
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     ); 
 
     HTTP::Response placeOrders(const std::string& api_key,
@@ -144,7 +144,7 @@ namespace BetfairAPI {
         std::optional<std::string> customer_strategy_ref = std::nullopt,
         std::optional<bool> async = std::nullopt,
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 
     HTTP::Response cancelOrders(const std::string& api_key,
@@ -153,7 +153,7 @@ namespace BetfairAPI {
         const std::vector<BettingType::CancelInstruction>& instructions,
         std::optional<std::string> customer_ref = std::nullopt,
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 
     HTTP::Response updateOrders(const std::string& api_key,
@@ -162,7 +162,7 @@ namespace BetfairAPI {
         const std::vector<BettingType::UpdateInstruction>& instructions,
         std::optional<std::string> customer_ref = std::nullopt,
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
     
     HTTP::Response replaceOrders(const std::string& api_key,
@@ -173,7 +173,7 @@ namespace BetfairAPI {
         std::optional<std::string> customer_ref = std::nullopt,
         std::optional<bool> async = std::nullopt,
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
     
     HTTP::Response listMarketBook(const std::string& api_key,
@@ -190,7 +190,7 @@ namespace BetfairAPI {
         std::optional<Date> matched_since = std::nullopt,
         std::set<std::string> bet_ids = {},
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 
     HTTP::Response listRunnerBook(const std::string& api_key,
@@ -208,7 +208,7 @@ namespace BetfairAPI {
         std::optional<Date> matched_since = std::nullopt,
         std::set<std::string> bet_ids = {},
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 
     HTTP::Response listMarketProfitAndLoss(const std::string& api_key,
@@ -218,6 +218,6 @@ namespace BetfairAPI {
         std::optional<bool> include_bsp_bets = std::nullopt,
         std::optional<bool> net_of_commission = std::nullopt,
         const Jurisdiction j = Jurisdiction::GLOBAL,
-        bool save_request_info = false
+        std::shared_ptr<Logging::ILogger> logger = nullptr
     );
 }
