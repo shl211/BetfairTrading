@@ -1,5 +1,5 @@
 #include "BetfairAPI/stream_api.h"
-#include "BetfairAPI/betting_type/json_serialiser.hpp"
+#include "BetfairAPI/streaming_type/json_serialiser.hpp"
 #include <iostream>
 #include <iomanip>
 
@@ -121,7 +121,7 @@ namespace BetfairAPI {
         asio::write(*ssl_stream_, asio::buffer(message));
     }
 
-    void BetfairStreaming::subscribeToMarket(const BettingType::MarketFilter& filter) {
+    void BetfairStreaming::subscribeToMarket(const StreamingType::MarketFilter& filter) {
         nlohmann::json j;
         j["op"] = "marketSubscription";
         j["id"] = 1;

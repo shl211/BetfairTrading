@@ -6,7 +6,7 @@
 #include <asio.hpp>
 #include <asio/ssl.hpp>
 #include <Logging/ILogger.h>
-#include "BetfairAPI/betting_type/market_filter.h"
+#include "BetfairAPI/streaming_type/market_filter.h"
 
 namespace BetfairAPI {
     class BetfairStreaming {
@@ -18,7 +18,7 @@ namespace BetfairAPI {
             void disconnect();
             std::string readMessage();
             void sendMessage(const std::string& json_str);
-            void subscribeToMarket(const BettingType::MarketFilter& filter);
+            void subscribeToMarket(const StreamingType::MarketFilter& filter);
 
         private:
             asio::io_context io_context_;

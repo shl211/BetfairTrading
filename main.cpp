@@ -82,7 +82,7 @@ int main() {
     std::cout << "Market P&L\n";
     printVector(r5);*/
 
-    BetfairAPI::BettingType::MarketFilter mf;
+    BetfairAPI::StreamingType::MarketFilter mf;
     std::string FOOTBALL = "1";
     mf.eventTypeIds.insert(FOOTBALL);
     mf.marketIds.insert("1.246017177");

@@ -167,7 +167,7 @@ namespace BetfairAPI {
                 std::optional<AccountEnum::IncludeItem> include_item = std::nullopt
             );
 
-            bool subscribeToStreamingMarket(const BettingType::MarketFilter& mf);
+            bool subscribeToStreamingMarket(const StreamingType::MarketFilter& mf);
 
 
             bool refreshSession();
