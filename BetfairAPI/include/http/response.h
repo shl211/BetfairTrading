@@ -7,16 +7,13 @@ namespace BetfairAPI::HTTP {
     class Response {
     
         public:
-            Response(int status,std::string raw_body,std::string target_url);
+            Response(int status,std::string raw_body);
             ~Response() = default;
 
             void saveRequestInfo(nlohmann::json body);
 
             int getStatusCode() const;
             [[nodiscard]] const nlohmann::json* getBody() const;
-            const std::string& getRequestTarget() const;
-            [[nodiscard]] const nlohmann::json* getRequestBody() const;
-
             bool isResponseOk() const; 
 
         private:
@@ -25,9 +22,5 @@ namespace BetfairAPI::HTTP {
             mutable nlohmann::json body_cached_;
             mutable bool already_parsed_ = false;
             mutable bool valid_json_ = false;
-            
-            //request info for logging purposes
-            std::string target_url_;
-            nlohmann::json request_body_;
     };
 } //namespace BetfairAPI

@@ -21,11 +21,7 @@ namespace BetfairAPI {
         ) {
             
             //cpr HTTP::Response will be made unsafe, but that is ok, as it should be discarded anyway
-            HTTP::Response response(r.status_code,std::move(r.text),url);
-
-            if(saveRequestBody || !response.isResponseOk()) {
-                response.saveRequestInfo(requestBody);
-            }
+            HTTP::Response response(r.status_code,std::move(r.text));
             
             return response;
         };

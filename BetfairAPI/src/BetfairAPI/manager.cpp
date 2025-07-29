@@ -15,21 +15,12 @@ namespace BetfairAPI {
         constexpr int MAX_API_DATA = 1000;
 
         std::string printResponse(const HTTP::Response& r,bool printResponseBody,bool printRequestBody) {
-            std::string s {"Queried " + r.getRequestTarget() + " (Status " + std::to_string(r.getStatusCode()) +  ")"};
+            std::string s {"Queried TBC (Status " + std::to_string(r.getStatusCode()) +  ")"};
 
             if(printRequestBody) {
                 s += ", Request body: ";
                 if (r.getBody()) {
                     s += r.getBody()->dump();
-                } else {
-                    s += "N/A";
-                }
-            }
-
-            if(printResponseBody) {
-                s += " Response body: ";
-                if (r.getRequestBody()) {
-                    s += r.getRequestBody()->dump();
                 } else {
                     s += "N/A";
                 }

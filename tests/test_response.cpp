@@ -3,37 +3,18 @@
 #include "http/response.h"
 
 TEST(ResponseTest, ConstructorStoresStatus) {
-    BetfairAPI::HTTP::Response resp(200, R"({"key":"value"})","url.com");
+    BetfairAPI::HTTP::Response resp(200, R"({"key":"value"})");
     EXPECT_EQ(resp.getStatusCode(), 200);
 }
 
 TEST(ResponseTest, GetBodyParsesJsonCorrectly) {
-    BetfairAPI::HTTP::Response resp(200, R"({"key":"value"})","url.com");
+    BetfairAPI::HTTP::Response resp(200, R"({"key":"value"})");
     nlohmann::json expected = {{"key", "value"}};
     EXPECT_TRUE(resp.getBody());
     EXPECT_EQ(*resp.getBody(), expected);
 }
 
 TEST(ResponseTest, GetBodyParsesInvalidJson) {
-    BetfairAPI::HTTP::Response resp(200, R"(INVALID})","url.com");
+    BetfairAPI::HTTP::Response resp(200, R"(INVALID})");
     EXPECT_FALSE(resp.getBody());
-}
-
-TEST(ResponseTest, GetRequestInfo) {
-    nlohmann::json j {"Some","Request"};
-    std::string url {"https://something.somewhere"};
-
-    BetfairAPI::HTTP::Response resp{200,R"({"key":"value"})",url};
-
-    //test to make sure no request info before input
-    EXPECT_FALSE(resp.getRequestBody());
-
-    //now insert
-    resp.saveRequestInfo(j);
-    EXPECT_TRUE(!resp.getRequestTarget().empty());
-    EXPECT_TRUE(resp.getRequestBody());
-
-    EXPECT_EQ(url,resp.getRequestTarget());
-    EXPECT_EQ(j,*resp.getRequestBody());
-
 }

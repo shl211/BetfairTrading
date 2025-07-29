@@ -15,11 +15,7 @@ namespace BetfairAPI {
         ) {
             
             //cpr Response will be made unsafe, but that is ok, as it should be discarded anyway
-            HTTP::Response response(r.status_code,std::move(r.text),url);
-
-            if(saveRequestBody || !response.isResponseOk()) {
-                response.saveRequestInfo(requestBody);
-            }
+            HTTP::Response response(r.status_code,std::move(r.text));
             
             return response;
         }
@@ -46,7 +42,7 @@ namespace BetfairAPI {
         cpr::Response response = cpr::Post(login_url,headers,body);
 
         //don't reveal the actual body in this case if logged
-        return toResponse(response,save_request_info,url,{"username=***&password=***"});
+        return toResponse(response,false,url,{"username=***&password=***"});
     }
 
     HTTP::Response keepAlive(const std::string& api_key,
