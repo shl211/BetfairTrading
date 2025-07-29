@@ -82,11 +82,18 @@ int main() {
     std::cout << "Market P&L\n";
     printVector(r5);*/
 
+    BetfairAPI::BettingType::MarketFilter mf;
+    std::string FOOTBALL = "1";
+    mf.eventTypeIds.insert(FOOTBALL);
+    mf.marketIds.insert("1.246017177");
+    //mf.marketBettingTypes.insert(BetfairAPI::BettingEnum::MarketBettingType::ODDS);
+
     manager.connectToStreamingService();
     std::cout << manager.readFromStreamingService() << "\n";
     std::this_thread::sleep_for(std::chrono::seconds(5));
-    std::cout << manager.getAccountFunds() << "\n"; 
-    std::cout << manager.getAccountDetails() << "\n";
-    auto v = manager.getAccountStatement();
-    printVector(v); 
+    manager.subscribeToStreamingMarket(mf);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::cout << manager.readFromStreamingService() << "\n";
+    std::cout << manager.readFromStreamingService() << "\n";
+    std::cout << manager.readFromStreamingService() << "\n";
 }

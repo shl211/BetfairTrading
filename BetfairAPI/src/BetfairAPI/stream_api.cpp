@@ -1,7 +1,20 @@
 #include "BetfairAPI/stream_api.h"
+#include "BetfairAPI/betting_type/json_serialiser.hpp"
 #include <iostream>
+#include <iomanip>
 
 namespace BetfairAPI {
+
+    namespace {
+        void hexDump(const std::string& s) {
+            for (unsigned char c : s) {
+                std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)c << ' ';
+            }
+            std::cout << std::dec << '\n';
+        }
+    }
+
+
     BetfairStreaming::BetfairStreaming(std::shared_ptr<Logging::ILogger> logger)
         : ssl_context_(asio::ssl::context::tlsv12_client),
         logger_(logger)
@@ -52,13 +65,12 @@ namespace BetfairAPI {
         }
 
         //send initialisation message
-        std::string msg = R"({
-            "op": "authentication",
-            "appKey": ")" + api_token + R"(",
-            "session": ")" + session_key + R"("
-        })";
+        nlohmann::json j;
+        j["op"] = "authentication";
+        j["appKey"] = api_token;
+        j["session"] = session_key;
 
-        sendMessage(msg);
+        sendMessage(j.dump());
     }
 
     void BetfairStreaming::disconnect() {
@@ -101,6 +113,24 @@ namespace BetfairAPI {
 
         std::string message = json_str + "\r\n";  // Betfair requires \r\n
 
+        if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Debug)) {
+            logger_->debug("Sending message: " + message);
+            hexDump(message);
+        }
+
         asio::write(*ssl_stream_, asio::buffer(message));
-}
+    }
+
+    void BetfairStreaming::subscribeToMarket(const BettingType::MarketFilter& filter) {
+        nlohmann::json j;
+        j["op"] = "marketSubscription";
+        j["id"] = 1;
+        j["marketFilter"] = filter;
+        j["marketDataFilter"] = nlohmann::json::object();  // temp obj for now
+
+        sendMessage(j.dump());
+    }
+
+
+
 }

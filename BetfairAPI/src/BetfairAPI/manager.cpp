@@ -788,6 +788,14 @@ namespace BetfairAPI {
         return streamer_ ? streamer_->readMessage() : "";
     }
 
+    bool BetfairManager::subscribeToStreamingMarket(const BettingType::MarketFilter& mf) {
+        if(streamer_) {
+            streamer_->subscribeToMarket(mf);
+        }
+
+        return false;
+    }
+
 
 }
 
