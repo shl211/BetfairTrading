@@ -120,13 +120,16 @@ namespace BetfairAPI {
 
         asio::write(*ssl_stream_, asio::buffer(message));
     }
+            void subscribeToMarket(const StreamingType::MarketFilter& filter,const StreamingType::MarketDataFilter& md_filter);
 
-    void BetfairStreaming::subscribeToMarket(const StreamingType::MarketFilter& filter) {
+    void BetfairStreaming::subscribeToMarket(const StreamingType::MarketFilter& m_filter,
+        const StreamingType::MarketDataFilter& md_filter
+    ) {
         nlohmann::json j;
         j["op"] = "marketSubscription";
         j["id"] = 1;
-        j["marketFilter"] = filter;
-        j["marketDataFilter"] = nlohmann::json::object();  // temp obj for now
+        j["marketFilter"] = m_filter;
+        j["marketDataFilter"] = md_filter;  
 
         sendMessage(j.dump());
     }

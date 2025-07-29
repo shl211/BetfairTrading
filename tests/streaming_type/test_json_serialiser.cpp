@@ -13,3 +13,14 @@ TEST(MarketFilterJson,Json) {
 
     EXPECT_EQ(mf,mf_new);
 }
+
+TEST(MarketDataFilterJson,Json) {
+    BetfairAPI::StreamingType::MarketDataFilter mdf;
+    mdf.ladderLevels = 3;
+    mdf.fields.insert(BetfairAPI::StreamingEnum::TradeField::EX_BEST_OFFERS_DISP);
+
+    nlohmann::json j = mdf;
+    BetfairAPI::StreamingType::MarketDataFilter mdf_new = j;
+
+    EXPECT_EQ(mdf, mdf_new);
+}

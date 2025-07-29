@@ -2,6 +2,7 @@
 
 #include <nlohmann/json.hpp>
 #include "BetfairAPI/streaming_type/market_filter.h"
+#include "BetfairAPI/streaming_type/market_data_filter.h"
 #include "BetfairAPI/utils.h"
 
 namespace BetfairAPI::StreamingType {
@@ -32,5 +33,18 @@ namespace BetfairAPI::StreamingType {
         if (j.contains("venues")) j.at("venues").get_to(mf.venues);
         if (j.contains("countryCodes")) j.at("countryCodes").get_to(mf.countryCodes);
         if (j.contains("raceTypes")) j.at("raceTypes").get_to(mf.raceTypes);
+    }
+
+    inline void to_json(nlohmann::json& j, const MarketDataFilter& mf) {
+        if (!mf.fields.empty()) j["fields"] = BetfairAPI::to_string(mf.fields);
+        if (mf.ladderLevels.has_value()) j["ladderLevels"] = mf.ladderLevels.value();
+    }
+
+    inline void from_json(const nlohmann::json& j, MarketDataFilter& mf) {
+        if (j.contains("fields")) {
+            auto tmp = j.at("fields").get<std::set<std::string>>();
+            mf.fields = BetfairAPI::from_string<StreamingEnum::TradeField>(std::move(tmp));
+        }
+        if (j.contains("ladderLevels")) mf.ladderLevels = j.at("ladderLevels").get<int>();
     }
 }
