@@ -71,17 +71,20 @@ FetchContent_Declare(
   GIT_TAG master
 )
 
+# Enable OpenGL support for SDL3 before FetchContent_MakeAvailable
+set(SDL_VIDEO_OPENGL ON CACHE BOOL "" FORCE)
+set(SDL_VIDEO_OPENGL_GLX ON CACHE BOOL "" FORCE)
+set(SDL_VIDEO_RENDER_OGL ON CACHE BOOL "" FORCE)
+
 # Fetch SDL3 platform backend for ImGui
 FetchContent_Declare(
   SDL3
   GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
   GIT_TAG release-3.2.0  # or latest stable
 )
-FetchContent_MakeAvailable(SDL3)
-
 
 # Download and make available
-FetchContent_MakeAvailable(cpr json googletest magic_enum date spdlog asio imgui implot)
+FetchContent_MakeAvailable(cpr json googletest magic_enum date spdlog asio imgui implot SDL3)
 
 ###################################
 # Project Targets
