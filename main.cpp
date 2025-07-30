@@ -85,8 +85,13 @@ int main() {
     BetfairAPI::StreamingType::MarketFilter mf;
     std::string FOOTBALL = "1";
     mf.eventTypeIds.insert(FOOTBALL);
-    mf.marketIds.insert("1.246017177");
-    //mf.marketBettingTypes.insert(BetfairAPI::BettingEnum::MarketBettingType::ODDS);
+    mf.marketTypes.insert("MATCH_ODDS");
+    mf.bspMarket = false;
+    mf.turnInPlayEnabled = false;
+    mf.bettingTypes.insert(BetfairAPI::StreamingEnum::BettingType::ODDS);
+
+    BetfairAPI::StreamingType::MarketDataFilter mdf;
+    mdf.ladderLevels = BetfairAPI::StreamingType::MarketDataFilter::ONE;
 
     manager.connectToStreamingService();
     std::cout << manager.readFromStreamingService() << "\n";

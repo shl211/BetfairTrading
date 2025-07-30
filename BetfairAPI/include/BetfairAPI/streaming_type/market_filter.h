@@ -5,7 +5,7 @@
 #include <optional>
 #include <set>
 
-#include "BetfairAPI/streaming_type/betting_type.hpp"
+#include "BetfairAPI/streaming_enum/betting_type.hpp"
 #include "BetfairAPI/utils.h"
 
 namespace BetfairAPI::StreamingType {

@@ -8,8 +8,21 @@
 
 namespace BetfairAPI::StreamingType {
     struct MarketDataFilter {
+        enum LadderLevel {
+            ONE=1,
+            TWO=2,
+            THREE=3,
+            FOUR=4,
+            FIVE=5,
+            SIX=6,
+            SEVEN=7,
+            EIGHT=8,
+            NINE=9,
+            TEN=10,
+        };
+
         std::set<StreamingEnum::TradeField> fields;
-        std::optional<int> ladderLevels;
+        std::optional<LadderLevel> ladderLevels;
     };
 
     inline bool operator==(const MarketDataFilter& lhs, const MarketDataFilter& rhs) {

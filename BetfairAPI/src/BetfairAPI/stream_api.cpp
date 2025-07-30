@@ -115,7 +115,7 @@ namespace BetfairAPI {
 
         if(logger_ && logger_->isLevelEnabled(Logging::LogLevel::Debug)) {
             logger_->debug("Sending message: " + message);
-            hexDump(message);
+            //hexDump(message); for debug purposes
         }
 
         asio::write(*ssl_stream_, asio::buffer(message));
