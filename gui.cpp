@@ -8,48 +8,7 @@
 #include "imgui_impl_opengl3.h"
 #include "BetfairAPI/manager.h"
 #include "gui/login.hpp"
-
-// ------------------ GUI FUNCTIONS ------------------
-
-
-void RenderTopBar() {
-    ImGui::SetNextWindowPos(ImVec2(0, 0));
-    ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, 40));
-
-    ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar |
-                             ImGuiWindowFlags_NoResize |
-                             ImGuiWindowFlags_NoMove |
-                             ImGuiWindowFlags_NoScrollbar;
-
-    ImGui::Begin("TopBar", nullptr, flags);
-
-    if (ImGui::Button("Dashboard")) {}
-    ImGui::SameLine();
-    if (ImGui::Button("Orders")) {}
-    ImGui::SameLine();
-    if (ImGui::Button("Positions")) {}
-    ImGui::SameLine();
-
-    ImGui::End();
-}
-
-void RenderMainContent() {
-    ImGui::SetNextWindowPos(ImVec2(0, 40));
-    ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x,
-                                    ImGui::GetIO().DisplaySize.y - 40));
-
-    ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse |
-                             ImGuiWindowFlags_NoMove |
-                             ImGuiWindowFlags_NoResize;
-
-    ImGui::Begin("MainContent", nullptr, flags);
-
-    ImGui::Text("Main trading dashboard will go here...");
-    ImGui::Separator();
-    ImGui::Text("You can add charts, order book, positions here.");
-
-    ImGui::End();
-}
+#include "gui/dashboard.hpp"
 
 // ------------------ MAIN ------------------
 
@@ -88,7 +47,10 @@ int main(int, char**)
     ImGui_ImplOpenGL3_Init("#version 130");
 
     bool done = false;
+
+    //set up frames to load in
     GUI::LoginFrame login_frame;
+    GUI::DashboardFrame dashboard_frame;
     while (!done)
     {
         SDL_Event event;
@@ -107,8 +69,9 @@ int main(int, char**)
             login_frame.render();
         }
         else {
-            RenderTopBar();
-            RenderMainContent();
+            dashboard_frame.renderTopBar();
+            dashboard_frame.renderMainContent();
+            dashboard_frame.renderBottomBar(login_frame.BetfairManager());
         }
 
         ImGui::Render();
