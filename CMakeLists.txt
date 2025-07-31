@@ -122,7 +122,15 @@ target_include_directories(imgui PUBLIC
     ${SDL3_SOURCE_DIR}/include
 )
 
-add_executable(gui gui.cpp)
+file(GLOB GUI_SOURCES
+    gui/*.cpp
+)
+
+add_executable(gui
+    gui.cpp
+    ${GUI_SOURCES}  # All files in gui/
+)
+
 target_link_libraries(gui 
     PRIVATE 
         BetfairAPI 

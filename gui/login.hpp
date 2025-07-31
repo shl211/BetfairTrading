@@ -50,7 +50,6 @@ namespace GUI {
                         success_ = true;
                     }
                     catch (const std::exception& ex) {
-                        std::cout << ex.what();
                         ImGui::Text("Login failed: %s", ex.what());
                     }
                 }

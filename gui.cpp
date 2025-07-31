@@ -70,7 +70,7 @@ int main(int, char**)
         }
         else {
             dashboard_frame.renderTopBar();
-            dashboard_frame.renderMainContent();
+            dashboard_frame.renderMainContent(login_frame.BetfairManager());
             dashboard_frame.renderBottomBar(login_frame.BetfairManager());
         }
 

@@ -2,8 +2,11 @@
 
 #include <memory>
 #include <optional>
-#include "BetfairAPI/manager.h"
+#include <vector>
+#include <iostream>
 #include "imgui.h"
+#include "current_order_table.h"
+#include "BetfairAPI/manager.h"
 
 namespace GUI {
     class DashboardFrame {
@@ -29,18 +32,27 @@ namespace GUI {
                 ImGui::End();
             }
 
-            void renderMainContent() {
+            void renderMainContent(std::weak_ptr<BetfairAPI::BetfairManager> manager) {
                 ImGui::SetNextWindowPos(ImVec2(0, 40));
                 ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x,
-                                                ImGui::GetIO().DisplaySize.y - 40));
+                                                ImGui::GetIO().DisplaySize.y - 40 - 30)); // leave space
 
                 ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse |
                                         ImGuiWindowFlags_NoMove |
-                                        ImGuiWindowFlags_NoResize;
+                                        ImGuiWindowFlags_NoResize |
+                                        ImGuiWindowFlags_NoBringToFrontOnFocus;
 
                 ImGui::Begin("MainContent", nullptr, flags);
+                
+                ImGui::Text("Current Orders on Betfair Exchange (Total: %d)", current_order_table_.currentOrderTotal());
+                
+                ImGui::SameLine();
+                if(ImGui::Button("Refresh")) {
+                    current_order_table_.refresh();
+                }
 
-                ImGui::Text("Main trading dashboard will go here...");
+                current_order_table_.render(manager);
+
                 ImGui::Separator();
                 ImGui::Text("You can add charts, order book, positions here.");
 
@@ -84,5 +96,9 @@ namespace GUI {
             bool api_called_already = false;
             float cached_balance_;
             float cached_exposure_;
+
+            bool update_current_order_summary_ = true;
+            std::vector<BetfairAPI::BettingType::CurrentOrderSummary> cached_current_order_summary_;
+            GUI::CurrentOrderTable current_order_table_;
     };
 }
