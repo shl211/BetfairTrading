@@ -6,6 +6,7 @@
 #include <iostream>
 #include "imgui.h"
 #include "current_order_table.h"
+#include "cleared_order_table.h"
 #include "BetfairAPI/manager.h"
 
 namespace GUI {
@@ -44,17 +45,25 @@ namespace GUI {
 
                 ImGui::Begin("MainContent", nullptr, flags);
                 
-                ImGui::Text("Current Orders on Betfair Exchange (Total: %d)", current_order_table_.currentOrderTotal());
-                
-                ImGui::SameLine();
-                if(ImGui::Button("Refresh")) {
-                    current_order_table_.refresh();
+                if(ImGui::CollapsingHeader("Current Orders")) {
+                    ImGui::Text("Current Orders on Betfair Exchange (Total: %d)", current_order_table_.currentOrderTotal());
+                    
+                    ImGui::SameLine();
+                    if(ImGui::Button("Refresh")) {
+                        current_order_table_.refresh();
+                    }
+                    
+                    current_order_table_.render(manager);
                 }
 
-                current_order_table_.render(manager);
-
                 ImGui::Separator();
-                ImGui::Text("You can add charts, order book, positions here.");
+
+                if(ImGui::CollapsingHeader("Cleared Orders")) {
+                    ImGui::Text("Cleared Orders on Betfair Exchange (Total: %d)", cleared_order_table_.clearedOrderTotal());
+                    cleared_order_table_.render(manager);
+                }
+                
+
 
                 ImGui::End();
             }
@@ -98,7 +107,7 @@ namespace GUI {
             float cached_exposure_;
 
             bool update_current_order_summary_ = true;
-            std::vector<BetfairAPI::BettingType::CurrentOrderSummary> cached_current_order_summary_;
             GUI::CurrentOrderTable current_order_table_;
+            GUI::ClearedOrderTable cleared_order_table_;
     };
 }
