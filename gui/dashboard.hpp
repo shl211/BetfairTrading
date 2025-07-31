@@ -7,6 +7,7 @@
 #include "imgui.h"
 #include "current_order_table.h"
 #include "cleared_order_table.h"
+#include "market_search.hpp"
 #include "BetfairAPI/manager.h"
 
 namespace GUI {
@@ -23,9 +24,9 @@ namespace GUI {
 
                 ImGui::Begin("TopBar", nullptr, flags);
 
-                if (ImGui::Button("Dashboard")) {}
+                if (ImGui::Button("Dashboard")) {toggleDashboard();}
                 ImGui::SameLine();
-                if (ImGui::Button("Orders")) {}
+                if (ImGui::Button("Markets")) {toggleMarkets();};
                 ImGui::SameLine();
                 if (ImGui::Button("Positions")) {}
                 ImGui::SameLine();
@@ -38,34 +39,12 @@ namespace GUI {
                 ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x,
                                                 ImGui::GetIO().DisplaySize.y - 40 - 30)); // leave space
 
-                ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse |
-                                        ImGuiWindowFlags_NoMove |
-                                        ImGuiWindowFlags_NoResize |
-                                        ImGuiWindowFlags_NoBringToFrontOnFocus;
-
-                ImGui::Begin("MainContent", nullptr, flags);
-                
-                if(ImGui::CollapsingHeader("Current Orders")) {
-                    ImGui::Text("Current Orders on Betfair Exchange (Total: %d)", current_order_table_.currentOrderTotal());
-                    
-                    ImGui::SameLine();
-                    if(ImGui::Button("Refresh")) {
-                        current_order_table_.refresh();
-                    }
-                    
-                    current_order_table_.render(manager);
+                if(show_dashboard_) {
+                    renderDashboardSummary(manager);
                 }
-
-                ImGui::Separator();
-
-                if(ImGui::CollapsingHeader("Cleared Orders")) {
-                    ImGui::Text("Cleared Orders on Betfair Exchange (Total: %d)", cleared_order_table_.clearedOrderTotal());
-                    cleared_order_table_.render(manager);
+                else if(show_markets_) {
+                    market_search_.render(manager);
                 }
-                
-
-
-                ImGui::End();
             }
 
             void renderBottomBar(std::weak_ptr<BetfairAPI::BetfairManager> manager) {
@@ -109,5 +88,48 @@ namespace GUI {
             bool update_current_order_summary_ = true;
             GUI::CurrentOrderTable current_order_table_;
             GUI::ClearedOrderTable cleared_order_table_;
+            GUI::MarketSearch market_search_;
+
+            void renderDashboardSummary(std::weak_ptr<BetfairAPI::BetfairManager> manager) {
+                ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse |
+                                        ImGuiWindowFlags_NoMove |
+                                        ImGuiWindowFlags_NoResize |
+                                        ImGuiWindowFlags_NoBringToFrontOnFocus;
+
+                ImGui::Begin("MainContent", nullptr, flags);
+                
+                if(ImGui::CollapsingHeader("Current Orders")) {
+                    ImGui::Text("Current Orders on Betfair Exchange (Total: %d)", current_order_table_.currentOrderTotal());
+                    
+                    ImGui::SameLine();
+                    if(ImGui::Button("Refresh")) {
+                        current_order_table_.refresh();
+                    }
+                    
+                    current_order_table_.render(manager);
+                }
+
+                ImGui::Separator();
+
+                if(ImGui::CollapsingHeader("Cleared Orders")) {
+                    ImGui::Text("Cleared Orders on Betfair Exchange (Total: %d)", cleared_order_table_.clearedOrderTotal());
+                    cleared_order_table_.render(manager);
+                }
+
+                ImGui::End();
+            }
+
+            void toggleDashboard() {
+                show_dashboard_ = true;
+                show_markets_ = false;
+            }
+
+            void toggleMarkets() {
+                show_markets_ = true;
+                show_dashboard_ = false;
+            }
+
+            bool show_dashboard_ = true;
+            bool show_markets_ = false;
     };
 }
