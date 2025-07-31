@@ -7,7 +7,7 @@
 #include "imgui.h"
 #include "current_order_table.h"
 #include "cleared_order_table.h"
-#include "market_search.hpp"
+#include "market_search.h"
 #include "BetfairAPI/manager.h"
 
 namespace GUI {
