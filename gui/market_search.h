@@ -18,12 +18,19 @@ namespace GUI {
             char market_search_[32] = "";
             std::vector<BetfairAPI::BettingType::MarketCatalogue> market_info_;
 
+            //store possible filter options
             std::vector<EventTypeFilter> event_types_;
             std::vector<CompetitionFilter> competitions_;
             std::vector<MarketTypeFilter> market_types_;
+            std::vector<CountryCodeFilter> country_codes_;
+            std::vector<VenueFilter> venue_;
+
+            //active selection of filters
             std::set<std::string> event_type_ids_;
             std::set<std::string> competition_ids_;
             std::set<std::string> market_type_ids_;
+            std::set<std::string> country_codes_ids_;
+            std::set<std::string> venue_ids_;
 
             void searchMarkets(std::weak_ptr<BetfairAPI::BetfairManager> manager);
             void displayTable();

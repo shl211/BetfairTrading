@@ -41,4 +41,26 @@ namespace GUI {
         std::string getName() const {return mtr_result.marketType;};
         std::string getId() const {return mtr_result.marketType;};
     };
+
+    struct VenueFilter : public OptionFilter {
+        VenueFilter(BetfairAPI::BettingType::VenueResult venue, bool selected)
+            : venue_result(std::move(venue)), selected(selected) {};
+
+        BetfairAPI::BettingType::VenueResult venue_result;
+        mutable bool selected = false;
+
+        std::string getName() const {return venue_result.venue;};
+        std::string getId() const {return venue_result.venue;};
+    };
+
+    struct CountryCodeFilter : public OptionFilter {
+        CountryCodeFilter(BetfairAPI::BettingType::CountryCodeResult country, bool selected)
+            : country_result(std::move(country)), selected(selected) {};
+
+        BetfairAPI::BettingType::CountryCodeResult country_result;
+        mutable bool selected = false;
+
+        std::string getName() const {return country_result.countryCode;};
+        std::string getId() const {return country_result.countryCode;};
+    };
 }

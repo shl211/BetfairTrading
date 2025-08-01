@@ -50,12 +50,12 @@ namespace GUI {
                 mf.inPlayOnly = false;
                         
                 auto data_list = [&]() {
-                    if constexpr (std::is_same_v<FilterT, EventTypeFilter>)
-                        return m->getEventTypes(mf);
-                    else if constexpr (std::is_same_v<FilterT, MarketTypeFilter>)
-                        return m->getMarketTypeResults(mf);
-                    else if constexpr (std::is_same_v<FilterT, CompetitionFilter>)
-                        return m->getCompetitions(mf);
+                    //if editing this: have you ensured filters are being processed and included in api call of future queries in searchMarkets? 
+                    if constexpr (std::is_same_v<FilterT, EventTypeFilter>)         return m->getEventTypes(std::move(mf));
+                    else if constexpr (std::is_same_v<FilterT, MarketTypeFilter>)   return m->getMarketTypeResults(std::move(mf));
+                    else if constexpr (std::is_same_v<FilterT, CompetitionFilter>)  return m->getCompetitions(std::move(mf));
+                    else if constexpr (std::is_same_v<FilterT, VenueFilter>)        return m->getVenues(std::move(mf));
+                    else if constexpr (std::is_same_v<FilterT, CountryCodeFilter>)  return m->getCountries(std::move(mf));
                 }();
 
                 inout_filters.reserve(data_list.size());
@@ -77,10 +77,14 @@ namespace GUI {
         }
         
         //filter options
+        //if editing this: have you loaded all filters in loadFilterOptions?
         loadFilterOptions(manager);
         renderFilterOptions("Competition",competitions_,competition_ids_);
         renderFilterOptions("Event Type",event_types_,event_type_ids_);
         renderFilterOptions("Market Type",market_types_,market_type_ids_);
+        renderFilterOptions("Countries",country_codes_,country_codes_ids_);
+        renderFilterOptions("Venues",venue_,venue_ids_);
+
 
         displayTable();
         ImGui::End();
@@ -93,9 +97,12 @@ namespace GUI {
                 filter.textQuery = std::move(s);
             }
 
+            //if editing this: have you displayed the available options in render?
             filter.eventTypeIds = event_type_ids_;
             filter.competitionIds = competition_ids_;
             filter.marketTypeCodes = market_type_ids_;
+            filter.marketCountries = country_codes_ids_;
+            filter.venues = venue_ids_;
 
             using MarketProjection = BetfairAPI::BettingEnum::MarketProjection;
             market_info_ = m->getMarketCatalogues(
@@ -144,9 +151,12 @@ namespace GUI {
     }
 
     void MarketSearch::loadFilterOptions(std::weak_ptr<BetfairAPI::BetfairManager> manager) {
+        //if editing this: have you defined the correct Filter in the if constepxr of getDataFromBetfair for correct api call?
         getDataFromBetfair<CompetitionFilter>(manager,competitions_);
         getDataFromBetfair<EventTypeFilter>(manager,event_types_);
         getDataFromBetfair<MarketTypeFilter>(manager,market_types_);
+        getDataFromBetfair<CountryCodeFilter>(manager,country_codes_);
+        getDataFromBetfair<VenueFilter>(manager,venue_);
     }
 
 }
