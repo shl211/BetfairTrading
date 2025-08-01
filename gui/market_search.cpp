@@ -146,11 +146,13 @@ namespace GUI {
             
             ImGui::TableHeadersRow();
             
-            ImGuiListClipper clipper;
-            clipper.Begin(static_cast<int>(market_info_.size()));
+            //Need a fix for dynamically increasing rows in clipper.
+            //ImGuiListClipper clipper;
+            //clipper.Begin(static_cast<int>(market_info_.size()) + extra_rows_expanded);
 
-            while(clipper.Step()) {
-                for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++) {
+            //while(clipper.Step()) {
+            //    for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++) {
+                for (int row = 0; row < market_info_.size(); row++) {
                     auto& selected_market_info = market_info_[row];
                     auto& info = selected_market_info.market_catalogue_;
 
@@ -160,8 +162,7 @@ namespace GUI {
                     //make whole row selectable
                     bool row_selected = false;
                     std::string label = "##row_market_search_table" + std::to_string(row);
-                    if (ImGui::Selectable(label.c_str(), &row_selected, ImGuiSelectableFlags_SpanAllColumns))
-                    {
+                    if (ImGui::Selectable(label.c_str(), &row_selected, ImGuiSelectableFlags_SpanAllColumns)) {
                         // Toggle expansion
                         selected_market_info.expanded_ = !selected_market_info.expanded_;
                     }
@@ -185,14 +186,16 @@ namespace GUI {
                         renderExtraInfo(row,manager);
                     }
                 }
-            }
+            //}
 
-            clipper.End();
+            //clipper.End();
             ImGui::EndTable();
         }
     }
 
-    void MarketSearch::renderExtraInfo(int row, std::weak_ptr<BetfairAPI::BetfairManager> manager) {
+    ExtraRowCount MarketSearch::renderExtraInfo(int row, std::weak_ptr<BetfairAPI::BetfairManager> manager) {
+        ExtraRowCount extra_rows = 0;
+
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
 
@@ -231,6 +234,7 @@ namespace GUI {
         }
         
         ImGui::Text("Runners: ");
+        extra_rows++;
         
         //need to create a nerw class with new frame rendering
         for(auto& runner : market_cat.runners) {
@@ -240,14 +244,20 @@ namespace GUI {
             ImGui::TextColored(
                 ImVec4(0.0f, 1.0f, 0.0f, 1.0f),  //green
                 "Back %.2f", 
-                !price_data.availableToBack.empty() ? price_data.availableToBack[0].price : 0.00);
+                !price_data.availableToBack.empty() ? price_data.availableToBack[0].price : 0.00
+            );
                 
             ImGui::SameLine();
             ImGui::TextColored(
                 ImVec4(1.0f, 0.0f, 0.0f, 1.0f), //red
-            "Lay %.2f", 
-            !price_data.availableToLay.empty() ? price_data.availableToLay[0].price : 0.00);
+                "Lay %.2f", 
+                !price_data.availableToLay.empty() ? price_data.availableToLay[0].price : 0.00
+            );
+            
+            extra_rows++;
         }
+
+        return extra_rows;
     }
     
     void MarketSearch::loadFilterOptions(std::weak_ptr<BetfairAPI::BetfairManager> manager) {

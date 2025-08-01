@@ -9,6 +9,8 @@
 #include "option_filter.hpp"
 
 namespace GUI {
+    using ExtraRowCount = int;
+
     class MarketSearch {
         public:
             void render(std::weak_ptr<BetfairAPI::BetfairManager> manager);
@@ -43,6 +45,8 @@ namespace GUI {
                 void searchMarkets(std::weak_ptr<BetfairAPI::BetfairManager> manager);
                 void displayTable(std::weak_ptr<BetfairAPI::BetfairManager> manager);
                 void loadFilterOptions(std::weak_ptr<BetfairAPI::BetfairManager> manager); //does not currently work
-                void renderExtraInfo(int row, std::weak_ptr<BetfairAPI::BetfairManager> manager);
+
+                ExtraRowCount renderExtraInfo(int row, std::weak_ptr<BetfairAPI::BetfairManager> manager);
+                ExtraRowCount extra_rows_expanded = 0;
     };
 }
