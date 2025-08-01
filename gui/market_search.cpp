@@ -64,6 +64,18 @@ namespace GUI {
                 }
             }
         }
+
+        BetfairAPI::BettingType::ExchangePrices lookupBackLayPrice(long runner_id,const BetfairAPI::BettingType::MarketBook& m_book) {
+            auto& runners = m_book.runners;
+
+            for(auto& runner : runners) {
+                if(runner.selectionId == runner_id) {
+                    return *runner.ex;
+                }
+            }
+
+            return {};
+        }
     }
 
     void MarketSearch::render(std::weak_ptr<BetfairAPI::BetfairManager> manager) {
@@ -201,11 +213,40 @@ namespace GUI {
             //replace only runners for now
             market_cat.runners = std::move(updated_m_cat_list[0].runners);
         }
+
+        if(auto m = manager.lock(); m && !selected_market_info.market_book_) {
+            //load market book if not already done so
+            BetfairAPI::BettingType::PriceProjection pp;
+            pp.virtualise = true;
+            pp.priceData.insert(BetfairAPI::BettingEnum::PriceData::EX_BEST_OFFERS);
+
+            auto data = m->getMarketBook(
+                {market_cat.marketId},
+                std::move(pp)
+            );
+
+            assert(std::size(data) == 1);
+            
+            selected_market_info.market_book_ = std::make_unique<BetfairAPI::BettingType::MarketBook>(std::move(data[0]));
+        }
         
         ImGui::Text("Runners: ");
         
+        //need to create a nerw class with new frame rendering
         for(auto& runner : market_cat.runners) {
             ImGui::Text("%s", runner.runnerName.c_str());
+            ImGui::SameLine();
+            auto price_data = lookupBackLayPrice(runner.selectionId,*selected_market_info.market_book_);
+            ImGui::TextColored(
+                ImVec4(0.0f, 1.0f, 0.0f, 1.0f),  //green
+                "Back %.2f", 
+                !price_data.availableToBack.empty() ? price_data.availableToBack[0].price : 0.00);
+                
+            ImGui::SameLine();
+            ImGui::TextColored(
+                ImVec4(1.0f, 0.0f, 0.0f, 1.0f), //red
+            "Lay %.2f", 
+            !price_data.availableToLay.empty() ? price_data.availableToLay[0].price : 0.00);
         }
     }
     

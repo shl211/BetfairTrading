@@ -19,6 +19,7 @@ namespace GUI {
                     MarketCatalogueSelection(BetfairAPI::BettingType::MarketCatalogue&& m_cat)
                         : market_catalogue_(m_cat) {};
                     BetfairAPI::BettingType::MarketCatalogue market_catalogue_;
+                    std::unique_ptr<BetfairAPI::BettingType::MarketBook> market_book_ = nullptr;
                     bool expanded_ = false;
                 };
             
