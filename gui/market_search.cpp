@@ -86,7 +86,7 @@ namespace GUI {
         renderFilterOptions("Venues",venue_,venue_ids_);
 
 
-        displayTable();
+        displayTable(manager);
         ImGui::End();
     }
 
@@ -105,7 +105,7 @@ namespace GUI {
             filter.venues = venue_ids_;
 
             using MarketProjection = BetfairAPI::BettingEnum::MarketProjection;
-            market_info_ = m->getMarketCatalogues(
+            auto market_cat = m->getMarketCatalogues(
                 std::move(filter),
                 {MarketProjection::EVENT,
                     MarketProjection::EVENT_TYPE,
@@ -113,11 +113,17 @@ namespace GUI {
                     MarketProjection::MARKET_START_TIME
                 }
             );
+
+            market_info_.clear();
+            market_info_.reserve(market_cat.size());
+            for(auto& m_cat : market_cat) {
+                market_info_.emplace_back(std::move(m_cat));
+            }
         }
     }
 
-    void MarketSearch::displayTable() {
-        auto flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Borders;
+    void MarketSearch::displayTable(std::weak_ptr<BetfairAPI::BetfairManager> manager) {
+        auto flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg ;
 
         if (ImGui::BeginTable("MyTable", 6, flags)) {
             ImGui::TableSetupColumn("Event");
@@ -128,28 +134,81 @@ namespace GUI {
             
             ImGui::TableHeadersRow();
             
-            for (auto& info : market_info_) {
-                ImGui::TableNextRow();
-                ImGui::TableSetColumnIndex(0);
-                ImGui::Text("%s", info.event ? info.event->name.c_str() : "N/A");
+            ImGuiListClipper clipper;
+            clipper.Begin(static_cast<int>(market_info_.size()));
 
-                ImGui::TableSetColumnIndex(1);
-                ImGui::Text("%s", info.eventType ? info.eventType->name.c_str() : "N/A");
+            while(clipper.Step()) {
+                for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++) {
+                    auto& selected_market_info = market_info_[row];
+                    auto& info = selected_market_info.market_catalogue_;
 
-                ImGui::TableSetColumnIndex(2);
-                ImGui::Text("%s", !info.marketName.empty() ? info.marketName.c_str() : "N/A");
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
 
-                ImGui::TableSetColumnIndex(3);
-                ImGui::Text("%.2f", info.totalMatched);
+                    //make whole row selectable
+                    bool row_selected = false;
+                    std::string label = "##row_market_search_table" + std::to_string(row);
+                    if (ImGui::Selectable(label.c_str(), &row_selected, ImGuiSelectableFlags_SpanAllColumns))
+                    {
+                        // Toggle expansion
+                        selected_market_info.expanded_ = !selected_market_info.expanded_;
+                    }
 
-                ImGui::TableSetColumnIndex(4);
-                ImGui::Text("%s", info.marketStartTime ? info.marketStartTime->getIsoString().c_str() : "N/A");
+                    ImGui::SameLine();
+                    ImGui::Text("%s", info.event ? info.event->name.c_str() : "N/A");
+    
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::Text("%s", info.eventType ? info.eventType->name.c_str() : "N/A");
+    
+                    ImGui::TableSetColumnIndex(2);
+                    ImGui::Text("%s", !info.marketName.empty() ? info.marketName.c_str() : "N/A");
+    
+                    ImGui::TableSetColumnIndex(3);
+                    ImGui::Text("%.2f", info.totalMatched);
+    
+                    ImGui::TableSetColumnIndex(4);
+                    ImGui::Text("%s", info.marketStartTime ? info.marketStartTime->getIsoString().c_str() : "N/A");
+                
+                    if (selected_market_info.expanded_) {
+                        renderExtraInfo(row,manager);
+                    }
+                }
             }
 
+            clipper.End();
             ImGui::EndTable();
         }
     }
 
+    void MarketSearch::renderExtraInfo(int row, std::weak_ptr<BetfairAPI::BetfairManager> manager) {
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+
+        auto& selected_market_info = market_info_[row];
+        auto& market_cat = selected_market_info.market_catalogue_;
+        
+        if(auto m = manager.lock(); m && market_cat.runners.empty()) {
+            BetfairAPI::BettingType::MarketFilter filter;
+            filter.marketIds.insert(market_cat.marketId);//this is a global identifier
+            
+            auto updated_m_cat_list = m->getMarketCatalogues(
+                std::move(filter),
+                {BetfairAPI::BettingEnum::MarketProjection::RUNNER_DESCRIPTION}
+            );
+            
+            assert(std::size(updated_m_cat_list) == 1);//should only get one from global id
+            
+            //replace only runners for now
+            market_cat.runners = std::move(updated_m_cat_list[0].runners);
+        }
+        
+        ImGui::Text("Runners: ");
+        
+        for(auto& runner : market_cat.runners) {
+            ImGui::Text("%s", runner.runnerName.c_str());
+        }
+    }
+    
     void MarketSearch::loadFilterOptions(std::weak_ptr<BetfairAPI::BetfairManager> manager) {
         //if editing this: have you defined the correct Filter in the if constepxr of getDataFromBetfair for correct api call?
         getDataFromBetfair<CompetitionFilter>(manager,competitions_);
