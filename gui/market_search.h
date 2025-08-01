@@ -6,21 +6,9 @@
 #include <set>
 #include "imgui.h"
 #include "BetfairAPI/manager.h"
+#include "option_filter.hpp"
 
 namespace GUI {
-    struct CompetitionFilter{
-        CompetitionFilter(BetfairAPI::BettingType::CompetitionResult c, bool selected)
-            : comp_result(std::move(c)), selected(selected) {};
-        BetfairAPI::BettingType::CompetitionResult comp_result;
-        bool selected = false;
-    };
-    struct EventTypeFilter{
-        EventTypeFilter(BetfairAPI::BettingType::EventTypeResult evt, bool selected)
-            : ev_result(std::move(evt)), selected(selected) {};
-        BetfairAPI::BettingType::EventTypeResult ev_result;
-        bool selected = false;
-    };
-
     class MarketSearch {
         public:
             void render(std::weak_ptr<BetfairAPI::BetfairManager> manager);
@@ -32,8 +20,10 @@ namespace GUI {
 
             std::vector<EventTypeFilter> event_types_;
             std::vector<CompetitionFilter> competitions_;
+            std::vector<MarketTypeFilter> market_types_;
             std::set<std::string> event_type_ids_;
             std::set<std::string> competition_ids_;
+            std::set<std::string> market_type_ids_;
 
             void searchMarkets(std::weak_ptr<BetfairAPI::BetfairManager> manager);
             void displayTable();
