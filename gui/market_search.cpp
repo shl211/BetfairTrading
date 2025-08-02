@@ -146,59 +146,51 @@ namespace GUI {
             
             ImGui::TableHeadersRow();
             
-            //Need a fix for dynamically increasing rows in clipper.
-            //ImGuiListClipper clipper;
-            //clipper.Begin(static_cast<int>(market_info_.size()) + extra_rows_expanded);
+            for (int row = 0; row < market_info_.size(); row++) {
+                auto& selected_market_info = market_info_[row];
+                auto& info = selected_market_info.market_catalogue_;
 
-            //while(clipper.Step()) {
-            //    for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++) {
-                for (int row = 0; row < market_info_.size(); row++) {
-                    auto& selected_market_info = market_info_[row];
-                    auto& info = selected_market_info.market_catalogue_;
+                ImGui::TableNextRow();
+                ImGui::TableSetColumnIndex(0);
 
-                    ImGui::TableNextRow();
-                    ImGui::TableSetColumnIndex(0);
-
-                    //make whole row selectable
-                    bool row_selected = false;
-                    std::string label = "##row_market_search_table" + std::to_string(row);
-                    if (ImGui::Selectable(label.c_str(), &row_selected, ImGuiSelectableFlags_SpanAllColumns)) {
-                        // Toggle expansion
-                        selected_market_info.expanded_ = !selected_market_info.expanded_;
-                    }
-
-                    ImGui::SameLine();
-                    ImGui::Text("%s", info.event ? info.event->name.c_str() : "N/A");
-    
-                    ImGui::TableSetColumnIndex(1);
-                    ImGui::Text("%s", info.eventType ? info.eventType->name.c_str() : "N/A");
-    
-                    ImGui::TableSetColumnIndex(2);
-                    ImGui::Text("%s", !info.marketName.empty() ? info.marketName.c_str() : "N/A");
-    
-                    ImGui::TableSetColumnIndex(3);
-                    ImGui::Text("%.2f", info.totalMatched);
-    
-                    ImGui::TableSetColumnIndex(4);
-                    ImGui::Text("%s", info.marketStartTime ? info.marketStartTime->getIsoString().c_str() : "N/A");
-                
-                    if (selected_market_info.expanded_) {
-                        renderExtraInfo(row,manager);
-                    }
+                //make whole row selectable
+                bool row_selected = false;
+                std::string label = "##row_market_search_table" + std::to_string(row);
+                if (ImGui::Selectable(label.c_str(), &row_selected, ImGuiSelectableFlags_SpanAllColumns)) {
+                    // Toggle expansion
+                    selected_market_info.expanded_ = !selected_market_info.expanded_;
                 }
-            //}
 
-            //clipper.End();
+                ImGui::SameLine();
+                ImGui::Text("%s", info.event ? info.event->name.c_str() : "N/A");
+
+                ImGui::TableSetColumnIndex(1);
+                ImGui::Text("%s", info.eventType ? info.eventType->name.c_str() : "N/A");
+
+                ImGui::TableSetColumnIndex(2);
+                ImGui::Text("%s", !info.marketName.empty() ? info.marketName.c_str() : "N/A");
+
+                ImGui::TableSetColumnIndex(3);
+                ImGui::Text("%.2f", info.totalMatched);
+
+                ImGui::TableSetColumnIndex(4);
+                ImGui::Text("%s", info.marketStartTime ? info.marketStartTime->getIsoString().c_str() : "N/A");
+            
+                if (selected_market_info.expanded_) {
+                    renderExtraInfo(row,manager);
+                }
+            }
+
             ImGui::EndTable();
         }
     }
 
-    ExtraRowCount MarketSearch::renderExtraInfo(int row, std::weak_ptr<BetfairAPI::BetfairManager> manager) {
-        ExtraRowCount extra_rows = 0;
+    void MarketSearch::renderExtraInfo(int row, std::weak_ptr<BetfairAPI::BetfairManager> manager) {
 
+        // Add a new row for the expanded info
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-
+        
         auto& selected_market_info = market_info_[row];
         auto& market_cat = selected_market_info.market_catalogue_;
         
@@ -231,33 +223,27 @@ namespace GUI {
             assert(std::size(data) == 1);
             
             selected_market_info.market_book_ = std::make_unique<BetfairAPI::BettingType::MarketBook>(std::move(data[0]));
+
+            //instantiate pricing widget upon new market book data
+            if(!selected_market_info.price_size_widget_) {
+                selected_market_info.price_size_widget_ = std::make_unique<PriceSizeSquare>();
+            }
         }
         
         ImGui::Text("Runners: ");
-        extra_rows++;
         
         //need to create a nerw class with new frame rendering
         for(auto& runner : market_cat.runners) {
-            ImGui::Text("%s", runner.runnerName.c_str());
-            ImGui::SameLine();
-            auto price_data = lookupBackLayPrice(runner.selectionId,*selected_market_info.market_book_);
-            ImGui::TextColored(
-                ImVec4(0.0f, 1.0f, 0.0f, 1.0f),  //green
-                "Back %.2f", 
-                !price_data.availableToBack.empty() ? price_data.availableToBack[0].price : 0.00
-            );
+            if(selected_market_info.price_size_widget_) {
+                auto data = lookupBackLayPrice(runner.selectionId,*selected_market_info.market_book_);
                 
-            ImGui::SameLine();
-            ImGui::TextColored(
-                ImVec4(1.0f, 0.0f, 0.0f, 1.0f), //red
-                "Lay %.2f", 
-                !price_data.availableToLay.empty() ? price_data.availableToLay[0].price : 0.00
-            );
-            
-            extra_rows++;
-        }
+                //refactor so update occurs upon state change??
+                selected_market_info.price_size_widget_->updatePriceSizeData(std::move(data));
+                selected_market_info.price_size_widget_->updateRunnerName(runner.runnerName);
 
-        return extra_rows;
+                selected_market_info.price_size_widget_->render();
+            }
+        }
     }
     
     void MarketSearch::loadFilterOptions(std::weak_ptr<BetfairAPI::BetfairManager> manager) {

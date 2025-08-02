@@ -7,6 +7,7 @@
 #include "imgui.h"
 #include "BetfairAPI/manager.h"
 #include "option_filter.hpp"
+#include "price_square.hpp"
 
 namespace GUI {
     using ExtraRowCount = int;
@@ -22,6 +23,7 @@ namespace GUI {
                         : market_catalogue_(m_cat) {};
                     BetfairAPI::BettingType::MarketCatalogue market_catalogue_;
                     std::unique_ptr<BetfairAPI::BettingType::MarketBook> market_book_ = nullptr;
+                    std::unique_ptr<PriceSizeSquare> price_size_widget_ = nullptr;
                     bool expanded_ = false;
                 };
             
@@ -44,9 +46,7 @@ namespace GUI {
 
                 void searchMarkets(std::weak_ptr<BetfairAPI::BetfairManager> manager);
                 void displayTable(std::weak_ptr<BetfairAPI::BetfairManager> manager);
-                void loadFilterOptions(std::weak_ptr<BetfairAPI::BetfairManager> manager); //does not currently work
-
-                ExtraRowCount renderExtraInfo(int row, std::weak_ptr<BetfairAPI::BetfairManager> manager);
-                ExtraRowCount extra_rows_expanded = 0;
+                void loadFilterOptions(std::weak_ptr<BetfairAPI::BetfairManager> manager);
+                void renderExtraInfo(int row, std::weak_ptr<BetfairAPI::BetfairManager> manager);
     };
 }
