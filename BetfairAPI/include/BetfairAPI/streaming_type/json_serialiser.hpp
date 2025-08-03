@@ -4,6 +4,7 @@
 #include "BetfairAPI/streaming_type/market_filter.h"
 #include "BetfairAPI/streaming_type/market_data_filter.h"
 #include "BetfairAPI/streaming_type/change_message.h"
+#include "BetfairAPI/streaming_type/market_change_message.h"
 #include "BetfairAPI/streaming_type/market_description.h"
 #include "BetfairAPI/streaming_type/runner_change.h"
 #include "BetfairAPI/utils.h"
@@ -226,18 +227,40 @@ namespace BetfairAPI::StreamingType {
     * RunnerChange
     **************************************************************************/
     inline void to_json(nlohmann::json& j, const RunnerChange& rc) {
-        j["img"] = rc.replaceImage;
-        j["tv"] = rc.totalMatchedVolume;
-        if (!rc.values.empty()) j["values"] = rc.values;
-        if (!rc.lvlLadder.empty()) j["lvlLadder"] = rc.lvlLadder;
-        if (!rc.priceLadder.empty()) j["priceLadder"] = rc.priceLadder;
+        
+        if (!rc.values.empty()) j["Values"] = rc.values;
+        if (rc.conflated.has_value()) j["con"] = rc.conflated.value();
+        if (!rc.lvlLadder.empty()) j["Level"] = rc.lvlLadder;
+        if (!rc.priceLadder.empty()) j["Price point"] = rc.priceLadder;
     }
 
     inline void from_json(const nlohmann::json& j, RunnerChange& rc) {
-        if (j.contains("img")) rc.replaceImage = j.at("img").get<bool>();
-        if (j.contains("tv")) rc.totalMatchedVolume = j.at("tv").get<double>();
-        if (j.contains("values")) j.at("values").get_to(rc.values);
-        if (j.contains("lvlLadder")) j.at("lvlLadder").get_to(rc.lvlLadder);
-        if (j.contains("priceLadder")) j.at("priceLadder").get_to(rc.priceLadder);
+        if (j.contains("Values")) j.at("Values").get_to(rc.values);
+        if (j.contains("con")) rc.conflated = j.at("con").get<bool>();
+        if (j.contains("Level")) j.at("Level").get_to(rc.lvlLadder);
+        if (j.contains("Price point")) j.at("Price point").get_to(rc.priceLadder);
+    }
+
+    /**************************************************************************
+    * MarketChangeMessage
+    **************************************************************************/
+    inline void to_json(nlohmann::json& j, const MarketChangeMessage& mcm) {
+        to_json(j, static_cast<const ChangeMessage&>(mcm));
+        
+        j["tv"] = mcm.totalValueMatched;
+        j["img"] = mcm.replaceImage;
+        j["rc"] = mcm.runnerChange;
+        if(mcm.marketDefinition) j["marketDefinition"] = *mcm.marketDefinition;
+    }
+
+    inline void from_json(const nlohmann::json& j, MarketChangeMessage& mcm) {
+        from_json(j,static_cast<ChangeMessage&>(mcm));
+        
+        if (j.contains("tv")) mcm.totalValueMatched = j.at("tv").get<double>();
+        if (j.contains("img")) mcm.replaceImage = j.at("img").get<bool>();
+        if (j.contains("rc")) j.at("rc").get_to(mcm.runnerChange);
+        if (j.contains("marketDefinition")) {
+            mcm.marketDefinition = std::make_unique<MarketDefinition>(j.at("marketDefinition").get<MarketDefinition>());
+        }
     }
 }

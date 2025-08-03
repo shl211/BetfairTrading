@@ -150,16 +150,14 @@ namespace BetfairAPI::StreamingType {
     }
 
     struct RunnerChange {
-        bool replaceImage = false; //img
-        double totalMatchedVolume = 0;//tv
+        std::optional<bool> conflated;
         std::vector<RunnerValues> values;
         std::vector<LevelBasedLadder> lvlLadder;
         std::vector<PriceBasedLadder> priceLadder;
     };
 
     inline bool operator==(const RunnerChange& lhs, const RunnerChange& rhs) {
-        return lhs.replaceImage == rhs.replaceImage &&
-               lhs.totalMatchedVolume == rhs.totalMatchedVolume &&
+        return lhs.conflated == rhs.conflated &&
                lhs.values == rhs.values &&
                lhs.lvlLadder == rhs.lvlLadder &&
                lhs.priceLadder == rhs.priceLadder;
@@ -171,8 +169,7 @@ namespace BetfairAPI::StreamingType {
 
     inline std::ostream& operator<<(std::ostream& os, const RunnerChange& rc) {
         os << "RunnerChange{";
-        os << "replaceImage=" << (rc.replaceImage ? "true" : "false") << ", ";
-        os << "totalMatchedVolume=" << rc.totalMatchedVolume << ", ";
+        os << "conflated=" << (rc.conflated ? (*rc.conflated ? "true" : "false") : "null") << ", ";
         os << "values=[";
         for (size_t i = 0; i < rc.values.size(); ++i) {
             if (i > 0) os << ", ";

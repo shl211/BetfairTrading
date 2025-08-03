@@ -155,8 +155,7 @@ TEST(PriceBasedLadderJson,Json) {
 TEST(RunnerChangeJson, Json) {
     BetfairAPI::StreamingType::RunnerChange rc;
 
-    rc.replaceImage = false;
-    rc.totalMatchedVolume = 0;
+    rc.conflated = false;
     rc.values = {
         BetfairAPI::StreamingType::RunnerValues{
             1500.0, 2.8, 2.6, 2.7, std::make_optional<std::string>("runner_001")
@@ -204,4 +203,104 @@ TEST(RunnerChangeJson, Json) {
     BetfairAPI::StreamingType::RunnerChange rc_new = j;
 
     EXPECT_EQ(rc, rc_new);
+}
+
+TEST(MarketChangeMessageJson,Json) {
+    BetfairAPI::StreamingType::MarketChangeMessage msg;
+    msg.changeType = BetfairAPI::StreamingEnum::ChangeType::SUB_IMAGE;
+    msg.segmentType = BetfairAPI::StreamingEnum::SegmentType::SEG_START;
+    msg.conflateMs = 100;
+    msg.status = 1;
+    msg.heartbeatMs = 5000;
+    msg.publishTime = BetfairAPI::Date("2024-06-01T12:00:00Z");
+    msg.initialClk = "abc123";
+    msg.clk = "def456";
+
+    nlohmann::json j = msg;
+    BetfairAPI::StreamingType::ChangeMessage msg_new = j;
+
+    msg.marketDefinition = std::make_unique<BetfairAPI::StreamingType::MarketDefinition>();
+    msg.marketDefinition->id = "1.23456789";
+    msg.marketDefinition->venue = "Ascot";
+    msg.marketDefinition->raceType = "FLAT";
+    msg.marketDefinition->settledTime = BetfairAPI::Date("2024-06-01T13:00:00Z");
+    msg.marketDefinition->timeZone = "Europe/London";
+    msg.marketDefinition->eachWayDivisor = 1.5;
+    msg.marketDefinition->bspMarket = true;
+    msg.marketDefinition->turnInPlayEnabled = true;
+    msg.marketDefinition->priceLadderDefinition = "CLASSIC";
+    msg.marketDefinition->keyLineDefinition = 123456;
+    msg.marketDefinition->persistenceEnabled = true;
+    msg.marketDefinition->marketBaseRate = 5.0;
+    msg.marketDefinition->eventId = "evt123";
+    msg.marketDefinition->eventTypeId = "evttype456";
+    msg.marketDefinition->numberOfWinners = 1;
+    msg.marketDefinition->countryCode = "GB";
+    msg.marketDefinition->lineMaxUnit = 100.0;
+    msg.marketDefinition->bettingType = "ODDS";
+    msg.marketDefinition->marketType = "WIN";
+    msg.marketDefinition->marketTime = "2024-06-01T12:00:00Z";
+    msg.marketDefinition->suspendTime = "2024-06-01T12:30:00Z";
+    msg.marketDefinition->bspReconciled = false;
+    msg.marketDefinition->complete = false;
+    msg.marketDefinition->inPlay = false;
+    msg.marketDefinition->crossMatching = true;
+    msg.marketDefinition->runnersVoidable = false;
+    msg.marketDefinition->numberOfActiveRunners = 10;
+    msg.marketDefinition->lineMinUnit = 1.0;
+    msg.marketDefinition->betDelay = true;
+    msg.marketDefinition->status = "OPEN";
+    msg.marketDefinition->regulators = "UKGC";
+    msg.marketDefinition->discountAllowed = false;
+    msg.marketDefinition->openDate = BetfairAPI::Date("2024-06-01T11:00:00Z");
+    msg.marketDefinition->version = 1L;
+
+    msg.totalValueMatched = 12345.67;
+    msg.replaceImage = true;
+
+    msg.runnerChange.conflated = false;
+    msg.runnerChange.values = {
+        BetfairAPI::StreamingType::RunnerValues{
+            1500.0, 2.8, 2.6, 2.7, std::make_optional<std::string>("runner_001")
+        }
+    };
+    msg.runnerChange.lvlLadder = {
+        BetfairAPI::StreamingType::LevelBasedLadder{
+            {
+                BetfairAPI::StreamingType::LadderInfo{1, 2.0, 100.0},
+                BetfairAPI::StreamingType::LadderInfo{2, 2.2, 50.0}
+            },
+            {
+                BetfairAPI::StreamingType::LadderInfo{1, 2.4, 80.0},
+                BetfairAPI::StreamingType::LadderInfo{2, 2.6, 60.0}
+            },
+            {
+                BetfairAPI::StreamingType::LadderInfo{1, 2.1, 30.0}
+            },
+            {
+                BetfairAPI::StreamingType::LadderInfo{1, 2.5, 40.0}
+            }
+        }
+    };
+    msg.runnerChange.priceLadder = {
+        BetfairAPI::StreamingType::PriceBasedLadder{
+            {
+                {2.0, 100.0}, {2.2, 50.0}
+            },
+            {
+                {2.4, 80.0}, {2.6, 60.0}
+            },
+            {
+                {2.1, 30.0}
+            },
+            {
+                {2.5, 40.0}
+            },
+            {
+                {2.3, 120.0}
+            }
+        }
+    };
+
+    EXPECT_EQ(msg, msg_new);
 }
