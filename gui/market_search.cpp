@@ -97,8 +97,33 @@ namespace GUI {
         renderFilterOptions("Countries",country_codes_,country_codes_ids_);
         renderFilterOptions("Venues",venue_,venue_ids_);
 
-
+        //table of search results on left
+        ImGui::BeginGroup();
+        ImGui::BeginChild("LeftPanel", ImVec2(800, 0), true, ImGuiWindowFlags_HorizontalScrollbar); //make it dynamic sizing???
         displayTable(manager);
+        ImGui::EndChild();
+        ImGui::EndGroup();
+
+        //extra info panel on right
+        ImGui::SameLine();
+        ImGui::BeginGroup();
+        ImGui::Text("More Market Information");
+        ImGui::Separator();
+
+        //if goes out of bounds, reset to init
+        if(expanded_info_id_ > market_info_.size()) {
+            expanded_info_id_ = detail::DEFAULT_EXTRA_INFO_PANEL;
+        }
+
+        if(expanded_info_id_ == detail::DEFAULT_EXTRA_INFO_PANEL) {
+            ImGui::Text("Select a market to see more info.");
+        } 
+        else {
+            renderExtraInfo(expanded_info_id_,manager);
+        }
+
+        ImGui::EndGroup();
+
         ImGui::End();
     }
 
@@ -146,38 +171,39 @@ namespace GUI {
             
             ImGui::TableHeadersRow();
             
-            for (int row = 0; row < market_info_.size(); row++) {
-                auto& selected_market_info = market_info_[row];
-                auto& info = selected_market_info.market_catalogue_;
+            ImGuiListClipper clipper;
+            clipper.Begin(market_info_.size());
 
-                ImGui::TableNextRow();
-                ImGui::TableSetColumnIndex(0);
+            while(clipper.Step()) {
 
-                //make whole row selectable
-                bool row_selected = false;
-                std::string label = "##row_market_search_table" + std::to_string(row);
-                if (ImGui::Selectable(label.c_str(), &row_selected, ImGuiSelectableFlags_SpanAllColumns)) {
-                    // Toggle expansion
-                    selected_market_info.expanded_ = !selected_market_info.expanded_;
-                }
-
-                ImGui::SameLine();
-                ImGui::Text("%s", info.event ? info.event->name.c_str() : "N/A");
-
-                ImGui::TableSetColumnIndex(1);
-                ImGui::Text("%s", info.eventType ? info.eventType->name.c_str() : "N/A");
-
-                ImGui::TableSetColumnIndex(2);
-                ImGui::Text("%s", !info.marketName.empty() ? info.marketName.c_str() : "N/A");
-
-                ImGui::TableSetColumnIndex(3);
-                ImGui::Text("%.2f", info.totalMatched);
-
-                ImGui::TableSetColumnIndex(4);
-                ImGui::Text("%s", info.marketStartTime ? info.marketStartTime->getIsoString().c_str() : "N/A");
-            
-                if (selected_market_info.expanded_) {
-                    renderExtraInfo(row,manager);
+                for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++) {
+                    auto& selected_market_info = market_info_[row];
+                    auto& info = selected_market_info.market_catalogue_;
+    
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+    
+                    //make whole row selectable
+                    bool row_selected = false;
+                    std::string label = "##row_market_search_table" + std::to_string(row);
+                    if (ImGui::Selectable(label.c_str(), &row_selected, ImGuiSelectableFlags_SpanAllColumns)) {
+                        expanded_info_id_ = row;//keep track of last selected market for info expansion
+                    }
+    
+                    ImGui::SameLine();
+                    ImGui::Text("%s", info.event ? info.event->name.c_str() : "N/A");
+    
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::Text("%s", info.eventType ? info.eventType->name.c_str() : "N/A");
+    
+                    ImGui::TableSetColumnIndex(2);
+                    ImGui::Text("%s", !info.marketName.empty() ? info.marketName.c_str() : "N/A");
+    
+                    ImGui::TableSetColumnIndex(3);
+                    ImGui::Text("%.2f", info.totalMatched);
+    
+                    ImGui::TableSetColumnIndex(4);
+                    ImGui::Text("%s", info.marketStartTime ? info.marketStartTime->getIsoString().c_str() : "N/A");
                 }
             }
 
@@ -187,10 +213,7 @@ namespace GUI {
 
     void MarketSearch::renderExtraInfo(int row, std::weak_ptr<BetfairAPI::BetfairManager> manager) {
 
-        // Add a new row for the expanded info
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
-        
+        // Add a new row for the expanded info        
         auto& selected_market_info = market_info_[row];
         auto& market_cat = selected_market_info.market_catalogue_;
         
@@ -232,7 +255,6 @@ namespace GUI {
         
         ImGui::Text("Runners: ");
         
-        //need to create a nerw class with new frame rendering
         for(auto& runner : market_cat.runners) {
             if(selected_market_info.price_size_widget_) {
                 auto data = lookupBackLayPrice(runner.selectionId,*selected_market_info.market_book_);

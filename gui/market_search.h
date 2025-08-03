@@ -10,7 +10,11 @@
 #include "price_square.hpp"
 
 namespace GUI {
-    using ExtraRowCount = int;
+
+    namespace detail {
+        constexpr int DEFAULT_EXTRA_INFO_PANEL = -1;
+    }
+
 
     class MarketSearch {
         public:
@@ -24,11 +28,11 @@ namespace GUI {
                     BetfairAPI::BettingType::MarketCatalogue market_catalogue_;
                     std::unique_ptr<BetfairAPI::BettingType::MarketBook> market_book_ = nullptr;
                     std::unique_ptr<PriceSizeSquare> price_size_widget_ = nullptr;
-                    bool expanded_ = false;
                 };
             
                 char market_search_[32] = "";
                 std::vector<MarketCatalogueSelection> market_info_;
+                int expanded_info_id_ = detail::DEFAULT_EXTRA_INFO_PANEL;
 
                 //store possible filter options
                 std::vector<EventTypeFilter> event_types_;
