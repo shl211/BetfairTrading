@@ -7,7 +7,7 @@
 #include "imgui.h"
 #include "BetfairAPI/manager.h"
 #include "option_filter.hpp"
-#include "price_square.hpp"
+#include "order_book_summary.hpp"
 
 namespace GUI {
 
@@ -27,7 +27,7 @@ namespace GUI {
                         : market_catalogue_(m_cat) {};
                     BetfairAPI::BettingType::MarketCatalogue market_catalogue_;
                     std::unique_ptr<BetfairAPI::BettingType::MarketBook> market_book_ = nullptr;
-                    std::unique_ptr<PriceSizeSquare> price_size_widget_ = nullptr;
+                    std::unique_ptr<OrderBookSummary> order_book_summary_widget_ = nullptr;
                 };
             
                 char market_search_[32] = "";

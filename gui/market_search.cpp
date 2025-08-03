@@ -97,6 +97,8 @@ namespace GUI {
         renderFilterOptions("Countries",country_codes_,country_codes_ids_);
         renderFilterOptions("Venues",venue_,venue_ids_);
 
+        ImGui::Separator();
+
         //table of search results on left
         ImGui::BeginGroup();
         ImGui::BeginChild("LeftPanel", ImVec2(800, 0), true, ImGuiWindowFlags_HorizontalScrollbar); //make it dynamic sizing???
@@ -248,23 +250,23 @@ namespace GUI {
             selected_market_info.market_book_ = std::make_unique<BetfairAPI::BettingType::MarketBook>(std::move(data[0]));
 
             //instantiate pricing widget upon new market book data
-            if(!selected_market_info.price_size_widget_) {
-                selected_market_info.price_size_widget_ = std::make_unique<PriceSizeSquare>();
+            if(!selected_market_info.order_book_summary_widget_) {
+                selected_market_info.order_book_summary_widget_ = std::make_unique<OrderBookSummary>();
             }
         }
         
         ImGui::Text("Runners: ");
-        
-        for(auto& runner : market_cat.runners) {
-            if(selected_market_info.price_size_widget_) {
-                auto data = lookupBackLayPrice(runner.selectionId,*selected_market_info.market_book_);
-                
-                //refactor so update occurs upon state change??
-                selected_market_info.price_size_widget_->updatePriceSizeData(std::move(data));
-                selected_market_info.price_size_widget_->updateRunnerName(runner.runnerName);
+        if(selected_market_info.market_book_ && selected_market_info.market_book_->isMarketDataDelayed) {
+            ImGui::Text("Market data delayed");
+        }
 
-                selected_market_info.price_size_widget_->render();
+        if(selected_market_info.order_book_summary_widget_) {
+            for(auto& runner : market_cat.runners) {
+                auto data = lookupBackLayPrice(runner.selectionId,*selected_market_info.market_book_);
+                selected_market_info.order_book_summary_widget_->insert(runner.selectionId,runner.runnerName,std::move(data));
             }
+
+            selected_market_info.order_book_summary_widget_->render();
         }
     }
     
