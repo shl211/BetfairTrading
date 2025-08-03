@@ -5,6 +5,7 @@
 #include "BetfairAPI/streaming_type/market_data_filter.h"
 #include "BetfairAPI/streaming_type/change_message.h"
 #include "BetfairAPI/streaming_type/market_description.h"
+#include "BetfairAPI/streaming_type/runner_change.h"
 #include "BetfairAPI/utils.h"
 
 namespace BetfairAPI::StreamingType {
@@ -163,5 +164,80 @@ namespace BetfairAPI::StreamingType {
         if (j.contains("discountAllowed")) mf.discountAllowed = j.at("discountAllowed").get<bool>();
         if (j.contains("openDate")) mf.openDate = BetfairAPI::Date(j.at("openDate").get<std::string>());
         if (j.contains("version")) mf.version = j.at("version").get<long long>();
+    }
+
+    /**************************************************************************
+    * RunnerValues
+    **************************************************************************/
+    inline void to_json(nlohmann::json& j, const RunnerValues& mf) {
+        if (mf.tradedVolume.has_value()) j["tv"] = mf.tradedVolume.value();
+        if (mf.lastTradedPrice.has_value()) j["ltp"] = mf.lastTradedPrice.value();
+        if (mf.startingPriceNear.has_value()) j["spn"] = mf.startingPriceNear.value();
+        if (mf.startingPriceFar.has_value()) j["spf"] = mf.startingPriceFar.value();
+        if (mf.runnerId.has_value()) j["id"] = mf.runnerId.value();
+    }
+
+    inline void from_json(const nlohmann::json& j, RunnerValues& rv) {
+        if (j.contains("tv")) rv.tradedVolume = j.at("tv").get<double>();
+        if (j.contains("ltp")) rv.lastTradedPrice = j.at("ltp").get<double>();
+        if (j.contains("spn")) rv.startingPriceNear = j.at("spn").get<double>();
+        if (j.contains("spf")) rv.startingPriceFar = j.at("spf").get<double>();
+        if (j.contains("id")) rv.runnerId = j.at("id").get<std::string>();
+    }
+
+
+    /**************************************************************************
+    * LevelBasedLadder
+    **************************************************************************/
+    inline void to_json(nlohmann::json& j, const LevelBasedLadder& lbl) {
+        if (!lbl.bestAvailableToBack.empty()) j["batb"] = lbl.bestAvailableToBack;
+        if (!lbl.bestAvailableToLay.empty()) j["batl"] = lbl.bestAvailableToLay;
+        if (!lbl.bestAvailableToBackVirtual.empty()) j["bdatb"] = lbl.bestAvailableToBackVirtual;
+        if (!lbl.bestAvailableToLayVirtual.empty()) j["bdatl"] = lbl.bestAvailableToLayVirtual;
+    }
+
+    inline void from_json(const nlohmann::json& j, LevelBasedLadder& lbl) {
+        if (j.contains("batb")) j.at("batb").get_to(lbl.bestAvailableToBack);
+        if (j.contains("batl")) j.at("batl").get_to(lbl.bestAvailableToLay);
+        if (j.contains("bdatb")) j.at("bdatb").get_to(lbl.bestAvailableToBackVirtual);
+        if (j.contains("bdatl")) j.at("bdatl").get_to(lbl.bestAvailableToLayVirtual);
+    }
+
+    /**************************************************************************
+    * PriceBasedLadder
+    **************************************************************************/
+    inline void to_json(nlohmann::json& j, const PriceBasedLadder& lbl) {
+        if (!lbl.availableToBack.empty()) j["atb"] = lbl.availableToBack;
+        if (!lbl.availableToLay.empty()) j["atl"] = lbl.availableToLay;
+        if (!lbl.startingPriceAvailableToBack.empty()) j["spb"] = lbl.startingPriceAvailableToBack;
+        if (!lbl.startingPriceAvailableToLay.empty()) j["spl"] = lbl.startingPriceAvailableToLay;
+        if (!lbl.traded.empty()) j["trd"] = lbl.traded;
+    }
+
+    inline void from_json(const nlohmann::json& j, PriceBasedLadder& lbl) {
+        if (j.contains("atb")) j.at("atb").get_to(lbl.availableToBack);
+        if (j.contains("atl")) j.at("atl").get_to(lbl.availableToLay);
+        if (j.contains("spb")) j.at("spb").get_to(lbl.startingPriceAvailableToBack);
+        if (j.contains("spl")) j.at("spl").get_to(lbl.startingPriceAvailableToLay);
+        if (j.contains("trd")) j.at("trd").get_to(lbl.traded);
+    }
+
+    /**************************************************************************
+    * RunnerChange
+    **************************************************************************/
+    inline void to_json(nlohmann::json& j, const RunnerChange& rc) {
+        j["img"] = rc.replaceImage;
+        j["tv"] = rc.totalMatchedVolume;
+        if (!rc.values.empty()) j["values"] = rc.values;
+        if (!rc.lvlLadder.empty()) j["lvlLadder"] = rc.lvlLadder;
+        if (!rc.priceLadder.empty()) j["priceLadder"] = rc.priceLadder;
+    }
+
+    inline void from_json(const nlohmann::json& j, RunnerChange& rc) {
+        if (j.contains("img")) rc.replaceImage = j.at("img").get<bool>();
+        if (j.contains("tv")) rc.totalMatchedVolume = j.at("tv").get<double>();
+        if (j.contains("values")) j.at("values").get_to(rc.values);
+        if (j.contains("lvlLadder")) j.at("lvlLadder").get_to(rc.lvlLadder);
+        if (j.contains("priceLadder")) j.at("priceLadder").get_to(rc.priceLadder);
     }
 }
