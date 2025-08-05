@@ -15,7 +15,7 @@ void printVector(std::vector<T> v) {
     std::cout << "Total: " << v.size() << "\n";
 };
 
-int main() {
+int main(){
     const char* USERNAME = std::getenv("USERNAME");
     const char* PASSWORD = std::getenv("PASSWORD");
     const char* APIKEYDELAY = std::getenv("APIKEYDELAY");
@@ -93,12 +93,24 @@ int main() {
     BetfairAPI::StreamingType::MarketDataFilter mdf;
     mdf.ladderLevels = BetfairAPI::StreamingType::MarketDataFilter::ONE;
 
-    manager.connectToStreamingService();
-    std::cout << manager.readFromStreamingService() << "\n";
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-    manager.subscribeToStreamingMarket(mf);
+    asio::io_context io_context;
+    asio::ssl::context ssl_context{asio::ssl::context::tls_client};
+    ssl_context.set_default_verify_paths();  // Load system CA certificates
+    ssl_context.set_verify_mode(asio::ssl::verify_peer);
+
+    manager.connectToStreamingService(io_context,ssl_context);
+    std::thread io_thread([&]() {
+        io_context.run();
+    });
+
+    //std::cout << manager.readFromStreamingService() << "\n";
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    std::cout << manager.readFromStreamingService() << "\n";
-    std::cout << manager.readFromStreamingService() << "\n";
-    std::cout << manager.readFromStreamingService() << "\n";
+    manager.subscribeToStreamingMarket(mf);
+    while(true) {
+        std::this_thread::sleep_for(std::chrono::seconds(30));
+        std::cout << manager.readFromStreamingService() << "\n";
+    }
+    //std::cout << manager.readFromStreamingService() << "\n";
+    //std::cout << manager.readFromStreamingService() << "\n";
+    io_thread.join();
 }

@@ -776,16 +776,21 @@ namespace BetfairAPI {
         return results;
     }
 
-    void BetfairManager::connectToStreamingService() {
+    void BetfairManager::connectToStreamingService(asio::io_context& io_context, asio::ssl::context& ssl_context) {
         if(!streamer_) {
-            streamer_ = std::make_unique<BetfairStreaming>(logger_);
+            streamer_ = BetfairAPI::BetfairStreaming::create(io_context,ssl_context,logger_);
+            streamer_->on_message = [this](const nlohmann::json& msg) {
+            
+                // TEMP for now
+                latest_message_ = msg.dump();
+            };
         }
 
         streamer_->connect(api_token_,session_token_);
     }
 
     std::string BetfairManager::readFromStreamingService() {
-        return streamer_ ? streamer_->readMessage() : "";
+        return std::to_string(streamer_->queueSize()) + latest_message_;
     }
 
     bool BetfairManager::subscribeToStreamingMarket(const StreamingType::MarketFilter& mf) {

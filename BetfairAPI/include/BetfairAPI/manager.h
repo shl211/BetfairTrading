@@ -167,14 +167,12 @@ namespace BetfairAPI {
                 std::optional<AccountEnum::IncludeItem> include_item = std::nullopt
             );
 
-            bool subscribeToStreamingMarket(const StreamingType::MarketFilter& mf);
-
-
             bool refreshSession();
-
+            
             //for streaming data
-            void connectToStreamingService();
+            void connectToStreamingService(asio::io_context& io_context, asio::ssl::context& ssl_context);
             std::string readFromStreamingService();
+            bool subscribeToStreamingMarket(const StreamingType::MarketFilter& mf);
             
         private:
             bool endSession();
@@ -203,6 +201,7 @@ namespace BetfairAPI {
             bool is_critical_level_;
 
             //streaming service
-            std::unique_ptr<BetfairStreaming> streamer_;
+            std::shared_ptr<BetfairStreaming> streamer_;
+            std::string latest_message_;
     };
 }
