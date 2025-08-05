@@ -32,7 +32,6 @@ namespace BetfairAPI {
                 const StreamingType::MarketFilter& filter = {},
                 const StreamingType::MarketDataFilter& md_filter = {}
             );
-            int queueSize() {return outgoing_messages_.size();};
 
         private:
             BetfairStreaming(

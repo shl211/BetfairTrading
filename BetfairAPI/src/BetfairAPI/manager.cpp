@@ -7,6 +7,8 @@
 #include "BetfairAPI/betting_type/json_serialiser.hpp"
 #include "BetfairAPI/account_api.h"
 #include "BetfairAPI/account_type/json_serialiser.hpp"
+#include "BetfairAPI/streaming_type/market_change_message.h"
+#include "BetfairAPI/streaming_type/json_serialiser.hpp"
 
 namespace BetfairAPI {
 
@@ -790,7 +792,11 @@ namespace BetfairAPI {
     }
 
     std::string BetfairManager::readFromStreamingService() {
-        return std::to_string(streamer_->queueSize()) + latest_message_;
+        if(auto j = nlohmann::json::parse(latest_message_); j.contains("op") && j.at("op").get<std::string>() == "mcm") {
+            auto mcm = j.get<StreamingType::MarketChangeMessage>();
+        }
+
+        return latest_message_;
     }
 
     bool BetfairManager::subscribeToStreamingMarket(const StreamingType::MarketFilter& mf) {

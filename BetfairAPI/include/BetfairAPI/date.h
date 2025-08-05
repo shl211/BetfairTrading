@@ -50,6 +50,5 @@ namespace BetfairAPI {
     inline bool operator>=(const Date& lhs, const Date& rhs) {
         return !(lhs < rhs);
     }
-
 }
 

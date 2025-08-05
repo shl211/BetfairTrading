@@ -11,6 +11,11 @@
 #include <stdexcept>
 #include <type_traits>
 #include <magic_enum.hpp>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 
 namespace BetfairAPI {
 
@@ -84,4 +89,49 @@ namespace BetfairAPI {
         }
         return result;
     };
+
+
+    inline std::string unixToISO8601(std::time_t timestamp) {
+        std::tm tm{};
+        
+    #ifdef _WIN32
+        if (gmtime_s(&tm, &timestamp) != 0) {
+            throw std::runtime_error("Failed to convert time to UTC");
+        }
+    #else
+        if (gmtime_r(&timestamp, &tm) == nullptr) {
+            throw std::runtime_error("Failed to convert time to UTC");
+        }
+    #endif
+
+        std::ostringstream oss;
+        oss << std::put_time(&tm, "%Y-%m-%dT%H:%M:%SZ");
+        if (oss.fail()) {
+            throw std::runtime_error("Failed to format time as ISO8601");
+        }
+        return oss.str();
+    }
+
+    inline std::time_t iso8601ToUnix(const std::string& iso_time) {
+        std::tm tm = {};
+        std::istringstream ss(iso_time);
+
+        // Try to parse the ISO format (e.g., "2025-08-05T20:00:00Z")
+        ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%SZ");
+        if (ss.fail()) {
+            throw std::runtime_error("Failed to parse ISO8601 time: " + iso_time);
+        }
+
+        // Convert to time_t (UTC)
+    #ifdef _WIN32
+        std::time_t result = _mkgmtime(&tm);
+    #else
+        std::time_t result = timegm(&tm);
+    #endif
+
+        if (result == -1) {
+            throw std::runtime_error("Failed to convert tm to time_t");
+        }
+        return result;
+    }
 }

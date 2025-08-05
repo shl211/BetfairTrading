@@ -107,7 +107,7 @@ int main(){
     std::this_thread::sleep_for(std::chrono::seconds(1));
     manager.subscribeToStreamingMarket(mf);
     while(true) {
-        std::this_thread::sleep_for(std::chrono::seconds(30));
+        std::this_thread::sleep_for(std::chrono::seconds(5));
         std::cout << manager.readFromStreamingService() << "\n";
     }
     //std::cout << manager.readFromStreamingService() << "\n";

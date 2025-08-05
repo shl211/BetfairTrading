@@ -67,7 +67,7 @@ namespace BetfairAPI::StreamingType {
         if (mf.conflateMs.has_value()) j["conflateMs"] = mf.conflateMs.value();
         if (mf.status.has_value()) j["status"] = mf.status.value();
         if (mf.heartbeatMs.has_value()) j["heartbeatMs"] = mf.heartbeatMs.value();
-        if (mf.publishTime.has_value()) j["pt"] = mf.publishTime->getIsoString();
+        if (mf.publishTime.has_value()) j["pt"] = iso8601ToUnix(mf.publishTime->getIsoString()) * 1000;
         if (mf.initialClk.has_value()) j["initialClk"] = mf.initialClk.value();
         if (mf.clk.has_value()) j["clk"] = mf.clk.value();
     }
@@ -85,7 +85,7 @@ namespace BetfairAPI::StreamingType {
         if (j.contains("status")) mf.status = j.at("status").get<int>();
         if (j.contains("heartbeatMs")) mf.heartbeatMs = j.at("heartbeatMs").get<int>();
         if (j.contains("pt"))
-            mf.publishTime = BetfairAPI::Date(j.at("pt").get<std::string>());
+            mf.publishTime = BetfairAPI::Date(unixToISO8601(j.at("pt").get<std::time_t>() / 1000));
         if (j.contains("initialClk")) mf.initialClk = j.at("initialClk").get<std::string>();
         if (j.contains("clk")) mf.clk = j.at("clk").get<std::string>();
     }
