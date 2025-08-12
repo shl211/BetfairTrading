@@ -63,8 +63,8 @@ TEST(MarketDefinitionJson,Json) {
         md.lineMaxUnit = 100.0;
         md.bettingType = "ODDS";
         md.marketType = "WIN";
-        md.marketTime = "2024-06-01T12:00:00Z";
-        md.suspendTime = "2024-06-01T12:30:00Z";
+        md.marketTime = BetfairAPI::Date{"2024-06-01T12:00:00Z"};
+        md.suspendTime = BetfairAPI::Date{"2024-06-01T12:30:00Z"};
         md.bspReconciled = false;
         md.complete = false;
         md.inPlay = false;
@@ -74,7 +74,7 @@ TEST(MarketDefinitionJson,Json) {
         md.lineMinUnit = 1.0;
         md.betDelay = true;
         md.status = "OPEN";
-        md.regulators = "UKGC";
+        md.regulators.push_back("UKGC");
         md.discountAllowed = false;
         md.openDate = BetfairAPI::Date("2024-06-01T11:00:00Z");
         md.version = 1L;
@@ -186,8 +186,8 @@ TEST(MarketChangeJson,Json) {
     mc.marketDefinition->lineMaxUnit = 100.0;
     mc.marketDefinition->bettingType = "ODDS";
     mc.marketDefinition->marketType = "WIN";
-    mc.marketDefinition->marketTime = "2024-06-01T12:00:00Z";
-    mc.marketDefinition->suspendTime = "2024-06-01T12:30:00Z";
+    mc.marketDefinition->marketTime = BetfairAPI::Date{"2024-06-01T12:00:00Z"};
+    mc.marketDefinition->suspendTime = BetfairAPI::Date{"2024-06-01T12:30:00Z"};
     mc.marketDefinition->bspReconciled = false;
     mc.marketDefinition->complete = false;
     mc.marketDefinition->inPlay = false;
@@ -197,7 +197,7 @@ TEST(MarketChangeJson,Json) {
     mc.marketDefinition->lineMinUnit = 1.0;
     mc.marketDefinition->betDelay = true;
     mc.marketDefinition->status = "OPEN";
-    mc.marketDefinition->regulators = "UKGC";
+    mc.marketDefinition->regulators.push_back("UKGC");
     mc.marketDefinition->discountAllowed = false;
     mc.marketDefinition->openDate = BetfairAPI::Date("2024-06-01T11:00:00Z");
     mc.marketDefinition->version = 1L;

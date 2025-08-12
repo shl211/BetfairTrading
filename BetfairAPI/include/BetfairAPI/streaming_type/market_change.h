@@ -11,7 +11,7 @@ namespace BetfairAPI::StreamingType {
     struct MarketChange {
         std::string marketId;//id
         double tradedVolume;//tv
-        std::optional<std::string> image;//img
+        std::optional<bool> image;//img
         std::unique_ptr<MarketDefinition> marketDefinition;
         std::vector<RunnerChange> runnerChange;
     };
@@ -33,7 +33,7 @@ namespace BetfairAPI::StreamingType {
     inline std::ostream& operator<<(std::ostream& os, const MarketChange& mc) {
         os << "MarketChange(marketId: " << mc.marketId
            << ", tradedVolume: " << mc.tradedVolume
-           << ", image: " << (mc.image ? *mc.image : "null")
+           << ", image: " << (mc.image ? *mc.image : false)
            << ", marketDefinition: ";
         if (mc.marketDefinition) {
             os << *mc.marketDefinition;

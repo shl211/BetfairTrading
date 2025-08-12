@@ -794,6 +794,11 @@ namespace BetfairAPI {
     std::string BetfairManager::readFromStreamingService() {
         if(auto j = nlohmann::json::parse(latest_message_); j.contains("op") && j.at("op").get<std::string>() == "mcm") {
             auto mcm = j.get<StreamingType::MarketChangeMessage>();
+            if(logger_) {
+                std::stringstream ss;
+                ss << mcm;
+                logger_->debug(ss.str());
+            }
         }
 
         return latest_message_;

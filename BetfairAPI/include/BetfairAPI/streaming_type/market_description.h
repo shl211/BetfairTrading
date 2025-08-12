@@ -13,36 +13,36 @@ namespace BetfairAPI::StreamingType {
         std::optional<std::string> venue;
         std::optional<std::string> raceType;
         std::optional<Date> settledTime;
-        std::optional<std::string> timeZone;
+        std::optional<std::string> timeZone;//
         std::optional<double> eachWayDivisor;
-        std::optional<bool> bspMarket;
-        std::optional<bool> turnInPlayEnabled;
+        std::optional<bool> bspMarket;//
+        std::optional<bool> turnInPlayEnabled;//
         std::optional<std::string> priceLadderDefinition;
         std::optional<int> keyLineDefinition;
-        std::optional<bool> persistenceEnabled;
-        std::optional<double> marketBaseRate;
-        std::optional<std::string> eventId;
+        std::optional<bool> persistenceEnabled;//
+        std::optional<double> marketBaseRate;//
+        std::optional<std::string> eventId;//
         std::optional<std::string> eventTypeId;
-        std::optional<int> numberOfWinners;
+        std::optional<int> numberOfWinners;//
         std::optional<std::string> countryCode;
         std::optional<double> lineMaxUnit;
-        std::optional<std::string> bettingType;
-        std::optional<std::string> marketType;
-        std::optional<std::string> marketTime;
-        std::optional<std::string> suspendTime;
-        std::optional<bool> bspReconciled;
-        std::optional<bool> complete;
-        std::optional<bool> inPlay;
-        std::optional<bool> crossMatching;
-        std::optional<bool> runnersVoidable;
-        std::optional<int> numberOfActiveRunners;
+        std::optional<std::string> bettingType;//
+        std::optional<std::string> marketType;//
+        std::optional<Date> marketTime;//
+        std::optional<Date> suspendTime;//
+        std::optional<bool> bspReconciled;//
+        std::optional<bool> complete;//
+        std::optional<bool> inPlay;//
+        std::optional<bool> crossMatching;//
+        std::optional<bool> runnersVoidable;//
+        std::optional<int> numberOfActiveRunners;//
         std::optional<double> lineMinUnit;
-        std::optional<bool> betDelay;
-        std::optional<std::string> status;
-        std::optional<std::string> regulators;
-        std::optional<bool> discountAllowed;
-        std::optional<Date> openDate;
-        std::optional<long> version;
+        std::optional<double> betDelay;//
+        std::optional<std::string> status;//
+        std::vector<std::string> regulators;//
+        std::optional<bool> discountAllowed;//
+        std::optional<Date> openDate;//
+        std::optional<long> version;//
     };
 
     inline bool operator==(const MarketDefinition& lhs, const MarketDefinition& rhs) {
@@ -107,8 +107,8 @@ namespace BetfairAPI::StreamingType {
         os << "lineMaxUnit=" << (md.lineMaxUnit ? std::to_string(*md.lineMaxUnit) : "null") << ", ";
         os << "bettingType=" << (md.bettingType ? *md.bettingType : "null") << ", ";
         os << "marketType=" << (md.marketType ? *md.marketType : "null") << ", ";
-        os << "marketTime=" << (md.marketTime ? *md.marketTime : "null") << ", ";
-        os << "suspendTime=" << (md.suspendTime ? *md.suspendTime : "null") << ", ";
+        os << "marketTime=" << (md.marketTime ? md.marketTime->getIsoString() : "null") << ", ";
+        os << "suspendTime=" << (md.suspendTime ? md.suspendTime->getIsoString() : "null") << ", ";
         os << "bspReconciled=" << (md.bspReconciled ? (*md.bspReconciled ? "true" : "false") : "null") << ", ";
         os << "complete=" << (md.complete ? (*md.complete ? "true" : "false") : "null") << ", ";
         os << "inPlay=" << (md.inPlay ? (*md.inPlay ? "true" : "false") : "null") << ", ";
@@ -118,7 +118,14 @@ namespace BetfairAPI::StreamingType {
         os << "lineMinUnit=" << (md.lineMinUnit ? std::to_string(*md.lineMinUnit) : "null") << ", ";
         os << "betDelay=" << (md.betDelay ? (*md.betDelay ? "true" : "false") : "null") << ", ";
         os << "status=" << (md.status ? *md.status : "null") << ", ";
-        os << "regulators=" << (md.regulators ? *md.regulators : "null") << ", ";
+        os << "regulators=[";
+        for (size_t i = 0; i < md.regulators.size(); ++i) {
+            os << md.regulators[i];
+            if (i < md.regulators.size() - 1) {
+            os << ", ";
+            }
+        }
+        os << "], ";
         os << "discountAllowed=" << (md.discountAllowed ? (*md.discountAllowed ? "true" : "false") : "null") << ", ";
         os << "openDate=" << (md.openDate ? md.openDate->getIsoString() : "null") << ", ";
         os << "version=" << (md.version ? std::to_string(*md.version) : "null");
