@@ -3,6 +3,7 @@ file(GLOB SOURCES CONFIGURE_DEPENDS
     "src/BetfairAPI/betting_type/*.cpp"
     "src/BetfairAPI/account_type/*.cpp"
     "src/BetfairAPI/streaming_type/*.cpp"
+    "src/BetfairAPI/market_type/*.cpp"
     "src/http/*.cpp"
 )
 

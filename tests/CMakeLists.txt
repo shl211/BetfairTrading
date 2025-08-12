@@ -5,6 +5,7 @@ file(GLOB TEST_SOURCES CONFIGURE_DEPENDS
     "betting_type/*.cpp" 
     "account_type/*.cpp" 
     "streaming_type/*.cpp" 
+    "market_type/*.cpp" 
 )
 
 add_executable(test_suite
