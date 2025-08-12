@@ -92,7 +92,6 @@ TEST(RunnerValuesJson,Json) {
     rv.lastTradedPrice = 2.8;
     rv.startingPriceNear = 2.6;
     rv.startingPriceFar = 2.7;
-    rv.runnerId = std::make_optional<std::string>("runner_001");
 
     nlohmann::json j = rv;
     BetfairAPI::StreamingType::RunnerValues rv_new = j;
@@ -100,207 +99,164 @@ TEST(RunnerValuesJson,Json) {
     EXPECT_EQ(rv, rv_new);
 }
 
-TEST(LevelBasedLadderJson,Json) {
-    BetfairAPI::StreamingType::LevelBasedLadder lbl;
-
-    BetfairAPI::StreamingType::LadderInfo back1{1,2.0, 100.0};
-    BetfairAPI::StreamingType::LadderInfo back2{2,2.2, 50.0};
-    BetfairAPI::StreamingType::LadderInfo lay1{1,2.4, 80.0};
-    BetfairAPI::StreamingType::LadderInfo lay2{2,2.6, 60.0};
-    BetfairAPI::StreamingType::LadderInfo backVirtual{1,2.1, 30.0};
-    BetfairAPI::StreamingType::LadderInfo layVirtual{1,2.5, 40.0};
-
-    lbl.bestAvailableToBack = {back1, back2};
-    lbl.bestAvailableToLay = {lay1, lay2};
-    lbl.bestAvailableToBackVirtual = {backVirtual};
-    lbl.bestAvailableToLayVirtual = {layVirtual};
+TEST(DepthLadderJson,Json) {
+    BetfairAPI::StreamingType::DepthLadder lbl;
+    lbl.level = 1;
+    lbl.price = 0.01;
+    lbl.size = 0.04;
 
     nlohmann::json j = lbl;
-    BetfairAPI::StreamingType::LevelBasedLadder lbl_new = j;
+    BetfairAPI::StreamingType::DepthLadder lbl_new = j;
 
     EXPECT_EQ(lbl, lbl_new);
 }
 
+TEST(PriceLadderJson,Json) {
+    BetfairAPI::StreamingType::PriceLadder pbl{1.1,2};
 
-TEST(PriceBasedLadderJson,Json) {
-    BetfairAPI::StreamingType::PriceBasedLadder pbl;
-    std::vector<BetfairAPI::StreamingType::PriceSize> availableToBack = {
-        {2.0, 100.0}, {2.2, 50.0}
-    };
-    std::vector<BetfairAPI::StreamingType::PriceSize> availableToLay = {
-        {2.4, 80.0}, {2.6, 60.0}
-    };
-    std::vector<BetfairAPI::StreamingType::PriceSize> startingPriceAvailableToBack = {
-        {2.1, 30.0}
-    };
-    std::vector<BetfairAPI::StreamingType::PriceSize> startingPriceAvailableToLay = {
-        {2.5, 40.0}
-    };
-    std::vector<BetfairAPI::StreamingType::PriceSize> traded = {
-        {2.3, 120.0}
-    };
-
-    pbl.availableToBack = availableToBack;
-    pbl.availableToLay = availableToLay;
-    pbl.startingPriceAvailableToBack = startingPriceAvailableToBack;
-    pbl.startingPriceAvailableToLay = startingPriceAvailableToLay;
-    pbl.traded = traded;
 
     nlohmann::json j = pbl;
-    BetfairAPI::StreamingType::PriceBasedLadder pbl_new = j;
+    BetfairAPI::StreamingType::PriceLadder pbl_new = j;
 
     EXPECT_EQ(pbl, pbl_new);
 }
 
 TEST(RunnerChangeJson, Json) {
     BetfairAPI::StreamingType::RunnerChange rc;
-
-    rc.conflated = false;
-    rc.values = {
-        BetfairAPI::StreamingType::RunnerValues{
-            1500.0, 2.8, 2.6, 2.7, std::make_optional<std::string>("runner_001")
-        }
+    rc.runnerId = 123456789;
+    rc.conflated = true;
+    rc.runnerValues = BetfairAPI::StreamingType::RunnerValues{
+        1500.0, 2.8, 2.6, 2.7
     };
-    rc.lvlLadder = {
-        BetfairAPI::StreamingType::LevelBasedLadder{
-            {
-                BetfairAPI::StreamingType::LadderInfo{1, 2.0, 100.0},
-                BetfairAPI::StreamingType::LadderInfo{2, 2.2, 50.0}
-            },
-            {
-                BetfairAPI::StreamingType::LadderInfo{1, 2.4, 80.0},
-                BetfairAPI::StreamingType::LadderInfo{2, 2.6, 60.0}
-            },
-            {
-                BetfairAPI::StreamingType::LadderInfo{1, 2.1, 30.0}
-            },
-            {
-                BetfairAPI::StreamingType::LadderInfo{1, 2.5, 40.0}
-            }
-        }
+    rc.bestAvailableToBack = {
+        BetfairAPI::StreamingType::DepthLadder{1, 2.0, 100.0},
+        BetfairAPI::StreamingType::DepthLadder{2, 2.2, 50.0}
     };
-    rc.priceLadder = {
-        BetfairAPI::StreamingType::PriceBasedLadder{
-            {
-                {2.0, 100.0}, {2.2, 50.0}
-            },
-            {
-                {2.4, 80.0}, {2.6, 60.0}
-            },
-            {
-                {2.1, 30.0}
-            },
-            {
-                {2.5, 40.0}
-            },
-            {
-                {2.3, 120.0}
-            }
-        }
+    rc.bestAvailableToLay = {
+        BetfairAPI::StreamingType::DepthLadder{1, 2.4, 80.0},
+        BetfairAPI::StreamingType::DepthLadder{2, 2.6, 60.0}
     };
-
+    rc.bestAvailableToBackVirtual = {
+        BetfairAPI::StreamingType::DepthLadder{1, 2.1, 30.0}
+    };
+    rc.bestAvailableToLayVirtual = {
+        BetfairAPI::StreamingType::DepthLadder{1, 2.5, 40.0}
+    };
+    rc.availableToBack = {
+        BetfairAPI::StreamingType::PriceLadder{2.0, 100.0},
+        BetfairAPI::StreamingType::PriceLadder{2.2, 50.0}
+    };
+    rc.availableToLay = {
+        BetfairAPI::StreamingType::PriceLadder{2.4, 80.0},
+        BetfairAPI::StreamingType::PriceLadder{2.6, 60.0}
+    };
+    rc.startingPriceBack = {
+        BetfairAPI::StreamingType::PriceLadder{2.1, 30.0}
+    };
+    rc.startingPriceLay = {
+        BetfairAPI::StreamingType::PriceLadder{2.5, 40.0}
+    };
+    rc.traded = 12345.67;
     nlohmann::json j = rc;
     BetfairAPI::StreamingType::RunnerChange rc_new = j;
 
     EXPECT_EQ(rc, rc_new);
 }
 
+TEST(MarketChangeJson,Json) {
+    BetfairAPI::StreamingType::MarketChange mc;
+    mc.marketId = "1.23456789";
+    mc.marketDefinition = std::make_unique<BetfairAPI::StreamingType::MarketDefinition>();
+    mc.marketDefinition->id = "1.23456789";
+    mc.marketDefinition->venue = "Ascot";
+    mc.marketDefinition->raceType = "FLAT";
+    mc.marketDefinition->settledTime = BetfairAPI::Date("2024-06-01T13:00:00Z");
+    mc.marketDefinition->timeZone = "Europe/London";
+    mc.marketDefinition->eachWayDivisor = 1.5;
+    mc.marketDefinition->bspMarket = true;
+    mc.marketDefinition->turnInPlayEnabled = true;
+    mc.marketDefinition->priceLadderDefinition = "CLASSIC";
+    mc.marketDefinition->keyLineDefinition = 123456;
+    mc.marketDefinition->persistenceEnabled = true;
+    mc.marketDefinition->marketBaseRate = 5.0;
+    mc.marketDefinition->eventId = "evt123";
+    mc.marketDefinition->eventTypeId = "evttype456";
+    mc.marketDefinition->numberOfWinners = 1;
+    mc.marketDefinition->countryCode = "GB";
+    mc.marketDefinition->lineMaxUnit = 100.0;
+    mc.marketDefinition->bettingType = "ODDS";
+    mc.marketDefinition->marketType = "WIN";
+    mc.marketDefinition->marketTime = "2024-06-01T12:00:00Z";
+    mc.marketDefinition->suspendTime = "2024-06-01T12:30:00Z";
+    mc.marketDefinition->bspReconciled = false;
+    mc.marketDefinition->complete = false;
+    mc.marketDefinition->inPlay = false;
+    mc.marketDefinition->crossMatching = true;
+    mc.marketDefinition->runnersVoidable = false;
+    mc.marketDefinition->numberOfActiveRunners = 10;
+    mc.marketDefinition->lineMinUnit = 1.0;
+    mc.marketDefinition->betDelay = true;
+    mc.marketDefinition->status = "OPEN";
+    mc.marketDefinition->regulators = "UKGC";
+    mc.marketDefinition->discountAllowed = false;
+    mc.marketDefinition->openDate = BetfairAPI::Date("2024-06-01T11:00:00Z");
+    mc.marketDefinition->version = 1L;
+    mc.runnerChange = {
+        BetfairAPI::StreamingType::RunnerChange{
+            123456789, true,
+            BetfairAPI::StreamingType::RunnerValues{1500.0, 2.8, 2.6, 2.7},
+            {
+                BetfairAPI::StreamingType::DepthLadder{1, 2.0, 100.0},
+                BetfairAPI::StreamingType::DepthLadder{2, 2.2, 50.0}
+            },
+            {
+                BetfairAPI::StreamingType::DepthLadder{1, 2.4, 80.0},
+                BetfairAPI::StreamingType::DepthLadder{2, 2.6, 60.0}
+            },
+            {
+                BetfairAPI::StreamingType::DepthLadder{1, 2.1, 30.0}
+            },
+            {
+                BetfairAPI::StreamingType::DepthLadder{1, 2.5, 40.0}
+            },
+            {
+                BetfairAPI::StreamingType::PriceLadder{2.0, 100.0},
+                BetfairAPI::StreamingType::PriceLadder{2.2, 50.0}
+            },
+            {
+                BetfairAPI::StreamingType::PriceLadder{2.4, 80.0},
+                BetfairAPI::StreamingType::PriceLadder{2.6, 60.0}
+            },
+            {
+                BetfairAPI::StreamingType::PriceLadder{2.1, 30.0}
+            },
+            {
+                BetfairAPI::StreamingType::PriceLadder{2.5, 40.0}
+            },
+            12345.67
+        }
+    };
+
+    nlohmann::json j = mc;
+    BetfairAPI::StreamingType::MarketChange mc_new = j;
+
+    EXPECT_EQ(mc, mc_new);
+}
+
 TEST(MarketChangeMessageJson,Json) {
-    BetfairAPI::StreamingType::MarketChangeMessage msg;
-    msg.changeType = BetfairAPI::StreamingEnum::ChangeType::SUB_IMAGE;
-    msg.segmentType = BetfairAPI::StreamingEnum::SegmentType::SEG_START;
-    msg.conflateMs = 100;
-    msg.status = 1;
-    msg.heartbeatMs = 5000;
-    msg.publishTime = BetfairAPI::Date("2024-06-01T12:00:00Z");
-    msg.initialClk = "abc123";
-    msg.clk = "def456";
+    BetfairAPI::StreamingType::MarketChangeMessage mcm;
+    mcm.changeType = BetfairAPI::StreamingEnum::ChangeType::SUB_IMAGE;
+    mcm.clk = "abc123";
+    mcm.initialClk = "def456";
+    mcm.publishTime = BetfairAPI::Date("2024-06-01T12:00:00Z");
 
-    nlohmann::json j = msg;
-    BetfairAPI::StreamingType::ChangeMessage msg_new = j;
+    BetfairAPI::StreamingType::MarketChange mc;
+    mc.marketId = "12.1234";
+    mc.tradedVolume = 1000;
+    mcm.marketChange.push_back(std::move(mc));
 
-    msg.marketDefinition = std::make_unique<BetfairAPI::StreamingType::MarketDefinition>();
-    msg.marketDefinition->id = "1.23456789";
-    msg.marketDefinition->venue = "Ascot";
-    msg.marketDefinition->raceType = "FLAT";
-    msg.marketDefinition->settledTime = BetfairAPI::Date("2024-06-01T13:00:00Z");
-    msg.marketDefinition->timeZone = "Europe/London";
-    msg.marketDefinition->eachWayDivisor = 1.5;
-    msg.marketDefinition->bspMarket = true;
-    msg.marketDefinition->turnInPlayEnabled = true;
-    msg.marketDefinition->priceLadderDefinition = "CLASSIC";
-    msg.marketDefinition->keyLineDefinition = 123456;
-    msg.marketDefinition->persistenceEnabled = true;
-    msg.marketDefinition->marketBaseRate = 5.0;
-    msg.marketDefinition->eventId = "evt123";
-    msg.marketDefinition->eventTypeId = "evttype456";
-    msg.marketDefinition->numberOfWinners = 1;
-    msg.marketDefinition->countryCode = "GB";
-    msg.marketDefinition->lineMaxUnit = 100.0;
-    msg.marketDefinition->bettingType = "ODDS";
-    msg.marketDefinition->marketType = "WIN";
-    msg.marketDefinition->marketTime = "2024-06-01T12:00:00Z";
-    msg.marketDefinition->suspendTime = "2024-06-01T12:30:00Z";
-    msg.marketDefinition->bspReconciled = false;
-    msg.marketDefinition->complete = false;
-    msg.marketDefinition->inPlay = false;
-    msg.marketDefinition->crossMatching = true;
-    msg.marketDefinition->runnersVoidable = false;
-    msg.marketDefinition->numberOfActiveRunners = 10;
-    msg.marketDefinition->lineMinUnit = 1.0;
-    msg.marketDefinition->betDelay = true;
-    msg.marketDefinition->status = "OPEN";
-    msg.marketDefinition->regulators = "UKGC";
-    msg.marketDefinition->discountAllowed = false;
-    msg.marketDefinition->openDate = BetfairAPI::Date("2024-06-01T11:00:00Z");
-    msg.marketDefinition->version = 1L;
+    nlohmann::json j = mcm;
+    BetfairAPI::StreamingType::MarketChangeMessage mcm_new = j;
 
-    msg.totalValueMatched = 12345.67;
-    msg.replaceImage = true;
-
-    msg.runnerChange.conflated = false;
-    msg.runnerChange.values = {
-        BetfairAPI::StreamingType::RunnerValues{
-            1500.0, 2.8, 2.6, 2.7, std::make_optional<std::string>("runner_001")
-        }
-    };
-    msg.runnerChange.lvlLadder = {
-        BetfairAPI::StreamingType::LevelBasedLadder{
-            {
-                BetfairAPI::StreamingType::LadderInfo{1, 2.0, 100.0},
-                BetfairAPI::StreamingType::LadderInfo{2, 2.2, 50.0}
-            },
-            {
-                BetfairAPI::StreamingType::LadderInfo{1, 2.4, 80.0},
-                BetfairAPI::StreamingType::LadderInfo{2, 2.6, 60.0}
-            },
-            {
-                BetfairAPI::StreamingType::LadderInfo{1, 2.1, 30.0}
-            },
-            {
-                BetfairAPI::StreamingType::LadderInfo{1, 2.5, 40.0}
-            }
-        }
-    };
-    msg.runnerChange.priceLadder = {
-        BetfairAPI::StreamingType::PriceBasedLadder{
-            {
-                {2.0, 100.0}, {2.2, 50.0}
-            },
-            {
-                {2.4, 80.0}, {2.6, 60.0}
-            },
-            {
-                {2.1, 30.0}
-            },
-            {
-                {2.5, 40.0}
-            },
-            {
-                {2.3, 120.0}
-            }
-        }
-    };
-
-    EXPECT_EQ(msg, msg_new);
+    EXPECT_EQ(mcm, mcm_new);
 }

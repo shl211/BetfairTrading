@@ -9,12 +9,12 @@
 
 namespace BetfairAPI::StreamingType {
     struct ChangeMessage {
-        std::optional<StreamingEnum::ChangeType> changeType;
+        std::optional<StreamingEnum::ChangeType> changeType; //ct
         std::optional<StreamingEnum::SegmentType> segmentType;
         std::optional<int> conflateMs;
         std::optional<int> status;
         std::optional<int> heartbeatMs;
-        std::optional<BetfairAPI::Date> publishTime;
+        std::optional<BetfairAPI::Date> publishTime; //pt
         std::optional<std::string> initialClk;
         std::optional<std::string> clk;
     };

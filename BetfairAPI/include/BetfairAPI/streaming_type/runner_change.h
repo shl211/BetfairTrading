@@ -1,192 +1,149 @@
 #pragma once
 
-#include <optional>
-#include <tuple>
 #include <vector>
 #include <string>
+#include <optional>
+#include <ostream>
 
 namespace BetfairAPI::StreamingType {
-    using Level = int;
-    using Price = double;
-    using Size = double;
-    using LadderInfo = std::tuple<Level,Price,Size>;
-    using PriceSize = std::tuple<Price,Size>;
-
     struct RunnerValues {
-        std::optional<double> tradedVolume; //tv
-        std::optional<double> lastTradedPrice; //ltp
-        std::optional<double> startingPriceNear; //spn
-        std::optional<double> startingPriceFar; //spf
-        std::optional<std::string> runnerId; //id
+        double tradedVolume;//tv
+        double lastTradedPrice;//ltp
+        double startingPriceNear;//spn
+        double startingPriceFar;//spf
+    };
+
+    struct DepthLadder {
+        int level;
+        double price;
+        double size;
+    };
+
+    struct PriceLadder {
+        double price;
+        double size;
+    };
+    
+    struct RunnerChange {
+        long runnerId;
+        std::optional<bool> conflated;//con
+        RunnerValues runnerValues;
+        std::vector<DepthLadder> bestAvailableToBack;//batb
+        std::vector<DepthLadder> bestAvailableToLay;//batl
+        std::vector<DepthLadder> bestAvailableToBackVirtual;//bdatd
+        std::vector<DepthLadder> bestAvailableToLayVirtual;//bdatl
+        std::vector<PriceLadder> availableToBack;//atb
+        std::vector<PriceLadder> availableToLay;//atl
+        std::vector<PriceLadder> startingPriceBack;//spb
+        std::vector<PriceLadder> startingPriceLay;//spl
+        std::optional<double> traded;//trd
     };
 
     inline bool operator==(const RunnerValues& lhs, const RunnerValues& rhs) {
         return lhs.tradedVolume == rhs.tradedVolume &&
                lhs.lastTradedPrice == rhs.lastTradedPrice &&
                lhs.startingPriceNear == rhs.startingPriceNear &&
-               lhs.startingPriceFar == rhs.startingPriceFar &&
-               lhs.runnerId == rhs.runnerId;
+               lhs.startingPriceFar == rhs.startingPriceFar;
     }
 
     inline bool operator!=(const RunnerValues& lhs, const RunnerValues& rhs) {
         return !(lhs == rhs);
     }
 
-    inline std::ostream& operator<<(std::ostream& os, const RunnerValues& rv) {
-        os << "RunnerValues{";
-        os << "tradedVolume=" << (rv.tradedVolume ? std::to_string(*rv.tradedVolume) : "null") << ", ";
-        os << "lastTradedPrice=" << (rv.lastTradedPrice ? std::to_string(*rv.lastTradedPrice) : "null") << ", ";
-        os << "startingPriceNear=" << (rv.startingPriceNear ? std::to_string(*rv.startingPriceNear) : "null") << ", ";
-        os << "startingPriceFar=" << (rv.startingPriceFar ? std::to_string(*rv.startingPriceFar) : "null") << ", ";
-        os << "runnerId=" << (rv.runnerId ? *rv.runnerId : "null");
-        os << "}";
+    inline std::ostream& operator<<(std::ostream& os, const RunnerValues& values) {
+        os << "Values(tradedVolume: " << values.tradedVolume
+           << ", lastTradedPrice: " << values.lastTradedPrice
+           << ", startingPriceNear: " << values.startingPriceNear
+           << ", startingPriceFar: " << values.startingPriceFar << ")";
         return os;
     }
 
-    struct LevelBasedLadder {
-        std::vector<LadderInfo> bestAvailableToBack; //batb
-        std::vector<LadderInfo> bestAvailableToLay; //batl
-        std::vector<LadderInfo> bestAvailableToBackVirtual; //bdatb
-        std::vector<LadderInfo> bestAvailableToLayVirtual; //bdatl
-    };
-
-    inline bool operator==(const LevelBasedLadder& lhs, const LevelBasedLadder& rhs) {
-        return lhs.bestAvailableToBack == rhs.bestAvailableToBack &&
-               lhs.bestAvailableToLay == rhs.bestAvailableToLay &&
-               lhs.bestAvailableToBackVirtual == rhs.bestAvailableToBackVirtual &&
-               lhs.bestAvailableToLayVirtual == rhs.bestAvailableToLayVirtual;
+    inline bool operator==(const DepthLadder& lhs, const DepthLadder& rhs) {
+        return lhs.level == rhs.level &&
+               lhs.price == rhs.price &&
+               lhs.size == rhs.size;
     }
 
-    inline bool operator!=(const LevelBasedLadder& lhs, const LevelBasedLadder& rhs) {
+    inline bool operator!=(const DepthLadder& lhs, const DepthLadder& rhs) {
         return !(lhs == rhs);
     }
 
-    inline std::ostream& operator<<(std::ostream& os, const LevelBasedLadder& lbl) {
-        os << "LevelBasedLadder{";
-        os << "bestAvailableToBack=[";
-        for (size_t i = 0; i < lbl.bestAvailableToBack.size(); ++i) {
-            if (i > 0) os << ", ";
-            const auto& item = lbl.bestAvailableToBack[i];
-            os << "(" << std::get<0>(item) << "," << std::get<1>(item) << "," << std::get<2>(item) << ")";
-        }
-        os << "], bestAvailableToLay=[";
-        for (size_t i = 0; i < lbl.bestAvailableToLay.size(); ++i) {
-            if (i > 0) os << ", ";
-            const auto& item = lbl.bestAvailableToLay[i];
-            os << "(" << std::get<0>(item) << "," << std::get<1>(item) << "," << std::get<2>(item) << ")";
-        }
-        os << "], bestAvailableToBackVirtual=[";
-        for (size_t i = 0; i < lbl.bestAvailableToBackVirtual.size(); ++i) {
-            if (i > 0) os << ", ";
-            const auto& item = lbl.bestAvailableToBackVirtual[i];
-            os << "(" << std::get<0>(item) << "," << std::get<1>(item) << "," << std::get<2>(item) << ")";
-        }
-        os << "], bestAvailableToLayVirtual=[";
-        for (size_t i = 0; i < lbl.bestAvailableToLayVirtual.size(); ++i) {
-            if (i > 0) os << ", ";
-            const auto& item = lbl.bestAvailableToLayVirtual[i];
-            os << "(" << std::get<0>(item) << "," << std::get<1>(item) << "," << std::get<2>(item) << ")";
-        }
-        os << "]";
-        os << "}";
+    inline std::ostream& operator<<(std::ostream& os, const DepthLadder& depthLadder) {
+        os << "DepthLadder(level: " << depthLadder.level
+           << ", price: " << depthLadder.price
+           << ", size: " << depthLadder.size << ")";
         return os;
     }
-    
-    struct PriceBasedLadder {
-        std::vector<PriceSize> availableToBack; //atb
-        std::vector<PriceSize> availableToLay; //atl
-        std::vector<PriceSize> startingPriceAvailableToBack; //spb
-        std::vector<PriceSize> startingPriceAvailableToLay; //spl
-        std::vector<PriceSize> traded;//trd
-    };
 
-    inline bool operator==(const PriceBasedLadder& lhs, const PriceBasedLadder& rhs) {
-        return lhs.availableToBack == rhs.availableToBack &&
-               lhs.availableToLay == rhs.availableToLay &&
-               lhs.startingPriceAvailableToBack == rhs.startingPriceAvailableToBack &&
-               lhs.startingPriceAvailableToLay == rhs.startingPriceAvailableToLay &&
-               lhs.traded == rhs.traded;
+    inline bool operator==(const PriceLadder& lhs, const PriceLadder& rhs) {
+        return lhs.price == rhs.price &&
+               lhs.size == rhs.size;
     }
 
-    inline bool operator!=(const PriceBasedLadder& lhs, const PriceBasedLadder& rhs) {
+    inline bool operator!=(const PriceLadder& lhs, const PriceLadder& rhs) {
         return !(lhs == rhs);
     }
 
-    inline std::ostream& operator<<(std::ostream& os, const PriceBasedLadder& pbl) {
-        os << "PriceBasedLadder{";
-        os << "availableToBack=[";
-        for (size_t i = 0; i < pbl.availableToBack.size(); ++i) {
-            if (i > 0) os << ", ";
-            const auto& item = pbl.availableToBack[i];
-            os << "(" << std::get<0>(item) << "," << std::get<1>(item) << ")";
-        }
-        os << "], availableToLay=[";
-        for (size_t i = 0; i < pbl.availableToLay.size(); ++i) {
-            if (i > 0) os << ", ";
-            const auto& item = pbl.availableToLay[i];
-            os << "(" << std::get<0>(item) << "," << std::get<1>(item) << ")";
-        }
-        os << "], startingPriceAvailableToBack=[";
-        for (size_t i = 0; i < pbl.startingPriceAvailableToBack.size(); ++i) {
-            if (i > 0) os << ", ";
-            const auto& item = pbl.startingPriceAvailableToBack[i];
-            os << "(" << std::get<0>(item) << "," << std::get<1>(item) << ")";
-        }
-        os << "], startingPriceAvailableToLay=[";
-        for (size_t i = 0; i < pbl.startingPriceAvailableToLay.size(); ++i) {
-            if (i > 0) os << ", ";
-            const auto& item = pbl.startingPriceAvailableToLay[i];
-            os << "(" << std::get<0>(item) << "," << std::get<1>(item) << ")";
-        }
-        os << "], traded=[";
-        for (size_t i = 0; i < pbl.traded.size(); ++i) {
-            if (i > 0) os << ", ";
-            const auto& item = pbl.traded[i];
-            os << "(" << std::get<0>(item) << "," << std::get<1>(item) << ")";
-        }
-        os << "]";
-        os << "}";
+    inline std::ostream& operator<<(std::ostream& os, const PriceLadder& priceLadder) {
+        os << "PriceLadder(price: " << priceLadder.price
+           << ", size: " << priceLadder.size << ")";
         return os;
     }
-
-    struct RunnerChange {
-        std::optional<bool> conflated;
-        std::vector<RunnerValues> values;
-        std::vector<LevelBasedLadder> lvlLadder;
-        std::vector<PriceBasedLadder> priceLadder;
-    };
 
     inline bool operator==(const RunnerChange& lhs, const RunnerChange& rhs) {
-        return lhs.conflated == rhs.conflated &&
-               lhs.values == rhs.values &&
-               lhs.lvlLadder == rhs.lvlLadder &&
-               lhs.priceLadder == rhs.priceLadder;
+        return lhs.runnerId == rhs.runnerId &&
+               lhs.conflated == rhs.conflated &&
+               lhs.bestAvailableToBack == rhs.bestAvailableToBack &&
+               lhs.bestAvailableToLay == rhs.bestAvailableToLay &&
+               lhs.bestAvailableToBackVirtual == rhs.bestAvailableToBackVirtual &&
+               lhs.bestAvailableToLayVirtual == rhs.bestAvailableToLayVirtual &&
+               lhs.availableToBack == rhs.availableToBack &&
+               lhs.availableToLay == rhs.availableToLay &&
+               lhs.startingPriceBack == rhs.startingPriceBack &&
+               lhs.startingPriceLay == rhs.startingPriceLay &&
+               lhs.traded == rhs.traded;
     }
 
     inline bool operator!=(const RunnerChange& lhs, const RunnerChange& rhs) {
         return !(lhs == rhs);
     }
 
-    inline std::ostream& operator<<(std::ostream& os, const RunnerChange& rc) {
-        os << "RunnerChange{";
-        os << "conflated=" << (rc.conflated ? (*rc.conflated ? "true" : "false") : "null") << ", ";
-        os << "values=[";
-        for (size_t i = 0; i < rc.values.size(); ++i) {
-            if (i > 0) os << ", ";
-            os << rc.values[i];
+    inline std::ostream& operator<<(std::ostream& os, const RunnerChange& runnerChange) {
+        os << "RunnerChange(runnerId: " << runnerChange.runnerId
+           << ", conflated: " << (runnerChange.conflated ? *runnerChange.conflated : false)
+           << ", bestAvailableToBack: [";
+        for (const auto& item : runnerChange.bestAvailableToBack) {
+            os << item << ", ";
         }
-        os << "], lvlLadder=[";
-        for (size_t i = 0; i < rc.lvlLadder.size(); ++i) {
-            if (i > 0) os << ", ";
-            os << rc.lvlLadder[i];
+        os << "], bestAvailableToLay: [";
+        for (const auto& item : runnerChange.bestAvailableToLay) {
+            os << item << ", ";
         }
-        os << "], priceLadder=[";
-        for (size_t i = 0; i < rc.priceLadder.size(); ++i) {
-            if (i > 0) os << ", ";
-            os << rc.priceLadder[i];
+        os << "], bestAvailableToBackVirtual: [";
+        for (const auto& item : runnerChange.bestAvailableToBackVirtual) {
+            os << item << ", ";
         }
-        os << "]";
-        os << "}";
+        os << "], bestAvailableToLayVirtual: [";
+        for (const auto& item : runnerChange.bestAvailableToLayVirtual) {
+            os << item << ", ";
+        }
+        os << "], availableToBack: [";
+        for (const auto& item : runnerChange.availableToBack) {
+            os << item << ", ";
+        }
+        os << "], availableToLay: [";
+        for (const auto& item : runnerChange.availableToLay) {
+            os << item << ", ";
+        }
+        os << "], startingPriceBack: [";
+        for (const auto& item : runnerChange.startingPriceBack) {
+            os << item << ", ";
+        }
+        os << "], startingPriceLay: [";
+        for (const auto& item : runnerChange.startingPriceLay) {
+            os << item << ", ";
+        }
+        os << "], traded: " << (runnerChange.traded ? *runnerChange.traded : 0.0) << ")";
         return os;
     }
 }
