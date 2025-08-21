@@ -156,7 +156,7 @@ TEST(RunnerChangeJson, Json) {
     rc.startingPriceLay = {
         BetfairAPI::StreamingType::PriceLadder{2.5, 40.0}
     };
-    rc.traded = 12345.67;
+    rc.traded = {{12345.67,1}};
     nlohmann::json j = rc;
     BetfairAPI::StreamingType::RunnerChange rc_new = j;
 
@@ -233,7 +233,7 @@ TEST(MarketChangeJson,Json) {
             {
                 BetfairAPI::StreamingType::PriceLadder{2.5, 40.0}
             },
-            12345.67
+            {BetfairAPI::StreamingType::PriceLadder{25, 40.0}}
         }
     };
 

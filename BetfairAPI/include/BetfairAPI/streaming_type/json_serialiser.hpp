@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nlohmann/json.hpp>
+#include <iostream>
 #include "BetfairAPI/streaming_type/market_filter.h"
 #include "BetfairAPI/streaming_type/market_data_filter.h"
 #include "BetfairAPI/streaming_type/change_message.h"
@@ -230,11 +231,11 @@ namespace BetfairAPI::StreamingType {
         if(!rc.availableToLay.empty()) j["atl"] = rc.availableToLay;
         if(!rc.startingPriceBack.empty()) j["spb"] = rc.startingPriceBack;
         if(!rc.startingPriceLay.empty()) j["spl"] = rc.startingPriceLay;
-        if(rc.traded) j["trd"] = *rc.traded;
+        if(!rc.traded.empty()) j["trd"] = rc.traded;
     }
 
     inline void from_json(const nlohmann::json& j, RunnerChange& rc) {
-        if (j.contains("id")) rc.runnerId = j.at("id").get<int>();
+        if (j.contains("id")) rc.runnerId = j.at("id").get<long>();
         if (j.contains("con")) rc.conflated = j.at("con").get<bool>();
 
         rc.runnerValues = j.get<RunnerValues>();
@@ -246,7 +247,7 @@ namespace BetfairAPI::StreamingType {
         if (j.contains("atl")) rc.availableToLay = j.at("atl").get<std::vector<PriceLadder>>();
         if (j.contains("spb")) rc.startingPriceBack = j.at("spb").get<std::vector<PriceLadder>>();
         if (j.contains("spl")) rc.startingPriceLay = j.at("spl").get<std::vector<PriceLadder>>();
-        if (j.contains("trd")) rc.traded = j.at("trd").get<double>();
+        if (j.contains("trd")) rc.traded = j.at("trd").get<std::vector<PriceLadder>>();
     }
 
     /**************************************************************************
@@ -264,8 +265,8 @@ namespace BetfairAPI::StreamingType {
         if (j.contains("tv")) mc.tradedVolume = j.at("tv").get<double>();
         if (j.contains("img")) mc.image = j.at("img").get<bool>();
         if (j.contains("marketDefinition")) mc.marketDefinition = std::make_unique<MarketDefinition>(
-                                                                j.at("marketDefinition").get<MarketDefinition>()
-                                                            );
+            j.at("marketDefinition").get<MarketDefinition>()
+        );
         if(j.contains("rc")) mc.runnerChange = j.at("rc").get<std::vector<RunnerChange>>();
     }
 
