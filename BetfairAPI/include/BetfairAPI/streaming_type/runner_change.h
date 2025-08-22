@@ -36,7 +36,7 @@ namespace BetfairAPI::StreamingType {
         std::vector<PriceLadder> availableToLay;//atl
         std::vector<PriceLadder> startingPriceBack;//spb
         std::vector<PriceLadder> startingPriceLay;//spl
-        std::optional<double> traded;//trd
+        std::vector<PriceLadder> traded;//trd
     };
 
     inline bool operator==(const RunnerValues& lhs, const RunnerValues& rhs) {
@@ -143,7 +143,11 @@ namespace BetfairAPI::StreamingType {
         for (const auto& item : runnerChange.startingPriceLay) {
             os << item << ", ";
         }
-        os << "], traded: " << (runnerChange.traded ? *runnerChange.traded : 0.0) << ")";
+        os << "], traded: [";
+        for (const auto& item : runnerChange.traded) {
+            os << item << ", ";
+        }
+        os << "])";
         return os;
     }
 }

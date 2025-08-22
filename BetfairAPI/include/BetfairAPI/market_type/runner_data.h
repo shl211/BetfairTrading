@@ -2,6 +2,7 @@
 
 #include <mutex>
 #include <vector>
+#include <map>
 #include "BetfairAPI/market_type/price_ladders.h"
 #include "BetfairAPI/streaming_type/market_change_message.h"
 
@@ -12,19 +13,22 @@ namespace BetfairAPI::MarketType {
     public:
         RunnerData() = default;
         ~RunnerData() = default;
+        
+        void updateData(StreamingType::RunnerChange& rc);
+        void replaceData(StreamingType::RunnerChange& rc);
 
-        void updateData(StreamingType::RunnerChange rc);
-
-        std::vector<DepthBasedLadder> getBestPrice(Side side, bool virtual_price = false) const;
+        std::vector<DepthBasedLadder> getBestPriceList(Side side, bool virtual_price = false) const;
+        std::map<Price,Size> getPriceLadder(Side side, bool starting_price = false) const;
 
     private:
-        mutable std::mutex mtx_;
         std::vector<DepthBasedLadder> best_available_to_back_;
         std::vector<DepthBasedLadder> best_available_to_lay_;
         std::vector<DepthBasedLadder> best_available_to_back_virtual_;
         std::vector<DepthBasedLadder> best_available_to_lay_virtual_;
 
-        
-
+        std::map<Price,Size> available_to_back_;
+        std::map<Price,Size> available_to_lay_;
+        std::map<Price,Size> starting_price_back_;
+        std::map<Price,Size> starting_price_lay_;
     };
 }
